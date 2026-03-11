@@ -1,6 +1,7 @@
 from flask import Flask
 from app.auth.routes import auth_bp 
 from app.extensions import db,migrate
+from app import models
 
 def create_app():
 
@@ -9,8 +10,8 @@ def create_app():
                                                     # Replaced app.config.from_object("app.config.Config") with app.config.from_object(Config)
 
     db.init_app(app)          # Attach db to flask app
-    migrate.init(app , db)    # Attach migrate to flask app and connect with db         
-                             
+    migrate.init_app(app , db)    # Attach migrate to flask app and connect with db         
+
     app.register_blueprint(auth_bp)  # register / attach auth blueprint routes to main flask file
 
     return app
