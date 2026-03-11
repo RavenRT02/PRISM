@@ -1,8 +1,9 @@
 from flask_login import UserMixin    # provides flask_login req methods like is_authenticated,is_active,is_anonymous,get_id()
                                      # flask_login does not recognise the model as user without UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db,login_manager
 
-class User(db.Model):
+class User(UserMixin, db.Model):
 
     __tablename__ = "users"
 
@@ -18,6 +19,11 @@ class User(db.Model):
 
     created_at = db.Column(db.DateTime, server_default = db.func.now())
 
+    def set_password(self,password):                         # Convert user pass to hashed pass before storing in db
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self,password):                       # Check if user pass matches hashed pass in db at login
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return f"<user {self.email}>"
