@@ -3,7 +3,7 @@ from flask_login import UserMixin    # provides flask_login req methods like is_
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db,login_manager
 
-class User(UserMixin, db.Model):
+class User(UserMixin, db.Model):           # users table
 
     __tablename__ = "users"
 
@@ -16,6 +16,8 @@ class User(UserMixin, db.Model):
     role = db.Column(db.String(20), nullable = False, default = "user")
 
     is_active = db.Column(db.Boolean, default = True)
+
+    course_end_date = db.Column(db.Date, nullable = True )
 
     created_at = db.Column(db.DateTime, server_default = db.func.now())
 
@@ -31,3 +33,46 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader                   # Tells flask_login on how to retrieve user from db
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class Buildings(db.Model):
+
+    __tablename__ = "buildings"
+
+    id = db.Column(db.Integer, primary_key = True)
+
+    name = db.Column(db.String(100), nullable = False, unique = True)
+
+    is_active = db.Column(db.Boolean, default = True)
+
+
+class Floor(db.Model):
+
+    __tablename__ = "floors"
+
+    id = db.Column(db.Integer, primary_key = True)
+
+    number = db.Column(db.String(20), nullable = False)
+
+    building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"))
+
+    is_active = db.Column(db.Boolean, default = True)
+
+    building = db.relationship("Building", backref = "floors")
+
+
+class Room(db.Model):
+
+    __tablename__ = "rooms"
+
+    id = db.Column(db.Integer, primary_key = True)
+
+    name = db.Column(db.String(50), nullable = False)
+
+    floor_id = db.Column(db.Integer, db.ForeignKey("floors.id"))
+
+    is_active = db.Column(db.Boolean, default = True)
+
+    floors = db.relationship("Floor", backref = "rooms")
+
+    
