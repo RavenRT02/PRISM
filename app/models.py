@@ -35,7 +35,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-class Buildings(db.Model):
+class Building(db.Model):
 
     __tablename__ = "buildings"
 
@@ -75,4 +75,3 @@ class Room(db.Model):
 
     floors = db.relationship("Floor", backref = "rooms")
 
-    
