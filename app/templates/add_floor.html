@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<title>Add Floor</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f4f6f9;
+}
+
+.container{
+width:400px;
+margin:auto;
+margin-top:80px;
+background:white;
+padding:30px;
+border-radius:8px;
+box-shadow:0px 8px 20px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+color:#224abe;
+}
+
+input, select{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+
+button{
+width:100%;
+padding:10px;
+background:#4e73df;
+color:white;
+border:none;
+border-radius:5px;
+}
+
+.message{
+padding:10px;
+margin-bottom:15px;
+border-radius:5px;
+text-align:center;
+}
+
+.success{
+background:#d4edda;
+color:#155724;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Add Floor</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+
+<div class="message {{ category }}">
+{{ message }}
+</div>
+
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<form method="POST">
+
+<label>Select Building</label>
+
+<select name="building_id">
+
+{% for building in buildings %}
+
+<option value="{{ building.id }}">
+{{ building.name }}
+</option>
+{% endfor %}
+
+</select>
+
+<label>Floor Number</label>
+
+<input type="text" name="number" required>
+
+<label>
+<input type="checkbox" name="is_active" checked>
+Active
+</label>
+
+<br><br>
+
+<button type="submit">
+Add Floor
+</button>
+
+</form>
+
+<h3>Existing Floors</h3>
+
+<ul>
+
+{% for floor in floors %}
+
+<li>
+{{ floor.number }}
+</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+</body>
+
+</html>
