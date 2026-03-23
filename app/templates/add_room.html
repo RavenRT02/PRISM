@@ -1,190 +1,106 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-<title>Add Room</title>
+    <title>Add Room</title>
 
-<style>
-
-body{
-font-family: Arial;
-background:#f4f6f9;
-}
-
-.container{
-width:400px;
-margin:auto;
-margin-top:80px;
-background:white;
-padding:30px;
-border-radius:8px;
-box-shadow:0px 8px 20px rgba(0,0,0,0.1);
-}
-
-h2{
-text-align:center;
-color:#224abe;
-}
-
-input, select{
-width:100%;
-padding:10px;
-margin:10px 0;
-}
-
-button{
-width:100%;
-padding:10px;
-background:#4e73df;
-color:white;
-border:none;
-border-radius:5px;
-}
-
-.message{
-padding:10px;
-margin-bottom:15px;
-border-radius:5px;
-text-align:center;
-}
-
-.success{
-background:#d4edda;
-color:#155724;
-}
-
-</style>
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/add_room.css') }}">
 </head>
 
 <body>
 
 <div class="container">
 
-<h2>Add Room</h2>
+    <h2>Add Room</h2>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-{% for category, message in messages %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
 
-<div class="message {{ category }}">
-{{ message }}
-</div>
+                <div class="message {{ category }}">
+                    {{ message }}
+                </div>
 
-{% endfor %}
-{% endif %}
-{% endwith %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-<form method="POST">
+    <form method="POST">
 
-<label>Select Building</label>
+        <label>Select Building</label>
 
-<select id="buildingSelect">
+        <select id="buildingSelect">
 
-<option value="">Select Building</option>
+            <option value="">Select Building</option>
 
-{% for building in buildings %}
+            {% for building in buildings %}
+                <option value="{{ building.id }}">
+                    {{ building.name }}
+                </option>
+            {% endfor %}
 
-<option value="{{ building.id }}">
-{{ building.name }}
-</option>
-{% endfor %}
+        </select>
 
-</select>
 
-<label>Select Floor</label>
+        <label>Select Floor</label>
 
-<select name="floor_id" id="floorSelect">
+        <select name="floor_id" id="floorSelect" required>
 
-<option value="">Select Floor</option>
+            <option value="">Select Floor</option>
 
-{% for building in buildings %}
+            {% for building in buildings %}
+                {% for floor in building.floors %}
 
-{% for floor in building.floors %}
+                    <option
+                        value="{{ floor.id }}"
+                        data-building="{{ building.id }}"
+                    >
+                        {{ floor.number }}
+                    </option>
 
-<option
-value="{{ floor.id }}"
-data-building="{{ building.id }}"
->
+                {% endfor %}
+            {% endfor %}
 
-{{ floor.number }}
+        </select>
 
-</option>
 
-{% endfor %}
+        <label>Room Name</label>
 
-{% endfor %}
+        <input type="text" name="name" required>
 
-</select>
 
-<script>
+        <label class="checkbox-label">
+            <input type="checkbox" name="is_active" checked>
+            Active
+        </label>
 
-let floorSelect = document.getElementById("floorSelect");
 
-let floorOptions = floorSelect.querySelectorAll("option");
+        <button type="submit">
+            Add Room
+        </button>
 
-floorOptions.forEach(option => {
+    </form>
 
-if(option.value !== "")
-option.style.display = "none";
 
-});
+    <h3 id="roomListTitle">Existing Rooms</h3>
 
-document.getElementById("buildingSelect").addEventListener("change", function(){
+    <div class="room-list">
+        <ul>
 
-let buildingId = this.value;
+            {% for room in rooms %}
+                <li data-floor="{{ room.floor_id }}" data-building="{{ room.floor.building_id }}">
+                {{ room.name }}
+                </li>
+            {% endfor %}
 
-floorOptions.forEach(option => {
-
-if(option.value === "")
-return;
-
-if(option.dataset.building === buildingId)
-option.style.display = "block";
-else
-option.style.display = "none";
-
-});
-
-});
-
-</script>
-<label>Room Name</label>
-
-<input type="text" name="name" required>
-
-<label>
-<input type="checkbox" name="is_active" checked>
-Active
-</label>
-
-<br><br>
-
-<button type="submit">
-Add Room
-</button>
-
-</form>
-
-<h3>Existing Rooms</h3>
-
-<ul>
-
-{% for room in rooms %}
-
-<li>
-{{ room.name }}
-</li>
-
-{% endfor %}
-
-</ul>
+        </ul>
+    </div>
 
 </div>
+
+<script src="{{ url_for('static', filename='js/add_room.js') }}"></script>
 
 </body>
 
 </html>
-
-

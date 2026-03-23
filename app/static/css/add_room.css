@@ -1,0 +1,108 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+/* Container */
+
+.container {
+    width: 400px;
+    margin: 80px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Heading */
+
+h2 {
+    text-align: center;
+    color: #224abe;
+}
+
+/* Inputs */
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+/* Checkbox */
+
+.checkbox-label {
+    display: block;
+    margin: 10px 0;
+}
+
+/* Button */
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #4e73df;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2e59d9;
+}
+
+/* Flash messages */
+
+.message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Scrollable room list */
+
+.room-list {
+    max-height: 140px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background: #fafafa;
+}
+
+.room-list ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.room-list li {
+    margin-bottom: 6px;
+}
+
+/* Custom scrollbar */
+
+.room-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.room-list::-webkit-scrollbar-thumb {
+    background: #4e73df;
+    border-radius: 4px;
+}
+
+.room-list::-webkit-scrollbar-track {
+    background: #e9ecef;
+}

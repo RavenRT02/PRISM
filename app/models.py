@@ -54,11 +54,13 @@ class Floor(db.Model):
 
     number = db.Column(db.String(20), nullable = False)
 
-    building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"))
+    building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable = False)
 
     is_active = db.Column(db.Boolean, default = True)
 
     building = db.relationship("Building", backref = "floors")
+
+    __table_args__ = (db.UniqueConstraint("number", "building_id", name = "uq_floor_building"),)
 
 
 class Room(db.Model):
@@ -69,9 +71,11 @@ class Room(db.Model):
 
     name = db.Column(db.String(50), nullable = False)
 
-    floor_id = db.Column(db.Integer, db.ForeignKey("floors.id"))
+    floor_id = db.Column(db.Integer, db.ForeignKey("floors.id"), nullable = False)
 
     is_active = db.Column(db.Boolean, default = True)
 
-    floors = db.relationship("Floor", backref = "rooms")
+    floor = db.relationship("Floor", backref = "rooms")
+
+    __table_args__ = (db.UniqueConstraint("name", "floor_id", name = "uq_room_floor"),)
 
