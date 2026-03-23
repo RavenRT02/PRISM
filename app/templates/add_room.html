@@ -78,19 +78,78 @@ color:#155724;
 
 <form method="POST">
 
-<label>Select Floor</label>
+<label>Select Building</label>
 
-<select name="floor_id">
+<select id="buildingSelect">
 
-{% for floor in floors %}
+<option value="">Select Building</option>
 
-<option value="{{ floor.id }}">
-{{ floor.number }}
+{% for building in buildings %}
+
+<option value="{{ building.id }}">
+{{ building.name }}
 </option>
 {% endfor %}
 
 </select>
 
+<label>Select Floor</label>
+
+<select name="floor_id" id="floorSelect">
+
+<option value="">Select Floor</option>
+
+{% for building in buildings %}
+
+{% for floor in building.floors %}
+
+<option
+value="{{ floor.id }}"
+data-building="{{ building.id }}"
+>
+
+{{ floor.number }}
+
+</option>
+
+{% endfor %}
+
+{% endfor %}
+
+</select>
+
+<script>
+
+let floorSelect = document.getElementById("floorSelect");
+
+let floorOptions = floorSelect.querySelectorAll("option");
+
+floorOptions.forEach(option => {
+
+if(option.value !== "")
+option.style.display = "none";
+
+});
+
+document.getElementById("buildingSelect").addEventListener("change", function(){
+
+let buildingId = this.value;
+
+floorOptions.forEach(option => {
+
+if(option.value === "")
+return;
+
+if(option.dataset.building === buildingId)
+option.style.display = "block";
+else
+option.style.display = "none";
+
+});
+
+});
+
+</script>
 <label>Room Name</label>
 
 <input type="text" name="name" required>
@@ -127,3 +186,5 @@ Add Room
 </body>
 
 </html>
+
+

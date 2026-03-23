@@ -71,7 +71,7 @@ def add_floor():
 @admin_required
 def add_room():
 
-    floors = Floor.query.filter_by(is_active = True).all()
+    buildings = Building.query.filter_by(is_active = True).all()
 
     if request.method == 'POST':
 
@@ -79,15 +79,15 @@ def add_room():
         floor_id = request.form.get("floor_id")
         is_active = request.form.get("is_active") == "on"
 
+        floor = Floor.query.get(floor_id)
+
         room = Room( name = name, floor_id = floor_id, is_active = is_active)
 
         db.session.add(room)
         db.session.commit()
 
-        floor = Floor.query.get(floor_id)
-
         flash(f'Room {name} added to floor {floor.number} Successfully', "success")
 
     rooms = Room.query.all()
 
-    return render_template("add_room.html", floors = floors, rooms = rooms)
+    return render_template("add_room.html", buildings = buildings, rooms = rooms)
