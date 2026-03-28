@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PRISM Login</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg,#4e73df,#b81647);
+            height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+    .login-box{
+        background:white;
+        padding:40px;
+        width:350px;
+        border-radius:8px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.2);
+        text-align:center;
+    }
+
+    h1{
+        margin-bottom:20px;
+        color:#224abe;
+    }
+
+    input{
+        width:100%;
+        padding:10px;
+        margin:10px 0;
+        border:1px solid #ccc;
+        border-radius:4px;
+    }
+
+    button{
+        width:100%;
+        padding:10px;
+        background:#4e73df;
+        color:white;
+        border:none;
+        border-radius:4px;
+        font-size:16px;
+        cursor:pointer;
+    }
+
+    button:hover{
+        background:#224abe;
+    }
+
+    .error{
+        color:red;
+        margin-top:10px;
+    }
+
+    .system-title{
+        font-size:22px;
+        font-weight:bold;
+        margin-bottom:5px;
+    }
+
+    .subtitle{
+        font-size:13px;
+        color:gray;
+        margin-bottom:20px;
+    }
+</style>
+
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+<div class="system-title">PRISM</div>
+<div class="subtitle">Priority-Based Issue & Support Management System</div>
+
+<h1>Login</h1>
+
+<form method="POST">
+
+<input type="email" name="email" placeholder="College Email" required>
+
+<input type="password" name="password" placeholder="Password" required>
+
+<button type="submit">Login</button>
+
+</form>
+
+{% if error %}
+
+<div class="error">{{ error }}</div>
+{% endif %}
+
+</div>
+
+</body>
+</html>
