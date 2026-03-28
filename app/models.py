@@ -11,7 +11,9 @@ class User(UserMixin, db.Model):           # users table
 
     email = db.Column(db.String(120), unique = True, nullable = False)
 
-    password_hash = db.Column(db.String(255), nullable = False)
+    password_hash = db.Column(db.String(255), nullable = True)
+
+    is_password_set = db.Column(db.Boolean, default = False)
 
     role = db.Column(db.String(20), nullable = False, default = "user")
 
@@ -20,6 +22,10 @@ class User(UserMixin, db.Model):           # users table
     course_end_date = db.Column(db.Date, nullable = True )
 
     created_at = db.Column(db.DateTime, server_default = db.func.now())
+
+    otp_code = db.Column(db.String(10), nullable = True)
+
+    opt_expiry = db.Column(db.DateTime, nullable = True)
 
     def set_password(self,password):                         # Convert user pass to hashed pass before storing in db
         self.password_hash = generate_password_hash(password)

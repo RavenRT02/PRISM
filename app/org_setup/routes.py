@@ -1,10 +1,12 @@
-from flask import Blueprint, redirect, url_for, render_template, request, flash
+from flask import Blueprint, redirect, url_for, render_template, request, flash, Response
 from flask_login import login_required, current_user
 from functools import wraps
 from app.extensions import db
-from app.models import Building, Floor, Room
+from app.models import Building, Floor, Room, User
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
+import pandas as pd
+import csv, io
 
 org_bp = Blueprint("org_setup", __name__)
 
@@ -163,3 +165,122 @@ def add_room():
     rooms = Room.query.all()
 
     return render_template("add_room.html", buildings = buildings, floors = floors, rooms = rooms)
+
+@org_bp.route("/upload-users", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+def upload_users():
+
+    if request.method == 'POST':
+
+        file = request.files.get("file")
+
+        if not file:
+            flash("No file uploaded", "error")
+            return redirect(url_for("org_setup.upload_users"))
+        
+        try:
+            df = pd.read_csv(file)                           # pd.read_csv(file, header=0) -> Use first row as column names
+            df.columns = df.columns.str.strip().str.lower()  # Normalize column names, prevent excel from adding extra spaces
+
+        except Exception:
+            flash("Invalid CSV file", "error")
+            return redirect(url_for("org_setup.upload_users"))
+        
+        required_columns = {"email"}
+
+        if not required_columns.issubset(df.columns):
+            flash("CSV file must contain email column", "error")
+            return redirect(url_for("org_setup.upload_users"))
+        
+        added_count = 0
+        duplicate_count = 0
+        missing_email_count = 0
+        invalid_course_end_date_count = 0
+
+        for _, row in df.iterrows():                                       # _, row = index, row data
+            email = row.get("email")
+
+            if pd.isna(email) or str(email).strip() == "":
+                missing_email_count += 1
+                continue
+
+            email = str(email).strip().lower()
+
+            if email.startswith("example"):
+                continue
+
+            if "@" not in email:
+                missing_email_count += 1
+                continue
+
+            existing_user = User.query.filter_by(email = email).first()
+
+            if existing_user:
+                duplicate_count += 1
+                continue
+
+            role = str(row.get("role", "user")).strip().lower()
+
+            if role not in ["user", "admin"]:
+                role = "user"
+
+            is_active_raw = row.get("is_active")
+
+            if pd.isna(is_active_raw) or str(is_active_raw).strip() == "":
+                is_active = True
+
+            else:
+                is_active_value = str(is_active_raw).strip().lower()
+                is_active = is_active_value in ["true", "1", "yes"]
+
+            course_end_date = row.get("course_end_date")
+
+            if pd.notna(course_end_date):
+
+                parsed_date = pd.to_datetime(course_end_date, errors = "coerce")
+
+                if pd.isna(parsed_date):
+                    course_end_date = None
+                    invalid_course_end_date_count += 1
+                
+                else:
+                    course_end_date = parsed_date.date()
+
+            else:
+                course_end_date = None
+
+            user = User(email = email, role = role, is_active = is_active, course_end_date = course_end_date)
+
+            db.session.add(user)
+            added_count += 1
+        
+        db.session.commit()
+
+        flash(f'{added_count} users added, ' f'{duplicate_count} duplicates skipped, ' 
+              f'{missing_email_count} rows missing email skipped, '
+              f'{invalid_course_end_date_count} invalid course end date rows corrected', "success")
+        
+        return redirect(url_for("org_setup.upload_users"))
+    
+    return render_template("upload_users.html")
+
+@org_bp.route("/download-user-template")
+@login_required
+@admin_required
+def download_user_template():
+
+    output = io.StringIO()                    # Creates a temp file in memory ( RAM )
+    writer = csv.writer(output)               # Attaches a CSV writing tool to our temp file ( output )
+
+    writer.writerow(["email", "role", "is_active", "course_end_date"])
+
+    # Example row data in template for admins
+
+    writer.writerow(["example1@college.edu.in", "user", "True", "2026-12-31"])
+    writer.writerow(["example2@college.edu.in", "admin", "True", "2027-06-30"])
+
+    output.seek(0)                          # After write pointer points end of file, so seek(0) to move pointer to start of file. Prevents downloading empty files
+    
+    return Response(output, mimetype = "text/csv",
+                    headers = {"Content-Disposition" : "attachment; filename = user_upload_template.csv"}) # Header tells browser to download file and name it 
