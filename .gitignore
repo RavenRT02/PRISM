@@ -208,3 +208,6 @@ __marimo__/
 
 # check files
 db_check.py
+
+# .env
+.env

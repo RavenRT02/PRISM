@@ -2,6 +2,7 @@ from flask_login import UserMixin    # provides flask_login req methods like is_
                                      # flask_login does not recognise the model as user without UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db,login_manager
+from datetime import datetime
 
 class User(UserMixin, db.Model):           # users table
 
@@ -23,9 +24,6 @@ class User(UserMixin, db.Model):           # users table
 
     created_at = db.Column(db.DateTime, server_default = db.func.now())
 
-    otp_code = db.Column(db.String(10), nullable = True)
-
-    opt_expiry = db.Column(db.DateTime, nullable = True)
 
     def set_password(self,password):                         # Convert user pass to hashed pass before storing in db
         self.password_hash = generate_password_hash(password)
@@ -39,6 +37,33 @@ class User(UserMixin, db.Model):           # users table
 @login_manager.user_loader                   # Tells flask_login on how to retrieve user from db
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+
+class UserOTP(db.Model):
+
+    __tablename__ = "user_otps"
+
+    id = db.Column(db.Integer, primary_key = True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False, index = True)
+
+    otp_hash = db.Column(db.String(128), nullable = False)
+
+    purpose = db.Column(db.String(30), nullable = False)
+
+    expires_at = db.Column(db.DateTime, nullable = False)
+
+    attempts = db.Column(db.Integer, default = 0, nullable = False)
+
+    is_used = db.Column(db.Boolean, default = False, nullable = False)
+
+    created_at = db.Column(db.DateTime, server_default = db.func.now())
+
+    user = db.relationship("User", backref = "otps")
+
+    __table_args__ = (db.Index("idx_user_purpose_active", "user_id", "purpose", "is_used"),)
+
 
 
 class Building(db.Model):
@@ -84,4 +109,6 @@ class Room(db.Model):
     floor = db.relationship("Floor", backref = "rooms")
 
     __table_args__ = (db.UniqueConstraint("name", "floor_id", name = "uq_room_floor"),)
+
+
 
