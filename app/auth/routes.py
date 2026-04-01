@@ -1,6 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from app.models import User
+from app.utils.email import send_otp_email
 
 auth_bp = Blueprint("auth", __name__)  # Blueprint(name_of_blueprint, location_of_files)
 
@@ -35,3 +36,4 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for("auth.login"))
+

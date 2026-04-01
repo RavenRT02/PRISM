@@ -2,7 +2,7 @@ from flask_login import UserMixin    # provides flask_login req methods like is_
                                      # flask_login does not recognise the model as user without UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db,login_manager
-from datetime import datetime
+
 
 class User(UserMixin, db.Model):           # users table
 
@@ -34,6 +34,7 @@ class User(UserMixin, db.Model):           # users table
     def __repr__(self):
         return f"<user {self.email}>"
     
+    
 @login_manager.user_loader                   # Tells flask_login on how to retrieve user from db
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -52,13 +53,13 @@ class UserOTP(db.Model):
 
     purpose = db.Column(db.String(30), nullable = False)
 
-    expires_at = db.Column(db.DateTime, nullable = False)
+    expires_at = db.Column(db.DateTime(timezone = True), nullable = False)
 
     attempts = db.Column(db.Integer, default = 0, nullable = False)
 
     is_used = db.Column(db.Boolean, default = False, nullable = False)
 
-    created_at = db.Column(db.DateTime, server_default = db.func.now())
+    created_at = db.Column(db.DateTime(timezone = True), server_default = db.func.now())
 
     user = db.relationship("User", backref = "otps")
 
