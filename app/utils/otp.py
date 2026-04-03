@@ -3,6 +3,14 @@ from datetime import datetime,timedelta,timezone
 from app.extensions import db
 from app.models import UserOTP
 
+def ensure_utc(dt):  
+    """helper func to attach utc label to naive datetime ( does not convert time, attaches utc label )
+        adds utc label to naive datetime and does not affect aware datetime, handles db and py datetime conflict"""        
+
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo = timezone.utc)
+    return dt
+
 def generate_otp():
 
     return str(random.randint(100000, 999999))
@@ -14,6 +22,9 @@ def hash_otp(otp):
 
 
 def create_otp(user, purpose):                 # returns raw otp and stores hashed otp in db
+
+    UserOTP.query.filter_by(user_id = user.id, purpose = purpose, 
+                            is_used = False).update({"is_used" : True})
 
     otp = generate_otp()
 
@@ -35,14 +46,15 @@ def get_active_otp(user, purpose):
                                    is_used = False).order_by(UserOTP.created_at.desc()).first()  # return latest requested otp
 
 
-def verify_otp(user, input_otp, purpose):
+def verify_otp_code(user, input_otp, purpose):
 
     otp_entry = get_active_otp(user, purpose)
 
     if not otp_entry:
         return False, "No active OTP found"
     
-    if datetime.now(timezone.utc) > otp_entry.expires_at:
+    expires_at = ensure_utc(otp_entry.expires_at)
+    if datetime.now(timezone.utc) > expires_at:
         return False, "OTP expired"
     
     if otp_entry.attempts >= 3:
@@ -51,11 +63,15 @@ def verify_otp(user, input_otp, purpose):
     hashed_input = hash_otp(input_otp)
 
     if hashed_input != otp_entry.otp_hash:
-        otp_entry.attempts += 1
 
+        otp_entry.attempts += 1
         db.session.commit()
-        return False, "Invalid OTP"
-    
+
+        if otp_entry.attempts >= 3:
+            return False, "Maximum attempts exceeded"
+        
+        return False, f'Invalid OTP. Attempt {otp_entry.attempts}/3'
+     
     otp_entry.is_used = True
     db.session.commit()
 
@@ -69,8 +85,8 @@ def can_resend_otp(user, purpose):
     if not otp_entry:
         return True
     
-    cooldown_time = otp_entry.created_at + timedelta(minutes=2)
-
+    created_at = ensure_utc(otp_entry.created_at)
+    cooldown_time = created_at + timedelta(minutes=2)
     if datetime.now(timezone.utc) < cooldown_time:
         return False
     

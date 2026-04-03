@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Verify OTP</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/auth.css') }}">
+
+</head>
+
+
+<body>
+
+    <div class= "auth-container">
+
+        <div class= "auth-card">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endwith %}
+
+
+            <form method="POST">
+
+                <h2>Verify OTP</h2>
+                <label>Enter OTP:</label>
+
+                <input type="text" name="otp" required>
+
+                <label>Enter Captcha:</label>
+                <div class="captcha-box">
+                    <strong>{{ captcha_text }}</strong>
+                </div>
+
+                <input type="text" name="captcha" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+
+                <button type="submit">Verify OTP</button>
+
+            </form>
+
+
+            <div id="resend-section">
+
+                <button
+                id="resend-btn"
+                data-url="{{ url_for('auth.resend_otp') }}"
+                disabled>
+
+                Resend OTP
+
+                </button>
+
+                <p id="timer-text"></p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+<script>
+let remainingSeconds = {{ remaining_seconds | tojson }};
+</script>
+
+
+<script
+src="{{ url_for('static', filename='js/otp_timer.js') }}">
+</script>
+
+
+</body>
+
+</html>

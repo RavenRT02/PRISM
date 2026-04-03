@@ -2,6 +2,7 @@ from flask_login import UserMixin    # provides flask_login req methods like is_
                                      # flask_login does not recognise the model as user without UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db,login_manager
+from datetime import datetime, timezone
 
 
 class User(UserMixin, db.Model):           # users table
@@ -22,7 +23,7 @@ class User(UserMixin, db.Model):           # users table
 
     course_end_date = db.Column(db.Date, nullable = True )
 
-    created_at = db.Column(db.DateTime, server_default = db.func.now())
+    created_at = db.Column(db.DateTime, default = lambda: datetime.now(timezone.utc))
 
 
     def set_password(self,password):                         # Convert user pass to hashed pass before storing in db
@@ -59,7 +60,7 @@ class UserOTP(db.Model):
 
     is_used = db.Column(db.Boolean, default = False, nullable = False)
 
-    created_at = db.Column(db.DateTime(timezone = True), server_default = db.func.now())
+    created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
     user = db.relationship("User", backref = "otps")
 
