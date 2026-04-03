@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Room</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/add_room.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Add Room</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+
+                <div class="message {{ category }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+
+        <label>Select Building</label>
+
+        <select id="buildingSelect">
+
+            <option value="">Select Building</option>
+
+            {% for building in buildings %}
+                <option value="{{ building.id }}">
+                    {{ building.name }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+
+        <label>Select Floor</label>
+
+        <select name="floor_id" id="floorSelect" required>
+
+            <option value="">Select Floor</option>
+
+            {% for building in buildings %}
+                {% for floor in building.floors %}
+
+                    <option
+                        value="{{ floor.id }}"
+                        data-building="{{ building.id }}"
+                    >
+                        {{ floor.number }}
+                    </option>
+
+                {% endfor %}
+            {% endfor %}
+
+        </select>
+
+
+        <label>Room Name</label>
+
+        <input type="text" name="name" required>
+
+
+        <label class="checkbox-label">
+            <input type="checkbox" name="is_active" checked>
+            Active
+        </label>
+
+
+        <button type="submit">
+            Add Room
+        </button>
+
+    </form>
+
+
+    <h3 id="roomListTitle">Existing Rooms</h3>
+
+    <div class="room-list">
+        <ul>
+
+            {% for room in rooms %}
+                <li data-floor="{{ room.floor_id }}" data-building="{{ room.floor.building_id }}">
+                {{ room.name }}
+                </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/add_room.js') }}"></script>
+
+</body>
+
+</html>

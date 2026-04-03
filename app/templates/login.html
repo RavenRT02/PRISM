@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>PRISM Login</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <div class="system-title">PRISM</div>
+
+            <div class="subtitle">
+            Priority-Based Issue & Support Management System
+            </div>
+
+        <h1>Login</h1>
+
+        <!-- FLASH MESSAGE SUPPORT -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="{{ category }}">{{ message }}</div>
+
+                {% endfor %}
+
+            {% endif %}
+        {% endwith %}
+
+
+        <!-- LOGIN FORM -->
+
+        <form method="POST" action="{{ url_for('auth.login') }}">
+
+            <input type="email" name="email" placeholder="College Email" required>
+
+            <input type="password" id = "password" name="password" placeholder="Password" required>
+
+
+            <label class= "checkbox-row">
+            <input type="checkbox" onclick="togglePasswords('password')"> 
+            Show password
+            </label>
+
+            <button type="submit"> Login </button>
+
+        </form>
+
+
+        <!-- SECONDARY ACTIONS -->
+
+        <form method="POST" action="{{ url_for('auth.set_password_start') }}">
+
+            <input type="hidden" name="email" id="set-password-email">
+
+            <button
+            type="submit"
+            class="secondary-btn"
+            onclick="return copyEmailToHidden('set-password-email')">
+
+            Set Password
+
+            </button>
+
+        </form>
+
+
+        <form method="POST" action="{{ url_for('auth.reset_password_start') }}">
+
+            <input type="hidden" name="email" id="reset-password-email">
+
+            <button
+            type="submit"
+            class="secondary-btn"
+            onclick="return copyEmailToHidden('reset-password-email')">
+
+            Reset Password
+
+            </button>
+
+        </form>
+
+
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/login.js') }}"> </script>
+
+</body>
+
+</html>
