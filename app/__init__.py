@@ -3,6 +3,7 @@ from app.auth.routes import auth_bp
 from app.extensions import db,migrate,login_manager,mail
 from app import models
 from app.org_setup.routes import org_bp
+from app.cli import seed_categories
 
 def create_app():
 
@@ -11,6 +12,7 @@ def create_app():
                                                     # Replaced app.config.from_object("app.config.Config") with app.config.from_object(Config)
 
     db.init_app(app)          # Attach db to flask app
+    app.cli.add_command(seed_categories)     # seed default categories for Issue typr database
     migrate.init_app(app , db)    # Attach migrate to flask app and connect with db      
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"   # uses login path in auth/routes.py 

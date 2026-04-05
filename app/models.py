@@ -3,6 +3,7 @@ from flask_login import UserMixin    # provides flask_login req methods like is_
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db,login_manager
 from datetime import datetime, timezone
+from app.issues.enums import IssueStatus, IssueType, PriorityLevel
 
 
 class User(UserMixin, db.Model):           # users table
@@ -24,6 +25,10 @@ class User(UserMixin, db.Model):           # users table
     course_end_date = db.Column(db.Date, nullable = True )
 
     created_at = db.Column(db.DateTime, default = lambda: datetime.now(timezone.utc))
+
+    issues = db.relationship("Issue", foreign_keys = "Issue.created_by", lazy = True)
+
+    verified_issues = db.relationship("Issue", foreign_keys = "Issue.verified_by", lazy = True)
 
 
     def set_password(self,password):                         # Convert user pass to hashed pass before storing in db
@@ -78,6 +83,8 @@ class Building(db.Model):
 
     is_active = db.Column(db.Boolean, default = True)
 
+    created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
+
 
 class Floor(db.Model):
 
@@ -94,6 +101,8 @@ class Floor(db.Model):
     building = db.relationship("Building", backref = "floors")
 
     __table_args__ = (db.UniqueConstraint("number", "building_id", name = "uq_floor_building"),)
+
+    created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
 
 class Room(db.Model):
@@ -112,5 +121,86 @@ class Room(db.Model):
 
     __table_args__ = (db.UniqueConstraint("name", "floor_id", name = "uq_room_floor"),)
 
+    created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
+
+
+class IssueCategory(db.Model):
+
+    __tablename__ = "issue_categories"
+
+    id = db.Column(db.Integer, primary_key = True)
+
+    name = db.Column(db.String(100), unique = True, nullable = False)
+
+    description = db.Column(db.String(255))
+
+    display_order = db.Column(db.Integer, default = 0)
+
+    is_active = db.Column(db.Boolean, default = True)
+
+    created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
+
+
+
+
+class Issue(db.Model):
+
+    __tablename__ = "issues"
+
+    id = db.Column(db.Integer, primary_key = True)
+
+    title = db.Column(db.String(150), nullable = True)
+
+    description = db.Column(db.String(300), nullable = False)
+
+    issue_type = db.Column(db.Enum(IssueType), nullable = False)
+
+    category_id = db.Column(db.Integer, db.ForeignKey("issue_categories.id"), nullable = False)
+    category = db.relationship("IssueCategory")
+
+    building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable = False)
+    building = db.relationship("Building")
+
+    floor_id = db.Column(db.Integer, db.ForeignKey("floors.id"), nullable = False)
+    floor = db.relationship("Floor")
+
+    room_id = db.Column(db.Integer, db.ForeignKey("rooms.id"), nullable = False)
+    room = db.relationship("Room")
+
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
+    creator = db.relationship("User", foreign_keys = [created_by])
+
+    verified_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    verifier = db.relationship("User", foreign_keys = [verified_by])
+
+    status = db.Column(db.Enum(IssueStatus), default = IssueStatus.SUBMITTED, nullable = False)
+
+    urgency_score = db.Column(db.Integer)
+
+    impact_score = db.Column(db.Integer)
+
+    aging_score = db.Column(db.Integer, default = 0)
+
+    priority_score = db.Column(db.Integer)
+
+    priority_level = db.Column(db.Enum(PriorityLevel))
+
+    priority_override = db.Column(db.Boolean, default = False)
+
+    image_path = db.Column(db.String(255))
+
+    review_notes = db.Column(db.String(300))
+
+    hold_until = db.Column(db.DateTime(timezone = True))
+
+    created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
+
+    verified_at = db.Column(db.DateTime(timezone = True))
+
+    approved_at = db.Column(db.DateTime(timezone = True))
+
+    updated_at = db.Column(db.DateTime(timezone = True), onupdate = lambda: datetime.now(timezone.utc))
+
+    status_changed_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 

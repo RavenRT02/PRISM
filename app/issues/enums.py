@@ -1,0 +1,24 @@
+import enum
+
+class IssueStatus(enum.Enum):
+
+    SUBMITTED = "SUBMITTED"
+    UNDER_REVIEW = "UNDER_REVIEW"
+    APPROVED = "APPROVED"
+    PRIORITIZED = "PRIORITIZED"
+    ON_HOLD = "ON_HOLD"
+    RESOLVED = "RESOLVED"
+    CLOSED = "CLOSED"
+    REJECTED = "REJECTED"
+
+class IssueType(enum.Enum):
+
+    COMPLAINT = "COMPLAINT"
+    REQUEST = "REQUEST"
+
+class PriorityLevel(enum.Enum):
+
+    CRITICAL = "CRITICAL"
+    HIGH = "HIGH"
+    MEDIUM = "MIDIUM"
+    LOW = "LOW"

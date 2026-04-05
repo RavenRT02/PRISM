@@ -2,7 +2,8 @@ from flask import Blueprint, request, render_template, redirect, url_for, flash,
 from flask_login import login_user, logout_user, login_required, current_user
 from app.extensions import db
 from app.models import User, UserOTP
-from app.utils.otp import create_otp, can_resend_otp, verify_otp_code, ensure_utc
+from app.utils.otp import create_otp, can_resend_otp, verify_otp_code
+from app.utils.datetime_utils import ensure_utc
 from app.utils.email import send_otp_email
 from app.utils.password import validate_password_strength
 from app.utils.captcha import generate_captcha
