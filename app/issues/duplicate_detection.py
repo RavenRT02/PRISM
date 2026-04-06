@@ -42,9 +42,17 @@ def is_same_location(issue1, issue2):
 
 def is_duplicate(candidate_issue, existing_issue, threshold = 0.5):
 
-    if not is_same_location(candidate_issue, existing_issue):
-        return False
     
     similarity = jaccard_similarity(candidate_issue.description, existing_issue.description)
 
     return similarity >= threshold
+
+
+def find_duplicate(candidate_issue, existing_issue):
+
+    for issue in existing_issue:
+
+        if is_duplicate(candidate_issue, issue):
+            return issue
+        
+    return None

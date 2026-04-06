@@ -30,6 +30,8 @@ class User(UserMixin, db.Model):           # users table
 
     verified_issues = db.relationship("Issue", foreign_keys = "Issue.verified_by", lazy = True)
 
+    followed_issues = db.relationship("IssueFollower", foreign_keys = "IssueFollower.user_id", lazy = True)
+
 
     def set_password(self,password):                         # Convert user pass to hashed pass before storing in db
         self.password_hash = generate_password_hash(password)
@@ -204,3 +206,23 @@ class Issue(db.Model):
 
     status_changed_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
+    followers = db.relationship("IssueFollower", foreign_keys = "IssueFollower.issue_id", lazy = True)
+
+
+
+class IssueFollower(db.Model):
+
+    __tablename__ = "issue_followers"
+
+    id = db.Column(db.Integer, primary_key = True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
+
+    issue_id = db.Column(db.Integer, db.ForeignKey("issues.id"), nullable = False)
+
+    created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
+
+    user = db.relationship("User")
+    issue = db.relationship("Issue")
+
+    __table_args__ = (db.UniqueConstraint("user_id", "issue_id", name = "uq_user_issue_follow"), )
