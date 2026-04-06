@@ -1,6 +1,7 @@
 from app.issues.enums import PriorityLevel, IssueStatus
 from datetime import datetime, timezone
 from app.utils.datetime_utils import ensure_utc
+from app.issues.priority_keywords import URGENCY_KEYWORDS, IMPACT_KEYWORDS
 
 URGENCY_WEIGHT = 5
 IMPACT_WEIGHT = 4
@@ -33,6 +34,8 @@ def assign_priority_level(score):
 
 
 def update_issue_priority(issue):
+
+    auto_score_issue(issue)
 
     update_aging(issue)
 
@@ -68,4 +71,39 @@ def check_hold_expiry(issue):
     now = ensure_utc(datetime.now(timezone.utc))
     hold_until = ensure_utc(issue.hold_until)
     return now >= hold_until
+
+
+def infer_urgency_score(description):
+
+    description = description.lower()
+    score = 0
+
+    for category in URGENCY_KEYWORDS.values():
+
+        if any( keyword in description for keyword in category["keywords"] ):
+            score += category["score"]
+
+    return score
+
+
+def infer_impact_score(description):
+
+    description = description.lower()
+    score = 0
+
+    for category in IMPACT_KEYWORDS.values():
+
+        if any( keyword in description for keyword in category["keywords"] ):
+            score += category["score"]
+
+    return score
+
+
+def auto_score_issue(issue):
+
+    issue.urgency_score = infer_urgency_score(issue.description)
+    issue.impact_score = infer_impact_score(issue.description)
+
+    return issue
+
 

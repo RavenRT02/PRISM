@@ -7,21 +7,11 @@ from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 import pandas as pd
 import csv, io
+from app.utils.decorators import admin_required
+
+
 
 org_bp = Blueprint("org_setup", __name__)
-
-def admin_required(func):           # custom decorator to check admin role , will be used with buildings, floors and rooms page access
-    
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-
-        if current_user.role != "admin":
-            return "Access denied", 403        # not admin - deny access #return redirect(url_for("auth.dashboard")) - not admin - redirect
-        
-        return func(*args, **kwargs)                                # admin - run original function
-    
-                                                # wrapper.__name__ = func.__name__  set wrapper name to original func name(manually without @wraps)
-    return wrapper                                           # runs after decorator is applied not after all the above conditions
 
  
 def normalize_input(field):                     # remove white spaces, reuse helper func
