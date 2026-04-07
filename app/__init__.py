@@ -5,6 +5,9 @@ from app import models
 from app.org_setup.routes import org_bp
 from app.cli import seed_categories
 from app.issues.routes import issues_bp
+from app.dashboard.routes import dashboard_bp
+
+
 
 def create_app():
 
@@ -23,5 +26,6 @@ def create_app():
     app.register_blueprint(auth_bp)  # register / attach auth blueprint routes to main flask file
     app.register_blueprint(org_bp)
     app.register_blueprint(issues_bp)
+    app.register_blueprint(dashboard_bp)
 
     return app

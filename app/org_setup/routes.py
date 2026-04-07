@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 import pandas as pd
 import csv, io
 from app.utils.decorators import admin_required
+from app.org_setup.services import building_has_issues, floor_has_issues, room_has_issues
 
 
 
@@ -274,3 +275,262 @@ def download_user_template():
     
     return Response(output, mimetype = "text/csv",
                     headers = {"Content-Disposition" : "attachment; filename = user_upload_template.csv"}) # Header tells browser to download file and name it 
+
+
+
+@org_bp.route("/user/deactivate/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
+def deactivate_user(user_id):
+
+    user = User.query.get_or_404(user_id)
+
+    user.is_active = False
+
+    db.session.commit()
+
+    flash("User deactivated successfully", "info")
+
+    return redirect(url_for("dashboard.admin_dashboard"))
+
+
+
+@org_bp.route("/user/promote/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
+def promote_user(user_id):
+
+    user = User.query.get_or_404(user_id)
+
+    user.role = "admin"
+
+    db.session.commit()
+
+    flash("User promoted to admin", "success")
+
+    return redirect(url_for("dashboard.admin_dashboard"))
+
+
+
+@org_bp.route("/building/rename/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def rename_building(id):
+
+    building = Building.query.get_or_404(id)
+
+    new_name = request.form.get("name")
+
+    building.name = new_name
+
+    db.session.commit()
+
+    flash("Building renamed successfully")
+
+    return redirect(url_for("org_setup.manage_buildings"))
+
+
+
+
+@org_bp.route("/floor/rename/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def rename_floor(id):
+
+    floor = Floor.query.get_or_404(id)
+
+    new_name = request.form.get("name")
+
+    floor.number = new_name
+
+    db.session.commit()
+
+    flash("Floor renamed successfully")
+
+    return redirect(url_for("org_setup.manage_floors"))
+
+
+
+
+@org_bp.route("/room/rename/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def rename_room(id):
+
+    room = Room.query.get_or_404(id)
+
+    new_name = request.form.get("name")
+
+    room.name = new_name
+
+    db.session.commit()
+
+    flash("room renamed successfully")
+
+    return redirect(url_for("org_setup.manage_rooms"))
+
+
+
+@org_bp.route("/building/delete/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def delete_building(id):
+
+    building = Building.query.get_or_404(id)
+
+    if building_has_issues(building):
+        flash(f"Cannot delete {building.name} because issues exists under this location. Deactivate instead.", "error")
+        return redirect(url_for("org_setup.manage_buildings"))
+
+    db.session.delete(building)
+
+    db.session.commit()
+
+    flash(f"{building.name} deleted permanently", "success")
+
+    return redirect(url_for("org_setup.manage_buildings"))
+
+
+
+
+@org_bp.route("/floor/delete/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def delete_floor(id):
+
+    floor = Floor.query.get_or_404(id)
+
+    if floor_has_issues(floor):
+        flash(f"Cannot delete {floor.number} because issues exists under this location. Deactivate instead.", "error")
+        return redirect(url_for("org_setup.manage_floors"))
+
+    db.session.delete(floor)
+
+    db.session.commit()
+
+    flash(f"{floor.number} deleted permanently", "success")
+
+    return redirect(url_for("org_setup.manage_floors"))
+
+
+
+@org_bp.route("/room/delete/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def delete_room(id):
+
+    room = Room.query.get_or_404(id)
+
+    if room_has_issues(room):
+        flash(f"Cannot delete {room.name} because issues exists under this location.", "error")
+        return redirect(url_for("org_setup.manage_rooms"))
+
+    db.session.delete(room)
+
+    db.session.commit()
+
+    flash(f"{room.name} deleted permanently", "success")
+
+    return redirect(url_for("org_setup.manage_rooms"))
+
+
+
+@org_bp.route("/building/deactivate/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def deactivate_building(id):
+
+    building = Building.query.get_or_404(id)
+
+    building.is_active = False
+
+    db.session.commit()
+
+    flash(f"{building.name} hidden from users")
+
+    return redirect(url_for("org_setup.manage_buildings"))
+
+
+
+@org_bp.route("/floor/deactivate/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def deactivate_floor(id):
+
+    floor = Floor.query.get_or_404(id)
+
+    floor.is_active = False
+
+    db.session.commit()
+
+    flash(f"{floor.number} hidded from users")
+
+    return redirect(url_for("org_setup.manage_floors"))
+
+
+
+@org_bp.route("/room/deactivate/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def deactivate_room(id):
+
+    room = Room.query.get_or_404(id)
+
+    room.is_active = False
+
+    db.session.commit()
+
+    flash(f"{room.name} hidded from users")
+
+    return redirect(url_for("org_setup.manage_rooms"))
+
+
+
+@org_bp.route("/building/reactivate/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def reactivate_building(id):
+
+    building = Building.query.get_or_404(id)
+
+    building.is_active = True
+
+    db.session.commit()
+
+    flash(f"{building.name} made visible to users")
+
+    return redirect(url_for("org_setup.manage_buildings"))
+
+
+
+@org_bp.route("/floor/reactivate/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def reactivate_floor(id):
+
+    floor = Floor.query.get_or_404(id)
+
+    floor.is_active = True
+
+    db.session.commit()
+
+    flash(f"{floor.number} made visible to users")
+
+    return redirect(url_for("org_setup.manage_floors"))
+
+
+
+@org_bp.route("/room/reactivate/<int:id>", methods=["POST"])
+@login_required
+@admin_required
+def reactivate_room(id):
+
+    room = Room.query.get_or_404(id)
+
+    room.is_active = True
+
+    db.session.commit()
+
+    flash(f"{room.name} made visible to users")
+
+    return redirect(url_for("org_setup.manage_rooms"))

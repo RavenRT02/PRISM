@@ -7,7 +7,7 @@ from app.utils.datetime_utils import ensure_utc
 from app.utils.email import send_otp_email
 from app.utils.password import validate_password_strength
 from app.utils.captcha import generate_captcha
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 
 
 auth_bp = Blueprint("auth", __name__)  # Blueprint(name_of_blueprint, location_of_files)
@@ -33,19 +33,32 @@ def login():
             flash("Please set your password first", "error")
             return redirect(url_for("auth.set_password_start"))
 
-        if user.check_password(password):
-            login_user(user)
-            return redirect(url_for("auth.dashboard"))
+        if not user.check_password(password):
+            flash("Invalid Credentials", "error")
+            return redirect(url_for("auth.login"))
         
-        flash("Invalid credentials", "error")
-        return redirect(url_for("auth.login"))
+        if not user.is_active:
+
+            flash("Your account has been disabled. Contact administrator.", "error")
+            return redirect(url_for("auth.login"))
+
+        if user.course_end_date is not None and user.course_end_date < date.today():   # admin and staff have NULL (None) date
+
+            user.is_active = False
+            db.session.commit()
+
+            flash("Your course access has expired.", "error")
+            return redirect(url_for("auth.login"))
+        
+        login_user(user)
+        if current_user.role == "admin":
+
+            return redirect(url_for("dashboard.admin_dashboard"))
+
+        return redirect(url_for("dashboard.user_dashboard"))
     
     return render_template("login.html")
 
-@auth_bp.route("/dashboard")
-@login_required
-def dashboard():
-    return render_template("dashboard.html")
 
 @auth_bp.route("/logout")
 @login_required

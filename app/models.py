@@ -87,6 +87,8 @@ class Building(db.Model):
 
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
+    floors = db.relationship("Floor", back_populates = "building", lazy=True)
+
 
 class Floor(db.Model):
 
@@ -100,11 +102,13 @@ class Floor(db.Model):
 
     is_active = db.Column(db.Boolean, default = True)
 
-    building = db.relationship("Building", backref = "floors")
+    building = db.relationship("Building", back_populates = "floors")
 
     __table_args__ = (db.UniqueConstraint("number", "building_id", name = "uq_floor_building"),)
 
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
+
+    rooms = db.relationship("Room", back_populates = "floor", lazy=True)
 
 
 class Room(db.Model):
@@ -119,11 +123,13 @@ class Room(db.Model):
 
     is_active = db.Column(db.Boolean, default = True)
 
-    floor = db.relationship("Floor", backref = "rooms")
+    floor = db.relationship("Floor", back_populates = "rooms")
 
     __table_args__ = (db.UniqueConstraint("name", "floor_id", name = "uq_room_floor"),)
 
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
+
+    issues = db.relationship("Issue", back_populates = "room", lazy = True)
 
 
 
@@ -168,13 +174,13 @@ class Issue(db.Model):
     floor = db.relationship("Floor")
 
     room_id = db.Column(db.Integer, db.ForeignKey("rooms.id"), nullable = False)
-    room = db.relationship("Room")
+    room = db.relationship("Room", back_populates = "issues")
 
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
-    creator = db.relationship("User", foreign_keys = [created_by])
+    creator = db.relationship("User", foreign_keys = [created_by], overlaps = "issues")
 
     verified_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-    verifier = db.relationship("User", foreign_keys = [verified_by])
+    verifier = db.relationship("User", foreign_keys = [verified_by], overlaps = "verified_issues")
 
     status = db.Column(db.Enum(IssueStatus), default = IssueStatus.SUBMITTED, nullable = False)
 
@@ -222,7 +228,27 @@ class IssueFollower(db.Model):
 
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
-    user = db.relationship("User")
-    issue = db.relationship("Issue")
+    user = db.relationship("User", overlaps = "followed_issues")
+    issue = db.relationship("Issue", overlaps = "followers")
 
     __table_args__ = (db.UniqueConstraint("user_id", "issue_id", name = "uq_user_issue_follow"), )
+
+
+
+class IssueStatusHistory(db.Model):
+
+    __tablename__ = "issue_status_history"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    issue_id = db.Column(db.Integer, db.ForeignKey("issues.id"), nullable=False)
+
+    old_status = db.Column(db.String(50))
+
+    new_status = db.Column(db.String(50), nullable=False)
+
+    changed_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+    changed_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    note = db.Column(db.String(255))

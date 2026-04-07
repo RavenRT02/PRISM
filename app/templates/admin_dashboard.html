@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+   
+    <h2>Admin Dashboard</h2>
+
+    <h3>Issue Summary</h3>
+
+    <canvas id = "issueChart" width="400" height="200"></canvas>
+
+        <p>Issues: {{ issues|length }}</p>
+
+        <p>Prioritized: {{ prioritized|length }}</p>
+
+        <p>On Hold: {{ on_hold|length }}</p>
+
+        <p>Resolved: {{ resolved|length }}</p>
+
+        <p>Closed: {{ closed|length }}</p>
+
+
+     <h3>Issues by Category</h3>
+
+    <canvas id="categoryChart"></canvas>
+
+    <h3>Pending Verification</h3>
+
+    {% for issue in verification_queue %}
+
+    <div>
+
+        <strong>{{ issue.description[:60] }}...</strong>
+
+        <p>
+        {{ issue.building.name }}
+        /
+        Floor {{ issue.floor.number }}
+        /
+        Room {{ issue.room.name }}
+        </p>
+
+        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
+        Verify Issue
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% else %}
+
+    <p>No issues pending verification.</p>
+
+    {% endfor %}
+
+
+    <h3>Issues</h3>
+
+    {% for issue in issues %}
+
+    <div>
+
+        <strong>{{ issue.title }}</strong>
+
+        <p>
+            {{ issue.building.name }}
+            /
+            Floor {{ issue.floor.number }}
+            /
+            Room {{ issue.room.name }}
+        </p>
+
+        <p>
+            <span class="badge
+            {% if issue.priority_level.name == 'CRITICAL' %}
+            badge-critical
+            {% elif issue.priority_level.name == 'HIGH' %}
+            badge-high
+            {% elif issue.priority_level.name == 'MEDIUM' %}
+            badge-medium
+            {% else %}
+            badge-low
+            {% endif %}
+            ">
+                {{ issue.priority_level.name }}
+            </span>
+
+            <span class="badge status-{{ issue.status.name | lower }}">
+                {{ issue.status.name }}
+            </span>
+        </p>
+
+        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
+            View Details
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% else %}
+
+        <p>No active prioritized issues.</p>
+
+    {% endfor %}
+
+
+
+    <h3>Prioritized (Manual Override)</h3>
+
+    {% for issue in prioritized %}
+
+    <div>
+
+        <strong>{{ issue.title }}</strong>
+
+        <p>
+            {{ issue.building.name }}
+            /
+            Floor {{ issue.floor.number }}
+            /
+            Room {{ issue.room.name }}
+        </p>
+
+        <p>
+            Priority Override Active
+        </p>
+
+        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
+            View Details
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% else %}
+
+        <p>No active prioritized issues.</p>
+
+    {% endfor %}
+
+
+
+    <h3>On Hold</h3>
+
+    {% for issue in on_hold %}
+
+    <div>
+
+        <strong>{{ issue.title }}</strong>
+
+        <p>
+            Hold expires at:
+            {{ issue.hold_until }}
+        </p>
+
+        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
+            View Details
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% else %}
+
+        <p>No issues on hold.</p>
+
+    {% endfor %}
+
+
+
+    <h3>Resolved</h3>
+
+    {% for issue in resolved %}
+
+    <div>
+
+        <strong>{{ issue.title }}</strong>
+
+        <p>
+            Resolved successfully
+        </p>
+
+        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
+            View Details
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% else %}
+
+        <p>No resolved issues yet.</p>
+
+    {% endfor %}
+
+
+
+    <h3>Closed</h3>
+
+    {% for issue in closed %}
+
+    <div>
+
+        <strong>{{ issue.title }}</strong>
+
+        <p>
+            Closed without resolution
+        </p>
+
+        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
+            View Details
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% else %}
+
+        <p>No issues closed yet.</p>
+
+    {% endfor %}
+
+
+<script>
+
+window.issuesCount = {{ issues|length }};
+window.prioritizedCount = {{ prioritized|length }};
+window.onHoldCount = {{ on_hold|length }};
+window.resolvedCount = {{ resolved|length }};
+window.closedCount = {{ closed|length }};
+
+</script>
+
+<script>
+
+window.categoryLabels = {{ category_labels|tojson }};
+window.categoryCounts = {{ category_counts|tojson }};
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+
+</body>
+</html>

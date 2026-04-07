@@ -3,8 +3,6 @@ import enum
 class IssueStatus(enum.Enum):
 
     SUBMITTED = "SUBMITTED"
-    UNDER_REVIEW = "UNDER_REVIEW"
-    APPROVED = "APPROVED"
     PRIORITIZED = "PRIORITIZED"
     ON_HOLD = "ON_HOLD"
     RESOLVED = "RESOLVED"

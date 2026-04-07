@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models import IssueFollower, Issue
+from app.models import IssueFollower, Issue, IssueStatusHistory
 from app.issues.duplicate_detection import find_duplicate
 from app.issues.enums import IssueStatus
 from datetime import datetime, timezone
@@ -27,8 +27,7 @@ def detect_duplicate_issue(candidate_issue):
     existing_issue = Issue.query.filter(Issue.building_id == candidate_issue.building_id,
                                         Issue.floor_id == candidate_issue.floor_id,
                                         Issue.room_id == candidate_issue.room_id,
-                                        Issue.status.in_([IssueStatus.SUBMITTED, IssueStatus.UNDER_REVIEW,
-                                                         IssueStatus.APPROVED, IssueStatus.PRIORITIZED, IssueStatus.ON_HOLD])).all()
+                                        Issue.status.in_([IssueStatus.SUBMITTED, IssueStatus.PRIORITIZED, IssueStatus.ON_HOLD])).all()
     
     duplicate_issue = find_duplicate(candidate_issue, existing_issue)
 
@@ -97,3 +96,11 @@ def release_expired_holds():
         db.session.commit()
 
     return len(released)
+
+
+def log_status_change(issue, old_status, new_status, user_id=None, note=None):
+
+    history = IssueStatusHistory(issue_id=issue.id, old_status=old_status.name if old_status else None,
+                                 new_status=new_status.name, changed_by=user_id, note=note)
+
+    db.session.add(history)
