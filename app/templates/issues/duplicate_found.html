@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duplicate Found</title>
+</head>
+<body>
+
+
+    <h2>Similar Issue Already Exists</h2>
+
+    <p>
+    A similar issue has already been reported:
+    </p>
+
+    <hr>
+
+    <h3>{{ duplicate_issue.title }}</h3>
+
+    <p>
+    Location:
+    {{ duplicate_issue.building.name }}
+    /
+    Floor {{ duplicate_issue.floor.number }}
+    /
+    Room {{ duplicate_issue.room.name }}
+    </p>
+
+
+    <p>
+    Already being reviewed by administration.
+    </p>
+
+    <hr>
+
+    <form method="GET" action="{{ url_for('issues.track_duplicate', issue_id=duplicate_issue.id) }}">
+
+        <button type="submit">
+
+        Track Existing Issue Instead
+
+        </button>
+
+    </form>
+
+
+    <form method="GET" action="{{ url_for('dashboard.user_dashboard') }}">
+
+        <button type="submit">
+
+        Cancel Submission
+
+        </button>
+
+    </form>
+  
+</body>
+</html>

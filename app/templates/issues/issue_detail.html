@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h2>Issue Details</h2>
+
+    <p><strong>Title:</strong> {{ issue.title }}</p>
+
+    <p><strong>Description:</strong> {{ issue.description }}</p>
+
+    <p><strong>Category:</strong> {{ issue.category.name }}</p>
+
+    <p><strong>Location:</strong>
+    {{ issue.building.name }} /
+    Floor {{ issue.floor.number }} /
+    Room {{ issue.room.name }}
+    </p>
+
+    <p><strong>Status:</strong> {{ issue.status.value }}</p>
+
+    <p><strong>Priority Level:</strong> {{ issue.priority_level }}</p>
+
+    <p><strong>Priority Score:</strong> {{ issue.priority_score }}</p>
+
+    <p><strong>Urgency Score:</strong> {{ issue.urgency_score }}</p>
+
+    <p><strong>Impact Score:</strong> {{ issue.impact_score }}</p>
+
+    <p><strong>Created At:</strong> {{ issue.created_at }}</p>
+
+    {% if issue.image_path %}
+
+        <p><strong>Attached Image:</strong></p>
+
+        <img src="{{ url_for('static', filename=issue.image_path) }}" width="300">
+
+    {% endif %}
+    
+
+    {% if current_user.role == "admin" %}
+
+        {% if issue.status.value == "SUBMITTED" %}
+
+            <form method="POST" action="{{ url_for('issues.verify_issue_route', issue_id=issue.id) }}">
+
+                <input type="text" name="title" placeholder="Enter issue title" required>
+
+                <button type="submit">
+                    Verify Issue
+                </button>
+
+            </form>
+
+
+            <form method="POST" action="{{ url_for('issues.reject_issue_route', issue_id=issue.id) }}">
+
+                <input type="text" name="reason" placeholder="Optional rejection reason">
+
+                <button type="submit">
+                    Reject Issue
+                </button>
+
+            </form>
+
+        {% endif %}
+
+
+        {% if issue.status.value == "PRIORITIZED" %}
+
+            <form method="POST" action="{{ url_for('issues.hold_issue', issue_id=issue.id) }}">
+
+                <button type="submit">
+                    Put On Hold
+                </button>
+
+            </form>
+
+
+            <form method="POST" action="{{ url_for('issues.resolve_issue', issue_id=issue.id) }}">
+
+                <button type="submit">
+                    Resolve Issue
+                </button>
+
+            </form>
+
+
+            <form method="POST" action="{{ url_for('issues.close_issue', issue_id=issue.id) }}">
+
+                <button type="submit">
+                    Close Issue
+                </button>
+
+            </form>
+
+
+        {% if not issue.priority_override %}
+
+            <form method="POST" action="{{ url_for('issues.prioritize_issue', issue_id=issue.id) }}">
+
+                <button type="submit">
+                    Prioritize Issue
+                </button>
+
+            </form>
+
+            <form method="POST" action="{{ url_for('issues.unprioritize_issue', issue_id=issue.id) }}">
+
+                <button type="submit">
+                    Remove Priority Override
+                </button>
+
+            </form>
+
+        {% endif %}
+
+        {% if issue.status.value == "ON_HOLD" %}
+
+            <form method="POST" action="{{ url_for('issues.resolve_issue', issue_id=issue.id) }}">
+
+                <button type="submit">
+                    Resolve Issue
+                </button>
+
+            </form>
+
+            <form method="POST" action="{{ url_for('issues.close_issue', issue_id=issue.id) }}">
+
+                <button type="submit">
+                    Close Issue
+                </button>
+
+            </form>
+
+        {% endif %}
+
+        <h3>Priority Calculation Details</h3>
+
+        <p>
+        Urgency Score:
+        {{ issue.urgency_score or 0 }}
+        </p>
+
+        <p>
+        Impact Score:
+        {{ issue.impact_score or 0 }}
+        </p>
+
+        <p>
+        Aging Score:
+        {{ issue.aging_score or 0 }}
+        </p>
+
+        <hr>
+
+        <p>
+        Final Priority Score:
+        <strong>{{ issue.priority_score }}</strong>
+        </p>
+
+        <p>
+        Priority Level:
+        <strong>{{ issue.priority_level.name }}</strong>
+        </p>
+
+    {% endif %}
+
+    <a href="{{ url_for('dashboard.admin_dashboard') }}">
+    Back to Dashboard
+    </a>
+
+</body>
+</html>

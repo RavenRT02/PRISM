@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raise Issue</title>
+</head>
+<body>
+    
+    <h2>Submit Issue</h2>
+
+    <form method="POST"  action="{{ url_for('issues.submit_issue') }}"  enctype="multipart/form-data">
+
+        <label>Issue Type</label>
+
+        <select name="issue_type" required>
+        <option value="COMPLAINT">Complaint</option>
+        <option value="REQUEST">Request</option>
+        </select>
+
+        <br><br>
+
+        <label>Building</label>
+
+        <select id="building" name="building_id" required>
+        <option value="">Select building first</option>
+
+        {% for building in buildings %}
+
+            <option value="{{ building.id }}">
+            {{ building.name }}
+            </option>
+
+        {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label>Floor</label>
+
+        <select id="floor" name="floor_id" required>
+        <option value="">Select building first</option>
+
+        {% for floor in floors %}
+
+            <option value="{{ floor.id }}">
+            {{ floor.number }}
+            </option>
+
+        {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label>Room</label>
+
+        <select id="room" name="room_id" required>
+        <option value="">Select floor first</option>
+
+        {% for room in rooms %}
+
+            <option value="{{ room.id }}">
+            {{ room.name }}
+            </option>
+
+        {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label>Category</label>
+
+        <select name="category_id" required>
+
+        {% for category in categories %}
+
+            <option value="{{ category.id }}">
+            {{ category.name }}
+            </option>
+
+        {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label>Description</label>
+
+        <textarea name="description" maxlength="300" required></textarea>
+
+        <br><br>
+
+        <label>Attach Image (optional)</label>
+
+        <input type="file" name="image">
+
+        <br><br>
+
+        <button type="submit">
+        Submit Issue
+        </button>
+
+    </form>
+
+<script src="{{ url_for('static', filename='js/location_dropdown.js') }}"></script>
+
+</body>
+</html>
