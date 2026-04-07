@@ -31,11 +31,11 @@ def submit_issue():
 
     if not description:
         flash("Description required", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("dashboard.user_dashboard"))
     
     if contains_toxicity(description):
         flash("Issue  description contains inappropriate language", "error")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("dashboard.user_dashboard"))
     
     if image and image.filename:
 
@@ -60,7 +60,7 @@ def submit_issue():
         
     create_issue(candidate_issue)
     flash("Issue submitted successfully", "success")
-    return redirect(url_for("user.dashboard"))
+    return redirect(url_for("dashboard.user_dashboard"))
 
 
 
@@ -71,7 +71,7 @@ def track_duplicate(issue_id):
     follow_issue(current_user.id, issue_id)
     flash("You are now tracking this issue", "success")
 
-    return redirect(url_for("user.dashboard"))
+    return redirect(url_for("dashboard.user_dashboard"))
 
 
 
@@ -95,7 +95,7 @@ def verify_issue_route(issue_id):
 
     log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
 
-    return redirect(url_for("admin.dashboard"))
+    return redirect(url_for("dashboard.admin_dashboard"))
 
 
 
@@ -114,7 +114,7 @@ def reject_issue_route(issue_id):
 
     log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
 
-    return redirect(url_for("admin.dashboard"))
+    return redirect(url_for("dashboard.admin_dashboard"))
 
 
 
@@ -196,7 +196,7 @@ def resolve_issue(issue_id):
     db.session.commit()
     flash("Issue marked as resolved", "success")
 
-    return redirect(url_for("admin.dashboard"))
+    return redirect(url_for("dashboard.admin_dashboard"))
 
 
 
@@ -217,7 +217,7 @@ def close_issue(issue_id):
     flash("Issue closed", "info")
 
 
-    return redirect(url_for("admin.dashboard"))
+    return redirect(url_for("dashboard.admin_dashboard"))
 
 
 

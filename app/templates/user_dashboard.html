@@ -1,58 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h2>User Dashboard</h2>
+{% block title %}User Dashboard | PRISM{% endblock %}
 
-    <a href="{{ url_for('issues.raise_issue_form') }}">
-        Raise New Issue
-    </a>
+{% block page_title %}My Issues{% endblock %}
 
-    <hr>
+{% block content %}
 
-    <h3>Your Submitted Issues</h3>
-
-    {% for issue in issues %}
-
-        <div>
-
-            <strong>{{ issue.title or "Pending verification..." }}</strong>
-
-            <p>
-            Status:
-            <span class="badge status-{{ issue.status.name | lower }}">
-            {{ get_user_visible_status(issue) }}
-            </span>
-            </p>
-
-            <p>
-            Location:
-            {{ issue.building.name }}
-            /
-            Floor {{ issue.floor.number }}
-            /
-            Room {{ issue.room.name }}
-            </p>
-
-            <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
-            View Details
-            </a>
-
+<!-- Action Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="p-5 text-center bg-white rounded-4 shadow-sm border border-light position-relative overflow-hidden">
+            <!-- Decorative background element -->
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle at top right, var(--primary-light), transparent 60%); opacity: 0.5;"></div>
+            
+            <div class="position-relative z-1">
+                <div class="mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 64px; height: 64px;">
+                        <i class="fa-solid fa-bullhorn fs-2"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold font-outfit text-dark mb-3">Notice an Issue on Campus?</h2>
+                <p class="text-secondary mb-4 mx-auto" style="max-width: 600px;">
+                    Report maintenance, IT, or facility issues quickly and easily. We will prioritize and route it to the appropriate team.
+                </p>
+                <a href="{{ url_for('issues.raise_issue_form') }}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm fw-semibold">
+                    <i class="fa-solid fa-plus me-2"></i> Raise New Issue
+                </a>
+            </div>
         </div>
+    </div>
+</div>
 
-    <hr>
+<!-- Submitted Issues Section -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0 fw-bold font-outfit"><i class="fa-solid fa-list-check me-2 text-primary"></i> Your Submitted Issues</h4>
+    <span class="badge bg-primary rounded-pill fs-6 px-3">{{ issues|length }} Total</span>
+</div>
 
+<div class="row g-4">
+    {% for issue in issues %}
+    <div class="col-md-6 col-xl-4">
+        <div class="custom-card h-100 mb-0 custom-hover-card">
+            <div class="card-body p-4 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <span class="badge rounded-pill status-{{ issue.status.name | lower }} shadow-sm">
+                        <i class="fa-solid fa-circle fa-2xs me-1"></i> {{ get_user_visible_status(issue) }}
+                    </span>
+                    <span class="text-muted small"><i class="fa-regular fa-calendar me-1"></i> {{ issue.created_at.strftime('%b %d, %Y') if issue.created_at else 'N/A' }}</span>
+                </div>
+                
+                <h5 class="fw-bold mb-2 text-dark">{{ issue.title or "Pending verification..." }}</h5>
+                
+                <div class="mt-auto pt-3 border-top position-relative">
+                    <p class="text-muted small mb-3">
+                        <i class="fa-solid fa-location-dot me-2 text-secondary"></i>
+                        {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Rm {{ issue.room.name }}
+                    </p>
+                    <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-outline-primary w-100 rounded-pill fw-medium">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
     {% else %}
-
-        <p>No issues submitted yet.</p>
-
+    <div class="col-12">
+        <div class="p-5 text-center bg-white rounded border border-light">
+            <div class="text-muted mb-3" style="font-size: 3rem;">
+                <i class="fa-regular fa-folder-open opacity-50"></i>
+            </div>
+            <h5 class="text-muted fw-semibold">No issues submitted yet</h5>
+            <p class="text-secondary small">When you raise issues, they will appear here so you can track their status.</p>
+        </div>
+    </div>
     {% endfor %}
+</div>
 
-    
-</body>
-</html>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    .custom-hover-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid var(--border-color);
+    }
+    .custom-hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+        border-color: rgba(71, 35, 217, 0.3);
+    }
+</style>
+{% endblock %}

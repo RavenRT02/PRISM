@@ -1,80 +1,43 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Add Floor</title>
+{% block title %}Add Floor | PRISM{% endblock %}
+{% block page_title %}Add Floor{% endblock %}
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/add_floor.css') }}">
-</head>
-
-<body>
-
-<div class="container">
-
-    <h2>Add Floor</h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-
-                <div class="message {{ category }}">
-                    {{ message }}
-                </div>
-
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <form method="POST">
-
-        <label>Select Building</label>
-
-        <select name="building_id" required>
-
-            <option value="">-- Select Building --</option>
-
-            {% for building in buildings %}
-                <option value="{{ building.id }}">
-                    {{ building.name }}
-                </option>
-            {% endfor %}
-
-        </select>
-
-        <label>Floor Number</label>
-
-        <input type="text" name="number" required>
-
-        <label class="checkbox-label">
-            <input type="checkbox" name="is_active" checked>
-            Active
-        </label>
-
-        <button type="submit">
-            Add Floor
-        </button>
-
-    </form>
-
-    <h3 id="floorListTitle">Existing Floors</h3>
-
-    <div class="floor-list" id="floorListContainer">
-        <ul>
-
-            {% for floor in floors %}
-            <li data-building="{{ floor.building_id }}">
-                {{ floor.number }}
-            </li>
-            {% endfor %}
-
-        </ul>
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto mt-4">
+        <div class="custom-card shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="mb-0 fw-bold font-outfit text-dark"><i class="fa-solid fa-layer-group me-2 text-primary"></i> Add New Floor</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small text-uppercase">Select Building</label>
+                        <select name="building_id" class="form-select form-select-lg bg-light border-0" required>
+                            <option value="">-- Choose a Building --</option>
+                            {% for building in buildings %}
+                                <option value="{{ building.id }}">{{ building.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary small text-uppercase">Floor Identifier</label>
+                        <input type="text" name="number" class="form-control form-control-lg bg-light border-0" required placeholder="e.g. 1st Floor, Ground Floor, B1">
+                    </div>
+                    <div class="form-check form-switch mb-4">
+                        <input class="form-check-input" type="checkbox" role="switch" name="is_active" id="isActive" checked>
+                        <label class="form-check-label text-muted" for="isActive">Active (Visible to users)</label>
+                    </div>
+                    <div class="d-grid mt-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm fw-semibold">Submit Floor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+             <a href="{{ url_for('org_setup.manage_floors') }}" class="text-muted small text-decoration-none"><i class="fa-solid fa-arrow-left me-1"></i> Back to floors list</a>
+        </div>
     </div>
-
 </div>
-
-<script src="{{ url_for('static', filename='js/add_floor.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}

@@ -28,4 +28,12 @@ def create_app():
     app.register_blueprint(issues_bp)
     app.register_blueprint(dashboard_bp)
 
+    @app.after_request
+    def add_header(response):
+        # Instructs the browser to NEVER cache dynamic pages locally
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '-1'
+        return response
+
     return app

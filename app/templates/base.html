@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PRISM Dashboard{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-light">
+
+    <!-- Sidebar -->
+    <nav class="sidebar d-flex flex-column p-3 bg-white shadow-sm position-fixed h-100">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none logo-brand">
+            <div class="logo-icon bg-primary text-white d-flex align-items-center justify-content-center rounded me-2">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <span class="fs-4 fw-bold text-dark font-outfit">PRISM</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item mb-1">
+                <a href="{{ url_for('dashboard.admin_dashboard') if current_user.role == 'admin' else url_for('dashboard.user_dashboard') }}" class="nav-link active d-flex align-items-center shadow-sm rounded">
+                    <i class="fa-solid fa-chart-pie me-3"></i>
+                    Dashboard
+                </a>
+            </li>
+            {% if current_user.role != 'admin' %}
+            <li class="nav-item mb-1">
+                <a href="{{ url_for('issues.raise_issue_form') }}" class="nav-link text-secondary d-flex align-items-center link-hover rounded">
+                    <i class="fa-solid fa-plus-circle me-3"></i>
+                    Raise Issue
+                </a>
+            </li>
+            {% else %}
+            <!-- Admin Menus -->
+            <li class="nav-item mb-1">
+                <a class="nav-link text-secondary d-flex align-items-center link-hover rounded" data-bs-toggle="collapse" href="#buildingsMenu" role="button" aria-expanded="false" aria-controls="buildingsMenu">
+                    <i class="fa-solid fa-building me-3"></i> Buildings <i class="fa-solid fa-chevron-down ms-auto small"></i>
+                </a>
+                <div class="collapse" id="buildingsMenu">
+                    <ul class="nav flex-column ms-4 py-2 border-start ms-4 ps-2">
+                        <li><a href="{{ url_for('org_setup.add_building') }}" class="nav-link text-secondary py-1 small rounded"><i class="fa-solid fa-plus me-2"></i> Add Building</a></li>
+                        <li><a href="{{ url_for('org_setup.manage_buildings') }}" class="nav-link text-secondary py-1 small rounded"><i class="fa-solid fa-pen-to-square me-2"></i> Alter Buildings</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link text-secondary d-flex align-items-center link-hover rounded" data-bs-toggle="collapse" href="#floorsMenu" role="button" aria-expanded="false" aria-controls="floorsMenu">
+                    <i class="fa-solid fa-layer-group me-3"></i> Floors <i class="fa-solid fa-chevron-down ms-auto small"></i>
+                </a>
+                <div class="collapse" id="floorsMenu">
+                    <ul class="nav flex-column ms-4 py-2 border-start ms-4 ps-2">
+                        <li><a href="{{ url_for('org_setup.add_floor') }}" class="nav-link text-secondary py-1 small rounded"><i class="fa-solid fa-plus me-2"></i> Add Floor</a></li>
+                        <li><a href="{{ url_for('org_setup.manage_floors') }}" class="nav-link text-secondary py-1 small rounded"><i class="fa-solid fa-pen-to-square me-2"></i> Alter Floors</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link text-secondary d-flex align-items-center link-hover rounded" data-bs-toggle="collapse" href="#roomsMenu" role="button" aria-expanded="false" aria-controls="roomsMenu">
+                    <i class="fa-solid fa-door-open me-3"></i> Rooms <i class="fa-solid fa-chevron-down ms-auto small"></i>
+                </a>
+                <div class="collapse" id="roomsMenu">
+                    <ul class="nav flex-column ms-4 py-2 border-start ms-4 ps-2">
+                        <li><a href="{{ url_for('org_setup.add_room') }}" class="nav-link text-secondary py-1 small rounded"><i class="fa-solid fa-plus me-2"></i> Add Room</a></li>
+                        <li><a href="{{ url_for('org_setup.manage_rooms') }}" class="nav-link text-secondary py-1 small rounded"><i class="fa-solid fa-pen-to-square me-2"></i> Alter Rooms</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link text-secondary d-flex align-items-center link-hover rounded" data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false" aria-controls="usersMenu">
+                    <i class="fa-solid fa-users me-3"></i> Users <i class="fa-solid fa-chevron-down ms-auto small"></i>
+                </a>
+                <div class="collapse" id="usersMenu">
+                    <ul class="nav flex-column ms-4 py-2 border-start ms-4 ps-2">
+                        <li><a href="{{ url_for('org_setup.upload_users') }}" class="nav-link text-secondary py-1 small rounded"><i class="fa-solid fa-upload me-2"></i> Upload Users</a></li>
+                        <li><a href="{{ url_for('org_setup.manage_users') }}" class="nav-link text-secondary py-1 small rounded"><i class="fa-solid fa-users-gear me-2"></i> Manage Users</a></li>
+                    </ul>
+                </div>
+            </li>
+            {% endif %}
+        </ul>
+        <hr>
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark profile-dropdown p-2 rounded" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="user-avatar bg-light text-primary fw-bold d-flex align-items-center justify-content-center rounded-circle me-2 border">U</div>
+                <strong>Account</strong>
+            </a>
+            <ul class="dropdown-menu text-small shadow border-0 radius-10" aria-labelledby="dropdownUser">
+                <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-sign-out-alt me-2"></i> Sign out</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Navbar -->
+        <header class="p-3 mb-4 bg-white shadow-sm d-flex justify-content-between align-items-center header-top sticky-top border-bottom">
+            <h4 class="mb-0 fw-semibold text-dark font-outfit">{% block page_title %}Overview{% endblock %}</h4>
+            <div class="d-flex align-items-center">
+                 <div class="bg-light rounded-pill px-3 py-2 small text-muted fw-medium border shadow-sm">
+                    <i class="fa-regular fa-clock me-1 text-primary"></i> <span id="current-time"></span>
+                 </div>
+            </div>
+        </header>
+
+        <div class="container-fluid px-4 pb-5">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show border-0 shadow-sm" role="alert">
+                    <i class="fa-solid fa-circle-info me-2"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('current-time').innerText = now.toLocaleString('en-US', options);
+        }
+        setInterval(updateTime, 60000);
+        updateTime();
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

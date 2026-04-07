@@ -1,0 +1,51 @@
+{% extends "auth/base_auth.html" %}
+
+{% block title %}Verify Registration OTP | PRISM{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <div class="d-inline-flex align-items-center justify-content-center bg-info bg-opacity-10 text-info rounded-circle mb-3" style="width: 60px; height: 60px;">
+        <i class="fa-solid fa-shield-halved fs-3"></i>
+    </div>
+    <h5 class="fw-bold text-dark mb-1">Verify Registration</h5>
+    <p class="text-muted small">We've sent a one-time passcode to your email. Please enter it below to confirm your identity.</p>
+</div>
+
+<form method="POST" action="{{ url_for('auth.verify_otp') }}">
+    
+    <div class="mb-4">
+        <label class="form-label text-muted small fw-semibold text-uppercase">Enter OTP Code</label>
+        <div class="input-group shadow-sm rounded-3 overflow-hidden border border-2 border-primary border-opacity-25">
+            <span class="input-group-text bg-white border-0 px-3"><i class="fa-solid fa-key text-primary"></i></span>
+            <input type="text" name="otp" class="form-control form-control-lg bg-white border-0 px-2 fw-bold text-dark letter-spacing-1" placeholder="• • • • • •" required autofocus>
+        </div>
+    </div>
+    
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-end mb-2">
+            <label class="form-label text-muted small fw-semibold text-uppercase mb-0">Security Captcha</label>
+            <div class="captcha-box bg-light border px-4 py-2 rounded text-dark fs-5 fw-bold font-monospace shadow-sm" style="letter-spacing: 5px; user-select: none;">
+                {{ captcha_text }}
+            </div>
+        </div>
+        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-light border-0 px-3"><i class="fa-solid fa-robot text-secondary"></i></span>
+            <input type="text" name="captcha" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-control form-control-lg bg-light border-0 px-2" placeholder="Type captcha above" required>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow mt-2 mb-4 fs-6">Verify Identity</button>
+</form>
+
+<div class="text-center rounded-3 bg-light p-3 border">
+    <p class="text-muted small mb-2" id="timer-text">Waiting for cooldown...</p>
+    <button id="resend-btn" class="btn btn-outline-secondary btn-sm rounded-pill px-4 fw-medium" data-url="{{ url_for('auth.resend_otp') }}" disabled>Resend OTP</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let remainingSeconds = {{ remaining_seconds | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/otp_timer.js') }}"></script>
+{% endblock %}

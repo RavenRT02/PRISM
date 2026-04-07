@@ -1,78 +1,41 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-<title>Upload Users CSV</title>
+{% block title %}Upload Users | PRISM{% endblock %}
+{% block page_title %}Bulk Upload Users{% endblock %}
 
-<link rel="stylesheet"
-href="{{ url_for('static', filename='css/upload_users.css') }}">
-
-</head>
-
-<body>
-
-<div class="container">
-
-<h2>Upload Users CSV</h2>
-
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-{% for category, message in messages %}
-
-<div class="message {{ category }}">
-{{ message }}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto mt-4">
+        <div class="custom-card shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-bottom text-center">
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-2 mt-2" style="width: 50px; height: 50px;">
+                    <i class="fa-solid fa-file-csv fs-4"></i>
+                </div>
+                <h5 class="mb-0 fw-bold font-outfit text-dark">Bulk Upload Users</h5>
+                <p class="text-muted small mb-0 mt-1">Upload a CSV file containing user emails.</p>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-4 text-center p-4 border border-2 border-dashed rounded bg-light">
+                        <i class="fa-solid fa-cloud-arrow-up fs-1 text-secondary mb-3"></i>
+                        <input type="file" name="file" id="file" class="form-control" accept=".csv" required>
+                        <div class="form-text mt-2">Only .csv files are supported.</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="text-muted small"><i class="fa-solid fa-circle-info me-1 text-info"></i> Need the correct format?</span>
+                        <a href="{{ url_for('org_setup.download_user_template') }}" class="btn btn-sm btn-outline-secondary rounded-pill"><i class="fa-solid fa-download me-1"></i> Download Template</a>
+                    </div>
+                    
+                    <div class="d-grid mt-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm fw-semibold"><i class="fa-solid fa-upload me-2"></i> Upload Users</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+             <a href="{{ url_for('org_setup.manage_users') }}" class="text-muted small text-decoration-none"><i class="fa-solid fa-arrow-left me-1"></i> Back to users list</a>
+        </div>
+    </div>
 </div>
-
-{% endfor %}
-{% endif %}
-{% endwith %}
-
-
-<form method="POST"
-enctype="multipart/form-data">
-
-<input type="file"
-name="file"
-required>
-
-<br><br>
-
-<button type="submit">
-
-Upload CSV
-
-</button>
-
-</form>
-
-
-<hr>
-
-
-<h3>Download Template</h3>
-
-<p>
-
-Download the sample CSV template, fill user details, and upload here.
-Please do not change the column names and remove the example rows before uploads the file.
-
-</p>
-
-
-<a href="{{ url_for('org_setup.download_user_template') }}">
-
-<button>
-
-Download CSV Template
-
-</button>
-
-</a>
-
-
-</div>
-
-</body>
-
-</html>
+{% endblock %}

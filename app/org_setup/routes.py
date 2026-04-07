@@ -284,15 +284,29 @@ def download_user_template():
 def deactivate_user(user_id):
 
     user = User.query.get_or_404(user_id)
+    
+    if user.id == current_user.id:
+        flash("You cannot deactivate your own active session.", "error")
+    else:
+        user.is_active = False
+        db.session.commit()
+        flash("User deactivated successfully", "info")
 
-    user.is_active = False
+    return redirect(request.referrer or url_for("org_setup.manage_users"))
 
+
+@org_bp.route("/user/reactivate/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
+def reactivate_user(user_id):
+
+    user = User.query.get_or_404(user_id)
+    user.is_active = True
     db.session.commit()
+    
+    flash("User reactivated successfully", "success")
 
-    flash("User deactivated successfully", "info")
-
-    return redirect(url_for("dashboard.admin_dashboard"))
-
+    return redirect(request.referrer or url_for("org_setup.manage_users"))
 
 
 @org_bp.route("/user/promote/<int:user_id>", methods=["POST"])
@@ -301,15 +315,29 @@ def deactivate_user(user_id):
 def promote_user(user_id):
 
     user = User.query.get_or_404(user_id)
-
     user.role = "admin"
-
     db.session.commit()
-
+    
     flash("User promoted to admin", "success")
 
-    return redirect(url_for("dashboard.admin_dashboard"))
+    return redirect(request.referrer or url_for("org_setup.manage_users"))
 
+
+@org_bp.route("/user/demote/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
+def demote_user(user_id):
+
+    user = User.query.get_or_404(user_id)
+    
+    if user.id == current_user.id:
+        flash("You cannot demote yourself.", "error")
+    else:
+        user.role = "user"
+        db.session.commit()
+        flash("Administrator demoted back to user role", "success")
+
+    return redirect(request.referrer or url_for("org_setup.manage_users"))
 
 
 @org_bp.route("/building/rename/<int:id>", methods=["POST"])
@@ -534,3 +562,61 @@ def reactivate_room(id):
     flash(f"{room.name} made visible to users")
 
     return redirect(url_for("org_setup.manage_rooms"))
+
+@org_bp.route("/manage-buildings", methods=["GET"])
+@login_required
+@admin_required
+def manage_buildings():
+    buildings = Building.query.all()
+    return render_template("manage_buildings.html", buildings=buildings)
+
+@org_bp.route("/manage-floors", methods=["GET"])
+@login_required
+@admin_required
+def manage_floors():
+    building_id = request.args.get("building_id")
+    buildings = Building.query.all()
+    if building_id:
+        floors = Floor.query.filter_by(building_id=building_id).all()
+    else:
+        floors = Floor.query.all()
+    return render_template("manage_floors.html", floors=floors, buildings=buildings, selected_building_id=building_id)
+
+@org_bp.route("/manage-rooms", methods=["GET"])
+@login_required
+@admin_required
+def manage_rooms():
+    building_id = request.args.get("building_id")
+    floor_id = request.args.get("floor_id")
+    
+    buildings = Building.query.all()
+    floors = []
+    query = Room.query
+    
+    if building_id:
+        floors = Floor.query.filter_by(building_id=building_id).all()
+        if floor_id and any(str(f.id) == floor_id for f in floors):
+            query = query.filter_by(floor_id=floor_id)
+        else:
+            floor_ids = [f.id for f in floors]
+            query = query.filter(Room.floor_id.in_(floor_ids) if floor_ids else False)
+    
+    rooms = query.all()
+    return render_template("manage_rooms.html", rooms=rooms, buildings=buildings, floors=floors, selected_building_id=building_id, selected_floor_id=floor_id)
+
+@org_bp.route("/manage-users", methods=["GET"])
+@login_required
+@admin_required
+def manage_users():
+    search_query = request.args.get("q", "").strip()
+    role_filter = request.args.get("role", "all").strip()
+    
+    query = User.query
+    if search_query:
+        query = query.filter(User.email.ilike(f"%{search_query}%"))
+        
+    if role_filter != "all":
+        query = query.filter(User.role == role_filter)
+        
+    users = query.all()
+    return render_template("manage_users.html", users=users, search_query=search_query, current_role=role_filter)

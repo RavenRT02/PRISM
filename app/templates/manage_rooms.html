@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Rooms | PRISM{% endblock %}
+{% block page_title %}Manage Rooms{% endblock %}
+
+{% block content %}
+<div class="custom-card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold font-outfit text-dark d-none d-md-block"><i class="fa-solid fa-door-open me-2 text-primary"></i> All Rooms</h5>
+        <div class="d-flex align-items-center ms-auto">
+            <form method="GET" action="{{ url_for('org_setup.manage_rooms') }}" class="d-flex align-items-center me-3 gap-2">
+                <select name="building_id" class="form-select form-select-sm border-0 bg-light shadow-sm" style="width: auto;" onchange="this.form.submit()">
+                    <option value="">All Buildings</option>
+                    {% for building in buildings %}
+                        <option value="{{ building.id }}" {% if selected_building_id|string == building.id|string %}selected{% endif %}>{{ building.name }}</option>
+                    {% endfor %}
+                </select>
+                {% if selected_building_id %}
+                <select name="floor_id" class="form-select form-select-sm border-0 bg-light shadow-sm" style="width: auto;" onchange="this.form.submit()">
+                    <option value="">All Floors</option>
+                    {% for floor in floors %}
+                        <option value="{{ floor.id }}" {% if selected_floor_id|string == floor.id|string %}selected{% endif %}>Floor {{ floor.number }}</option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </form>
+            <a href="{{ url_for('org_setup.add_room') }}" class="btn btn-primary rounded-pill px-3 shadow-sm"><i class="fa-solid fa-plus me-1"></i> Add</a>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Room Name</th>
+                        <th>Floor & Building</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td class="ps-4 text-muted fw-medium">#{{ room.id }}</td>
+                        <td>
+                            <form action="{{ url_for('org_setup.rename_room', id=room.id) }}" method="POST" class="d-flex align-items-center">
+                                <input type="text" name="name" value="{{ room.name }}" class="form-control form-control-sm me-2 bg-light border-0" style="max-width: 150px;" required>
+                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-circle" title="Save Rename"><i class="fa-solid fa-check"></i></button>
+                            </form>
+                        </td>
+                        <td class="text-secondary">
+                            Floor {{ room.floor.number }} &bull; {{ room.floor.building.name }}
+                        </td>
+                        <td>
+                            {% if room.is_active %}
+                                <span class="badge border border-success text-success bg-success bg-opacity-10 rounded-pill"><i class="fa-solid fa-circle fa-2xs me-1"></i> Active</span>
+                            {% else %}
+                                <span class="badge border border-danger text-danger bg-danger bg-opacity-10 rounded-pill"><i class="fa-solid fa-circle fa-2xs me-1"></i> Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                {% if room.is_active %}
+                                    <form action="{{ url_for('org_setup.deactivate_room', id=room.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill px-3">Deactivate</button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('org_setup.reactivate_room', id=room.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3">Reactivate</button>
+                                    </form>
+                                {% endif %}
+                                <form action="{{ url_for('org_setup.delete_room', id=room.id) }}" method="POST" onsubmit="return confirm('Permanently delete {{ room.name }}? This action cannot be undone.');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">No rooms found. <a href="{{ url_for('org_setup.add_room') }}">Create one</a>.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users | PRISM{% endblock %}
+{% block page_title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8 mx-auto">
+        <div class="p-4 bg-white rounded-4 shadow-sm border border-light">
+            <h5 class="font-outfit fw-bold text-dark mb-3"><i class="fa-solid fa-magnifying-glass me-2 text-primary"></i> Search Directory</h5>
+            <form method="GET" action="{{ url_for('org_setup.manage_users') }}" class="d-flex w-100 gap-2">
+                <div class="position-relative flex-grow-1">
+                    <input type="text" name="q" value="{{ search_query }}" class="form-control form-control-lg rounded-pill bg-light border-0 ps-4 pe-5" placeholder="Search by email...">
+                </div>
+                <select name="role" class="form-select form-select-lg rounded-pill bg-light border-0" style="width: auto;">
+                    <option value="all" {% if current_role == 'all' %}selected{% endif %}>All Roles</option>
+                    <option value="admin" {% if current_role == 'admin' %}selected{% endif %}>Admins</option>
+                    <option value="user" {% if current_role == 'user' %}selected{% endif %}>Users</option>
+                </select>
+                <button type="submit" class="btn btn-primary rounded-pill shadow-sm px-4">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="custom-card shadow-sm">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold font-outfit text-dark"><i class="fa-solid fa-users me-2 text-primary"></i> User Directory</h5>
+        <a href="{{ url_for('org_setup.upload_users') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3"><i class="fa-solid fa-upload me-1"></i> Bulk Upload</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td class="ps-4 fw-medium text-dark">{{ user.email }}</td>
+                        <td>
+                            {% if user.role == 'admin' %}
+                                <span class="badge bg-primary rounded-pill px-3 shadow-sm"><i class="fa-solid fa-shield-halved me-1"></i> Admin</span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary rounded-pill px-3"><i class="fa-regular fa-user me-1"></i> User</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="badge border border-success text-success bg-success bg-opacity-10 rounded-pill"><i class="fa-solid fa-circle fa-2xs me-1"></i> Active</span>
+                            {% else %}
+                                <span class="badge border border-danger text-danger bg-danger bg-opacity-10 rounded-pill"><i class="fa-solid fa-circle fa-2xs me-1"></i> Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">
+                            {{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'Unknown' }}
+                        </td>
+                        <td class="text-end pe-4">
+                            {% if current_user.id == user.id %}
+                                <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill shadow-sm"><i class="fa-solid fa-user-check me-1"></i> You (Current Session)</span>
+                            {% else %}
+                                <div class="d-flex justify-content-end gap-2">
+                                    {% if user.role != 'admin' %}
+                                        <form action="{{ url_for('org_setup.promote_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Promote {{ user.email }} to Administrator?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-medium">Make Admin</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="{{ url_for('org_setup.demote_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('WARNING: Demote {{ user.email }} to a standard User? They will lose access to all admin tools.');">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-medium text-dark"><i class="fa-solid fa-arrow-down me-1"></i> Demote</button>
+                                        </form>
+                                    {% endif %}
+                                    
+                                    {% if user.is_active %}
+                                        <form action="{{ url_for('org_setup.deactivate_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Suspend account for {{ user.email }}?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-medium">Suspend</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="{{ url_for('org_setup.reactivate_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Reactivate account for {{ user.email }}?');">
+                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 fw-medium shadow-sm"><i class="fa-solid fa-bolt me-1"></i> Reactivate</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <i class="fa-solid fa-users-slash fs-1 text-light mb-3"></i><br>
+                            {% if search_query %}
+                            No users found matching "{{ search_query }}".
+                            {% else %}
+                            No users registered yet.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

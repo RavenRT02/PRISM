@@ -1,0 +1,223 @@
+/* Base Theme Colors - Vibrant & Premium */
+:root {
+    --primary: #4723D9;
+    --primary-light: #ECE8FF;
+    --secondary: #6B7280;
+    --success: #10B981;
+    --success-light: #D1FAE5;
+    --danger: #EF4444;
+    --danger-light: #FEE2E2;
+    --warning: #F59E0B;
+    --warning-light: #FEF3C7;
+    --info: #3B82F6;
+    --info-light: #DBEAFE;
+    --dark: #111827;
+    --light: #F3F4F6;
+    --white: #FFFFFF;
+    --border-color: #E5E7EB;
+    
+    --sidebar-width: 260px;
+    --font-sans: 'Inter', sans-serif;
+    --font-heading: 'Outfit', sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: #F8F9FA;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #374151;
+}
+
+.font-outfit {
+    font-family: var(--font-heading);
+    letter-spacing: -0.5px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--dark);
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: var(--sidebar-width);
+    z-index: 1000;
+    transition: all 0.3s;
+    border-right: 1px solid var(--border-color);
+}
+
+.logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--primary), #8B5CF6);
+    box-shadow: 0 4px 10px rgba(71, 35, 217, 0.3);
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    color: var(--secondary);
+}
+
+.nav-link:hover {
+    background-color: var(--light);
+    color: var(--primary) !important;
+    transform: translateX(3px);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--primary), #6366F1);
+    color: var(--white) !important;
+    box-shadow: 0 4px 12px rgba(71, 35, 217, 0.25);
+}
+
+.profile-dropdown:hover {
+    background-color: var(--light);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: var(--primary-light) !important;
+    color: var(--primary) !important;
+}
+
+/* Main Content Layout */
+.main-content {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+.header-top {
+    z-index: 999;
+}
+
+/* Dashboard Metric Cards */
+.metric-card {
+    border: none;
+    border-radius: 12px;
+    background: var(--white);
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-top: 4px solid transparent;
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.metric-card.primary { border-top-color: var(--primary); }
+.metric-card.success { border-top-color: var(--success); }
+.metric-card.danger { border-top-color: var(--danger); }
+.metric-card.warning { border-top-color: var(--warning); }
+.metric-card.info { border-top-color: var(--info); }
+
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.icon-primary { background-color: var(--primary-light); color: var(--primary); }
+.icon-success { background-color: var(--success-light); color: var(--success); }
+.icon-danger { background-color: var(--danger-light); color: var(--danger); }
+.icon-warning { background-color: var(--warning-light); color: var(--warning); }
+.icon-info { background-color: var(--info-light); color: var(--info); }
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-top: 8px;
+    color: var(--dark);
+    font-family: var(--font-heading);
+}
+
+/* Custom Cards */
+.custom-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    background: var(--white);
+    margin-bottom: 24px;
+}
+
+.custom-card .card-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 24px;
+    font-weight: 600;
+    font-family: var(--font-heading);
+}
+
+.custom-card .card-body {
+    padding: 24px;
+}
+
+/* Nav Tabs override */
+.nav-tabs {
+    border-bottom: 2px solid var(--border-color);
+}
+.nav-tabs .nav-link {
+    color: var(--secondary);
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-weight: 500;
+    padding: 12px 20px;
+    margin-bottom: -2px;
+}
+.nav-tabs .nav-link:hover {
+    color: var(--primary) !important;
+    border-color: transparent;
+    background: transparent;
+    transform: none;
+}
+.nav-tabs .nav-link.active {
+    color: var(--primary) !important;
+    border: none;
+    border-bottom: 2px solid var(--primary);
+    background: transparent;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+/* Badges */
+.badge-custom {
+    padding: 6px 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    font-size: 0.75rem;
+}
+.badge-critical { background-color: var(--danger-light); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+.badge-high { background-color: var(--warning-light); color: #B45309; border: 1px solid rgba(245, 158, 11, 0.2); }
+.badge-medium { background-color: var(--info-light); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.2); }
+.badge-low { background-color: var(--success-light); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+
+.status-new { background-color: #E0E7FF; color: #4338CA; border: 1px solid rgba(67, 56, 202, 0.2); }
+.status-assigned { background-color: #FEF3C7; color: #B45309; border: 1px solid rgba(245, 158, 11, 0.2); }
+.status-in_progress { background-color: #DBEAFE; color: #1D4ED8; border: 1px solid rgba(59, 130, 246, 0.2); }
+.status-resolved { background-color: #D1FAE5; color: #047857; border: 1px solid rgba(16, 185, 129, 0.2); }
+.status-closed { background-color: #F3F4F6; color: #374151; border: 1px solid rgba(156, 163, 175, 0.2); }
+
+/* List group hover */
+.list-group-item.issue-item {
+    transition: background-color 0.2s;
+    border-left: 4px solid transparent;
+}
+.list-group-item.issue-item:hover {
+    background-color: var(--light);
+}
+
+/* Utilities */
+.radius-10 {
+    border-radius: 10px;
+}

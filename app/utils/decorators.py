@@ -10,7 +10,7 @@ def admin_required(func):           # custom decorator to check admin role , wil
 
         if current_user.role != "admin":
             flash("Access denied", "error")
-            return redirect(url_for("user.dashboard"))        # not admin - deny access #return redirect(url_for("user.dashboard")) - not admin - redirect
+            return redirect(url_for("dashboard.user_dashboard"))        # not admin - deny access #return redirect(url_for("dashboard.user_dashboard")) - not admin - redirect
         
         return func(*args, **kwargs)                                # admin - run original function
     

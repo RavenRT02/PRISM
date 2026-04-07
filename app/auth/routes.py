@@ -14,10 +14,18 @@ auth_bp = Blueprint("auth", __name__)  # Blueprint(name_of_blueprint, location_o
 
 @auth_bp.route("/")
 def home():
+    if current_user.is_authenticated:
+        if current_user.role == "admin":
+            return redirect(url_for("dashboard.admin_dashboard"))
+        return redirect(url_for("dashboard.user_dashboard"))
     return redirect(url_for("auth.login"))
 
 @auth_bp.route("/login", methods = ["GET","POST"])
 def login():
+    if current_user.is_authenticated:
+        if current_user.role == "admin":
+            return redirect(url_for("dashboard.admin_dashboard"))
+        return redirect(url_for("dashboard.user_dashboard"))
     
     if request.method == "POST":
         email = request.form.get("email")
@@ -57,7 +65,7 @@ def login():
 
         return redirect(url_for("dashboard.user_dashboard"))
     
-    return render_template("login.html")
+    return render_template("auth/login.html")
 
 
 @auth_bp.route("/logout")
@@ -98,7 +106,7 @@ def set_password_start():
 
         return(redirect(url_for("auth.verify_otp")))
     
-    return render_template("set_password_start.html")
+    return render_template("auth/set_password_start.html")
 
 
 @auth_bp.route("/verify-otp", methods = ['GET', 'POST'])
@@ -151,7 +159,7 @@ def verify_otp():
     captcha_text = generate_captcha()
     session["captcha_text"] = captcha_text
 
-    return render_template("verify_otp.html", remaining_seconds = remaining_seconds, captcha_text = captcha_text)
+    return render_template("auth/verify_otp.html", remaining_seconds = remaining_seconds, captcha_text = captcha_text)
 
 
 @auth_bp.route("/set-password", methods = ['GET', 'POST'])
@@ -214,7 +222,7 @@ def set_password():
 
         return redirect(url_for("auth.login"))
     
-    return render_template("set_password.html")
+    return render_template("auth/set_password.html")
 
 
 @auth_bp.route("/resend-otp")
@@ -273,7 +281,7 @@ def reset_password_start():
 
         return redirect(url_for("auth.verify_reset_otp"))
     
-    return render_template("reset_password_start.html")
+    return render_template("auth/reset_password_start.html")
 
 
 @auth_bp.route("/verify-reset-otp", methods = ['GET', 'POST'])
@@ -328,7 +336,7 @@ def verify_reset_otp():
     captcha_text = generate_captcha()
     session["captcha_text"] = captcha_text
 
-    return render_template("verify_reset_otp.html", remaining_seconds = remaining_seconds, captcha_text = captcha_text)
+    return render_template("auth/verify_reset_otp.html", remaining_seconds = remaining_seconds, captcha_text = captcha_text)
 
 
 @auth_bp.route("/set-new-password", methods = ['GET', 'POST'])
@@ -376,7 +384,7 @@ def set_new_password():
         flash("Password reset successful, Please login", "success")
         return redirect(url_for("auth.login"))
     
-    return render_template("set_new_password.html")
+    return render_template("auth/set_new_password.html")
 
 
 @auth_bp.route("/resend-reset-otp")

@@ -1,260 +1,276 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% extends "base.html" %}
 
-</head>
+{% block title %}Admin Dashboard | PRISM{% endblock %}
 
+{% block page_title %}Overview Dashboard{% endblock %}
 
-<body>
-   
-    <h2>Admin Dashboard</h2>
-
-    <h3>Issue Summary</h3>
-
-    <canvas id = "issueChart" width="400" height="200"></canvas>
-
-        <p>Issues: {{ issues|length }}</p>
-
-        <p>Prioritized: {{ prioritized|length }}</p>
-
-        <p>On Hold: {{ on_hold|length }}</p>
-
-        <p>Resolved: {{ resolved|length }}</p>
-
-        <p>Closed: {{ closed|length }}</p>
-
-
-     <h3>Issues by Category</h3>
-
-    <canvas id="categoryChart"></canvas>
-
-    <h3>Pending Verification</h3>
-
-    {% for issue in verification_queue %}
-
-    <div>
-
-        <strong>{{ issue.description[:60] }}...</strong>
-
-        <p>
-        {{ issue.building.name }}
-        /
-        Floor {{ issue.floor.number }}
-        /
-        Room {{ issue.room.name }}
-        </p>
-
-        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
-        Verify Issue
-        </a>
-
+{% block content %}
+<!-- Metric Cards Row -->
+<div class="row g-4 mb-4">
+    <!-- Total Issues -->
+    <div class="col-md-6 col-lg-3 flex-fill">
+        <div class="metric-card primary h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="text-muted fw-semibold mb-1">Total Active</h6>
+                    <div class="metric-value">{{ issues|length }}</div>
+                </div>
+                <div class="metric-icon icon-primary">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Prioritized -->
+    <div class="col-md-6 col-lg-3 flex-fill">
+        <div class="metric-card warning h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="text-muted fw-semibold mb-1">Prioritized</h6>
+                    <div class="metric-value">{{ prioritized|length }}</div>
+                </div>
+                <div class="metric-icon icon-warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <hr>
-
-    {% else %}
-
-    <p>No issues pending verification.</p>
-
-    {% endfor %}
-
-
-    <h3>Issues</h3>
-
-    {% for issue in issues %}
-
-    <div>
-
-        <strong>{{ issue.title }}</strong>
-
-        <p>
-            {{ issue.building.name }}
-            /
-            Floor {{ issue.floor.number }}
-            /
-            Room {{ issue.room.name }}
-        </p>
-
-        <p>
-            <span class="badge
-            {% if issue.priority_level.name == 'CRITICAL' %}
-            badge-critical
-            {% elif issue.priority_level.name == 'HIGH' %}
-            badge-high
-            {% elif issue.priority_level.name == 'MEDIUM' %}
-            badge-medium
-            {% else %}
-            badge-low
-            {% endif %}
-            ">
-                {{ issue.priority_level.name }}
-            </span>
-
-            <span class="badge status-{{ issue.status.name | lower }}">
-                {{ issue.status.name }}
-            </span>
-        </p>
-
-        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
-            View Details
-        </a>
-
+    <!-- On Hold -->
+    <div class="col-md-6 col-lg-3 flex-fill">
+        <div class="metric-card info h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="text-muted fw-semibold mb-1">On Hold</h6>
+                    <div class="metric-value">{{ on_hold|length }}</div>
+                </div>
+                <div class="metric-icon icon-info">
+                    <i class="fa-solid fa-pause"></i>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <hr>
-
-    {% else %}
-
-        <p>No active prioritized issues.</p>
-
-    {% endfor %}
-
-
-
-    <h3>Prioritized (Manual Override)</h3>
-
-    {% for issue in prioritized %}
-
-    <div>
-
-        <strong>{{ issue.title }}</strong>
-
-        <p>
-            {{ issue.building.name }}
-            /
-            Floor {{ issue.floor.number }}
-            /
-            Room {{ issue.room.name }}
-        </p>
-
-        <p>
-            Priority Override Active
-        </p>
-
-        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
-            View Details
-        </a>
-
+    <!-- Resolved / Closed -->
+    <div class="col-md-6 col-lg-3 flex-fill d-flex flex-column gap-3">
+        <div class="metric-card success flex-fill py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted fw-semibold">Resolved</span>
+                <span class="fs-4 fw-bold text-success">{{ resolved|length }}</span>
+            </div>
+        </div>
+        <div class="metric-card danger flex-fill py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted fw-semibold">Closed</span>
+                <span class="fs-4 fw-bold text-danger">{{ closed|length }}</span>
+            </div>
+        </div>
     </div>
+</div>
 
-    <hr>
-
-    {% else %}
-
-        <p>No active prioritized issues.</p>
-
-    {% endfor %}
-
-
-
-    <h3>On Hold</h3>
-
-    {% for issue in on_hold %}
-
-    <div>
-
-        <strong>{{ issue.title }}</strong>
-
-        <p>
-            Hold expires at:
-            {{ issue.hold_until }}
-        </p>
-
-        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
-            View Details
-        </a>
-
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="custom-card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-chart-bar me-2 text-primary"></i> Issue Summary</span>
+            </div>
+            <div class="card-body">
+                <canvas id="issueChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
     </div>
-
-    <hr>
-
-    {% else %}
-
-        <p>No issues on hold.</p>
-
-    {% endfor %}
-
-
-
-    <h3>Resolved</h3>
-
-    {% for issue in resolved %}
-
-    <div>
-
-        <strong>{{ issue.title }}</strong>
-
-        <p>
-            Resolved successfully
-        </p>
-
-        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
-            View Details
-        </a>
-
+    <div class="col-lg-6">
+        <div class="custom-card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-solid fa-chart-pie me-2 text-primary"></i> Issues by Category</span>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
     </div>
+</div>
 
-    <hr>
+<!-- Issues Details Tabs -->
+<div class="custom-card shadow-sm">
+    <div class="card-body p-0">
+        <ul class="nav nav-tabs px-4 pt-3" id="issueTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="verification-tab" data-bs-toggle="tab" data-bs-target="#verification" type="button" role="tab">
+                    Verification Queue <span class="badge bg-danger ms-1">{{ verification_queue|length }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab">
+                    Active Issues <span class="badge bg-primary ms-1">{{ issues|length }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="prioritized-tab" data-bs-toggle="tab" data-bs-target="#prioritized" type="button" role="tab">
+                    Prioritized
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="onhold-tab" data-bs-toggle="tab" data-bs-target="#onhold" type="button" role="tab">
+                    On Hold
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="resolved-tab" data-bs-toggle="tab" data-bs-target="#resolved" type="button" role="tab">
+                    Resolved / Closed
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="issueTabsContent">
+            <!-- Verification Queue Tab -->
+            <div class="tab-pane fade show active p-0" id="verification" role="tabpanel">
+                <div class="list-group list-group-flush">
+                    {% for issue in verification_queue %}
+                    <div class="list-group-item issue-item p-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 fw-bold text-dark">{{ issue.description[:60] }}...</h6>
+                            <p class="mb-0 text-muted small">
+                                <i class="fa-solid fa-location-dot me-1"></i> {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Room {{ issue.room.name }}
+                            </p>
+                        </div>
+                        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm btn-outline-danger px-3 rounded-pill">
+                            Verify Now
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="p-5 text-center text-muted">
+                        <i class="fa-regular fa-circle-check fs-1 mb-3 text-success"></i>
+                        <p class="mb-0">All caught up! No issues pending verification.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Active Issues Tab -->
+            <div class="tab-pane fade p-0" id="active" role="tabpanel">
+                <div class="list-group list-group-flush">
+                    {% for issue in issues %}
+                    <div class="list-group-item issue-item p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0 fw-bold">{{ issue.title }}</h6>
+                            <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">
+                                Details
+                            </a>
+                        </div>
+                        <p class="mb-2 text-muted small">
+                            <i class="fa-solid fa-location-dot me-1"></i> {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Room {{ issue.room.name }}
+                        </p>
+                        <div class="d-flex gap-2">
+                            <span class="badge badge-custom rounded-pill
+                                {% if issue.priority_level.name == 'CRITICAL' %}badge-critical
+                                {% elif issue.priority_level.name == 'HIGH' %}badge-high
+                                {% elif issue.priority_level.name == 'MEDIUM' %}badge-medium
+                                {% else %}badge-low{% endif %}">
+                                <i class="fa-solid fa-bolt me-1"></i> {{ issue.priority_level.name }}
+                            </span>
+                            <span class="badge badge-custom rounded-pill status-{{ issue.status.name | lower }}">
+                                {{ issue.status.name }}
+                            </span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-5 text-center text-muted">
+                        <p class="mb-0">No active prioritized issues found.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Prioritized Tab -->
+            <div class="tab-pane fade p-0" id="prioritized" role="tabpanel">
+                <div class="list-group list-group-flush">
+                    {% for issue in prioritized %}
+                    <div class="list-group-item issue-item p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0 fw-bold">{{ issue.title }}</h6>
+                            <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">Details</a>
+                        </div>
+                        <p class="mb-2 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Room {{ issue.room.name }}</p>
+                        <div><span class="badge rounded-pill badge-custom badge-high"><i class="fa-solid fa-star me-1"></i> Priority Override Active</span></div>
+                    </div>
+                    {% else %}
+                    <div class="p-5 text-center text-muted"><p class="mb-0">No manual priority overrides.</p></div>
+                    {% endfor %}
+                </div>
+            </div>
 
-    {% else %}
+            <!-- On Hold Tab -->
+            <div class="tab-pane fade p-0" id="onhold" role="tabpanel">
+                <div class="list-group list-group-flush">
+                    {% for issue in on_hold %}
+                    <div class="list-group-item issue-item p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 fw-bold">{{ issue.title }}</h6>
+                                <p class="mb-0 text-muted small"><i class="fa-regular fa-clock me-1"></i> Hold expires: {{ issue.hold_until }}</p>
+                            </div>
+                            <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">Details</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-5 text-center text-muted"><p class="mb-0">No issues currently on hold.</p></div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Resolved & Closed Tab -->
+            <div class="tab-pane fade p-0" id="resolved" role="tabpanel">
+                <div class="p-3 bg-light border-bottom text-muted fw-semibold small text-uppercase">Resolved Issues</div>
+                <div class="list-group list-group-flush">
+                    {% for issue in resolved %}
+                    <div class="list-group-item p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-medium">{{ issue.title }}</span>
+                            <span class="badge rounded-pill bg-success ms-2 small">Resolved</span>
+                        </div>
+                        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm text-primary">View</a>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted small">No resolved issues yet.</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="p-3 bg-light border-bottom border-top text-muted fw-semibold small text-uppercase">Closed Issues</div>
+                <div class="list-group list-group-flush">
+                    {% for issue in closed %}
+                    <div class="list-group-item p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-medium text-muted text-decoration-line-through">{{ issue.title }}</span>
+                            <span class="badge rounded-pill bg-danger ms-2 small">Closed</span>
+                        </div>
+                        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm text-primary">View</a>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted small">No closed issues yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
 
-        <p>No resolved issues yet.</p>
-
-    {% endfor %}
-
-
-
-    <h3>Closed</h3>
-
-    {% for issue in closed %}
-
-    <div>
-
-        <strong>{{ issue.title }}</strong>
-
-        <p>
-            Closed without resolution
-        </p>
-
-        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}">
-            View Details
-        </a>
-
+        </div>
     </div>
+</div>
 
-    <hr>
+{% endblock %}
 
-    {% else %}
-
-        <p>No issues closed yet.</p>
-
-    {% endfor %}
-
-
+{% block scripts %}
 <script>
-
-window.issuesCount = {{ issues|length }};
-window.prioritizedCount = {{ prioritized|length }};
-window.onHoldCount = {{ on_hold|length }};
-window.resolvedCount = {{ resolved|length }};
-window.closedCount = {{ closed|length }};
-
+    window.issuesCount = {{ issues|length }};
+    window.prioritizedCount = {{ prioritized|length }};
+    window.onHoldCount = {{ on_hold|length }};
+    window.resolvedCount = {{ resolved|length }};
+    window.closedCount = {{ closed|length }};
+    
+    window.categoryLabels = {{ category_labels|tojson }};
+    window.categoryCounts = {{ category_counts|tojson }};
 </script>
-
-<script>
-
-window.categoryLabels = {{ category_labels|tojson }};
-window.categoryCounts = {{ category_counts|tojson }};
-
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
-
-</body>
-</html>
+{% endblock %}

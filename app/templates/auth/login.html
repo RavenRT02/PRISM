@@ -1,0 +1,67 @@
+{% extends "auth/base_auth.html" %}
+
+{% block title %}Login | PRISM{% endblock %}
+
+{% block content %}
+<h5 class="fw-bold text-dark mb-4 text-center">Account Login</h5>
+<form method="POST" action="{{ url_for('auth.login') }}">
+    
+    <div class="mb-4">
+        <label class="form-label text-muted small fw-semibold text-uppercase">College Email</label>
+        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-light border-0 px-3"><i class="fa-solid fa-envelope text-secondary"></i></span>
+            <input type="email" name="email" id="emailField" class="form-control form-control-lg bg-light border-0 px-2 text-dark" placeholder="user@college.edu" required>
+        </div>
+    </div>
+    
+    <div class="mb-4">
+        <label class="form-label text-muted small fw-semibold text-uppercase mb-2">Password</label>
+        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-light border-0 px-3"><i class="fa-solid fa-lock text-secondary"></i></span>
+            <input type="password" id="passwordField" name="password" class="form-control form-control-lg bg-light border-0 px-2" placeholder="••••••••" required>
+            <button class="btn btn-light bg-light border-0 text-secondary px-3" type="button" onclick="togglePasswords('passwordField')"><i class="fa-regular fa-eye"></i></button>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow mt-2 mb-4 fs-6">Secure Login</button>
+</form>
+
+<div class="d-flex justify-content-between gap-3 border-top pt-4">
+    <form method="POST" action="{{ url_for('auth.set_password_start') }}" class="w-50">
+        <input type="hidden" name="email" class="pass-trigger-email">
+        <button type="submit" class="btn btn-outline-secondary w-100 rounded-pill btn-sm py-2 fw-medium" onclick="return copyEmailToHidden('pass-trigger-email')">Set Password</button>
+    </form>
+    <form method="POST" action="{{ url_for('auth.reset_password_start') }}" class="w-50">
+        <input type="hidden" name="email" class="pass-trigger-email">
+        <button type="submit" class="btn btn-outline-secondary w-100 rounded-pill btn-sm py-2 fw-medium" onclick="return copyEmailToHidden('pass-trigger-email')">Reset Password</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function togglePasswords(passFieldId) {
+        let field = document.getElementById(passFieldId);
+        let icon = field.nextElementSibling.querySelector('i');
+        if (field.type === "password") {
+            field.type = "text";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = "password";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+    
+    function copyEmailToHidden(className) {
+        let emailVal = document.getElementById('emailField').value;
+        if (!emailVal || !emailVal.includes('@')) {
+            alert("Please enter a valid institution email address above first.");
+            return false;
+        }
+        document.querySelectorAll('.' + className).forEach(el => el.value = emailVal);
+        return true;
+    }
+</script>
+{% endblock %}

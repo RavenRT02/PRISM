@@ -1,111 +1,158 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raise Issue</title>
-</head>
-<body>
-    
-    <h2>Submit Issue</h2>
+{% extends "base.html" %}
 
-    <form method="POST"  action="{{ url_for('issues.submit_issue') }}"  enctype="multipart/form-data">
+{% block title %}Raise Issue | PRISM{% endblock %}
+{% block page_title %}Raise Issue{% endblock %}
 
-        <label>Issue Type</label>
+{% block content %}
+<div class="row mb-5">
+    <div class="col-lg-8 mx-auto mt-4">
+        <div class="custom-card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-primary text-white py-4 border-0 text-center position-relative">
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-white opacity-10" style="clip-path: polygon(0 0, 100% 0, 100% 30%, 0 80%);"></div>
+                <h4 class="mb-1 fw-bold font-outfit position-relative z-1"><i class="fa-solid fa-flag me-2"></i> Submit New Issue</h4>
+                <p class="mb-0 text-white-50 small position-relative z-1">Provide the details to notify our facilities team.</p>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <form method="POST" action="{{ url_for('issues.submit_issue') }}" enctype="multipart/form-data">
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Issue Type</label>
+                            <div class="input-group shadow-sm rounded overflow-hidden">
+                                <span class="input-group-text bg-white border-0"><i class="fa-solid fa-layer-group text-primary"></i></span>
+                                <select name="issue_type" class="form-select form-select-lg bg-light border-0" required>
+                                    <option value="COMPLAINT">Complaint</option>
+                                    <option value="REQUEST">Request</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Category</label>
+                            <div class="input-group shadow-sm rounded overflow-hidden">
+                                <span class="input-group-text bg-white border-0"><i class="fa-solid fa-tags text-primary"></i></span>
+                                <select name="category_id" class="form-select form-select-lg bg-light border-0" required>
+                                    <option value="">Select Category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-        <select name="issue_type" required>
-        <option value="COMPLAINT">Complaint</option>
-        <option value="REQUEST">Request</option>
-        </select>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Building</label>
+                            <div class="shadow-sm rounded overflow-hidden">
+                                <select id="building" name="building_id" class="form-select form-select-lg bg-light border-0" required>
+                                    <option value="">Choose Building</option>
+                                    {% for building in buildings %}
+                                        <option value="{{ building.id }}">{{ building.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Floor</label>
+                            <div class="shadow-sm rounded overflow-hidden">
+                                <select id="floor" name="floor_id" class="form-select form-select-lg bg-light border-0" required disabled>
+                                    <option value="">Choose Building First</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Room / Area</label>
+                            <div class="shadow-sm rounded overflow-hidden">
+                                <select id="room" name="room_id" class="form-select form-select-lg bg-light border-0" required disabled>
+                                    <option value="">Choose Floor First</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-        <br><br>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Issue Description</label>
+                        <div class="shadow-sm rounded overflow-hidden p-1 bg-light">
+                            <textarea name="description" class="form-control bg-transparent border-0" rows="5" maxlength="300" required placeholder="Please describe the problem or request in detail..."></textarea>
+                        </div>
+                        <div class="form-text text-end mt-1"><small>Maximum 300 characters.</small></div>
+                    </div>
 
-        <label>Building</label>
+                    <div class="mb-5">
+                        <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Attach Image <span class="text-muted fw-normal text-lowercase">(Optional)</span></label>
+                        <div class="p-4 border border-2 border-dashed rounded-3 bg-light text-center position-relative hover-overlay" style="cursor: pointer;" onclick="document.getElementById('imageUpload').click()">
+                            <i class="fa-solid fa-camera fs-2 text-primary mb-2 opacity-75"></i>
+                            <h6 class="text-dark fw-bold mb-1">Click to upload image</h6>
+                            <p class="text-muted small mb-0">Supported formats: JPG, PNG, GIF</p>
+                            <input type="file" id="imageUpload" name="image" class="d-none" accept="image/*">
+                            <div id="fileNameDisplay" class="mt-2 text-primary fw-bold small d-none"></div>
+                        </div>
+                    </div>
 
-        <select id="building" name="building_id" required>
-        <option value="">Select building first</option>
+                    <div class="d-grid mt-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow fw-bold py-3">
+                            <i class="fa-solid fa-paper-plane me-2"></i> Submit Issue Request
+                        </button>
+                    </div>
 
-        {% for building in buildings %}
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('dashboard.user_dashboard') }}" class="text-muted text-decoration-none small"><i class="fa-solid fa-arrow-left me-1"></i> Return to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-            <option value="{{ building.id }}">
-            {{ building.name }}
-            </option>
-
-        {% endfor %}
-
-        </select>
-
-        <br><br>
-
-        <label>Floor</label>
-
-        <select id="floor" name="floor_id" required>
-        <option value="">Select building first</option>
-
-        {% for floor in floors %}
-
-            <option value="{{ floor.id }}">
-            {{ floor.number }}
-            </option>
-
-        {% endfor %}
-
-        </select>
-
-        <br><br>
-
-        <label>Room</label>
-
-        <select id="room" name="room_id" required>
-        <option value="">Select floor first</option>
-
-        {% for room in rooms %}
-
-            <option value="{{ room.id }}">
-            {{ room.name }}
-            </option>
-
-        {% endfor %}
-
-        </select>
-
-        <br><br>
-
-        <label>Category</label>
-
-        <select name="category_id" required>
-
-        {% for category in categories %}
-
-            <option value="{{ category.id }}">
-            {{ category.name }}
-            </option>
-
-        {% endfor %}
-
-        </select>
-
-        <br><br>
-
-        <label>Description</label>
-
-        <textarea name="description" maxlength="300" required></textarea>
-
-        <br><br>
-
-        <label>Attach Image (optional)</label>
-
-        <input type="file" name="image">
-
-        <br><br>
-
-        <button type="submit">
-        Submit Issue
-        </button>
-
-    </form>
-
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/location_dropdown.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const buildingSelect = document.getElementById("building");
+        const floorSelect = document.getElementById("floor");
+        const roomSelect = document.getElementById("room");
+        const imageUpload = document.getElementById("imageUpload");
+        const fileNameDisplay = document.getElementById("fileNameDisplay");
 
-</body>
-</html>
+        // Display file name when image is selected
+        imageUpload.addEventListener("change", function() {
+            if (this.files && this.files.length > 0) {
+                fileNameDisplay.textContent = "Selected: " + this.files[0].name;
+                fileNameDisplay.classList.remove("d-none");
+            } else {
+                fileNameDisplay.classList.add("d-none");
+            }
+        });
+
+        // Enhancing the legacy script behavior by managing disabled states
+        buildingSelect.addEventListener("change", () => {
+            if (buildingSelect.value) {
+                floorSelect.disabled = false;
+            } else {
+                floorSelect.disabled = true;
+                roomSelect.disabled = true;
+                floorSelect.innerHTML = '<option value="">Choose Building First</option>';
+                roomSelect.innerHTML = '<option value="">Choose Floor First</option>';
+            }
+        });
+
+        floorSelect.addEventListener("change", () => {
+            if (floorSelect.value && floorSelect.value !== "Select Floor") {
+                roomSelect.disabled = false;
+            } else {
+                roomSelect.disabled = true;
+                roomSelect.innerHTML = '<option value="">Choose Floor First</option>';
+            }
+        });
+        
+        // If there's an error and the page reloads retaining the value
+        if (buildingSelect.value) {
+            floorSelect.disabled = false;
+        }
+        if (floorSelect.value && floorSelect.value !== "" && floorSelect.value !== "Select Floor") {
+            roomSelect.disabled = false;
+        }
+    });
+</script>
+{% endblock %}
