@@ -36,4 +36,9 @@ def create_app():
         response.headers['Expires'] = '-1'
         return response
 
+    from app.utils.status_mapper import get_user_visible_status
+    @app.context_processor
+    def inject_status_mapper():
+        return dict(get_user_visible_status=get_user_visible_status)
+
     return app

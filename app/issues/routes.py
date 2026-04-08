@@ -29,13 +29,13 @@ def submit_issue():
 
     image_path = None
 
-    if not description:
-        flash("Description required", "error")
-        return redirect(url_for("dashboard.user_dashboard"))
+    if not description or len(description.strip()) < 10:
+        flash("Description must be at least 10 characters long", "warning")
+        return redirect(request.referrer or url_for("dashboard.user_dashboard"))
     
     if contains_toxicity(description):
-        flash("Issue  description contains inappropriate language", "error")
-        return redirect(url_for("dashboard.user_dashboard"))
+        flash("Issue description contains inappropriate language", "error")
+        return redirect(request.referrer or url_for("dashboard.user_dashboard"))
     
     if image and image.filename:
 
@@ -75,6 +75,26 @@ def track_duplicate(issue_id):
 
 
 
+@issues_bp.route("/delete/<int:issue_id>", methods=['POST'])
+@login_required
+def delete_issue_route(issue_id):
+    issue = Issue.query.get_or_404(issue_id)
+    
+    if issue.created_by != current_user.id:
+        flash("You are not authorized to delete this issue.", "error")
+        return redirect(url_for("dashboard.user_dashboard"))
+        
+    if issue.status.name not in ["RESOLVED", "CLOSED", "REJECTED"]:
+        flash("Only resolved, closed, or rejected issues can be deleted.", "error")
+        return redirect(url_for("dashboard.user_dashboard"))
+        
+    db.session.delete(issue)
+    db.session.commit()
+    flash("Issue permanently deleted.", "success")
+    return redirect(url_for("dashboard.user_dashboard"))
+
+
+
 @issues_bp.route("/verify/<int:issue_id>", methods = ['POST'])
 @login_required
 @admin_required
@@ -86,7 +106,7 @@ def verify_issue_route(issue_id):
 
     if not title:
         flash("Issue title is required", "error")
-        return redirect(url_for("issues.issue_detail", issue_id = issue.id))
+        return redirect(url_for("issues.issue_details", issue_id = issue.id))
     
     old_status = issue.status
     
@@ -139,7 +159,7 @@ def prioritize_issue(issue_id):
     db.session.commit()
     flash("Issue manually prioritized", "success")
 
-    return redirect(url_for("issues.issue_detail", issue_id = issue.id))
+    return redirect(url_for("issues.issue_details", issue_id = issue.id))
 
 
 
@@ -154,7 +174,7 @@ def unprioritize_issue(issue_id):
     db.session.commit()
     flash("Manual prioritization removed", "info")
 
-    return redirect(url_for("issues.issue_detail", issue_id = issue.id))
+    return redirect(url_for("issues.issue_details", issue_id = issue.id))
 
 
 
@@ -176,7 +196,7 @@ def hold_issue(issue_id):
     db.session.commit()
     flash("Issue moved to On Hold", "warning")
 
-    return redirect(url_for("issues.issue_detail", issue_id = issue.id))
+    return redirect(url_for("issues.issue_details", issue_id = issue.id))
 
 
 
@@ -205,19 +225,70 @@ def resolve_issue(issue_id):
 @admin_required
 def close_issue(issue_id):
 
-
     issue = Issue.query.get_or_404(issue_id)
+    reason = request.form.get("reason")
+    tracker_id = request.form.get("duplicate_id")
     old_status = issue.status
+
     issue.status = IssueStatus.CLOSED
     issue.status_changed_at = ensure_utc(datetime.now(timezone.utc))
-
-    log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
+    
+    if reason:
+        issue.review_notes = reason
 
     db.session.commit()
-    flash("Issue closed", "info")
+    
+    # Core Logic: If admin links an active duplicate, secretly assign the ticket-creator to track it!
+    if tracker_id and tracker_id.isdigit():
+        target_issue = Issue.query.get(int(tracker_id))
+        if target_issue:
+            follow_issue(issue.created_by, target_issue.id)
+            issue.review_notes = (issue.review_notes or "") + f" [System] Tracked to Issue #{target_issue.id} automatically."
+            db.session.commit()
+
+    flash("Issue marked as closed", "secondary")
+
+    log_status_change(issue, old_status, issue.status, current_user.id, f"Issue administratively closed: {reason}" if reason else "Issue administratively closed")
+
+    return redirect(url_for("issues.issue_details", issue_id = issue.id))
 
 
-    return redirect(url_for("dashboard.admin_dashboard"))
+@issues_bp.route("/rename/<int:issue_id>", methods=["POST"])
+@login_required
+@admin_required
+def rename_issue(issue_id):
+    issue = Issue.query.get_or_404(issue_id)
+    new_title = request.form.get("title")
+
+    if not new_title:
+        flash("Title cannot be empty.", "error")
+    else:
+        issue.title = new_title
+        db.session.commit()
+        flash("Ticket title renamed successfully.", "success")
+
+    return redirect(url_for("issues.issue_details", issue_id=issue.id))
+
+
+@issues_bp.route("/resume/<int:issue_id>", methods=["POST"])
+@login_required
+@admin_required
+def resume_issue(issue_id):
+    issue = Issue.query.get_or_404(issue_id)
+    
+    if issue.status != IssueStatus.ON_HOLD:
+        flash("Can only resume tickets that are currently on hold.", "warning")
+        return redirect(url_for("issues.issue_details", issue_id=issue.id))
+
+    old_status = issue.status
+    issue.status = IssueStatus.PRIORITIZED
+    issue.hold_until = None
+    
+    db.session.commit()
+    flash("Ticket resumed to Active Pipeline.", "success")
+    log_status_change(issue, old_status, issue.status, current_user.id, "Manually retrieved from On Hold.")
+    
+    return redirect(url_for("issues.issue_details", issue_id=issue.id))
 
 
 

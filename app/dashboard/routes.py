@@ -48,6 +48,6 @@ def admin_dashboard():
 @login_required
 def user_dashboard():
 
-    user_issues = Issue.query.filter(Issue.created_by == current_user.id).all()
+    user_issues = Issue.query.filter(Issue.created_by == current_user.id).order_by(Issue.created_at.desc()).all()
 
     return render_template("user_dashboard.html", issues=user_issues)

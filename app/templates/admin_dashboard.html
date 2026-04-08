@@ -109,17 +109,17 @@
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="prioritized-tab" data-bs-toggle="tab" data-bs-target="#prioritized" type="button" role="tab">
-                    Prioritized
+                    Prioritized <span class="badge bg-warning text-dark ms-1">{{ prioritized|length }}</span>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="onhold-tab" data-bs-toggle="tab" data-bs-target="#onhold" type="button" role="tab">
-                    On Hold
+                    On Hold <span class="badge bg-info text-dark ms-1">{{ on_hold|length }}</span>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="resolved-tab" data-bs-toggle="tab" data-bs-target="#resolved" type="button" role="tab">
-                    Resolved / Closed
+                    Resolved / Closed <span class="badge bg-success ms-1">{{ resolved|length + closed|length }}</span>
                 </button>
             </li>
         </ul>
@@ -136,8 +136,8 @@
                                 <i class="fa-solid fa-location-dot me-1"></i> {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Room {{ issue.room.name }}
                             </p>
                         </div>
-                        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm btn-outline-danger px-3 rounded-pill">
-                            Verify Now
+                        <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-medium">
+                            <i class="fa-solid fa-eye me-1"></i> Review Details
                         </a>
                     </div>
                     {% else %}
@@ -156,7 +156,7 @@
                     <div class="list-group-item issue-item p-4">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h6 class="mb-0 fw-bold">{{ issue.title }}</h6>
-                            <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">
+                            <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">
                                 Details
                             </a>
                         </div>
@@ -191,7 +191,7 @@
                     <div class="list-group-item issue-item p-4">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h6 class="mb-0 fw-bold">{{ issue.title }}</h6>
-                            <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">Details</a>
+                            <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">Details</a>
                         </div>
                         <p class="mb-2 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Room {{ issue.room.name }}</p>
                         <div><span class="badge rounded-pill badge-custom badge-high"><i class="fa-solid fa-star me-1"></i> Priority Override Active</span></div>
@@ -212,7 +212,7 @@
                                 <h6 class="mb-1 fw-bold">{{ issue.title }}</h6>
                                 <p class="mb-0 text-muted small"><i class="fa-regular fa-clock me-1"></i> Hold expires: {{ issue.hold_until }}</p>
                             </div>
-                            <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">Details</a>
+                            <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">Details</a>
                         </div>
                     </div>
                     {% else %}
@@ -231,7 +231,7 @@
                             <span class="fw-medium">{{ issue.title }}</span>
                             <span class="badge rounded-pill bg-success ms-2 small">Resolved</span>
                         </div>
-                        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm text-primary">View</a>
+                        <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-sm text-primary">View</a>
                     </div>
                     {% else %}
                     <div class="p-4 text-center text-muted small">No resolved issues yet.</div>
@@ -246,7 +246,7 @@
                             <span class="fw-medium text-muted text-decoration-line-through">{{ issue.title }}</span>
                             <span class="badge rounded-pill bg-danger ms-2 small">Closed</span>
                         </div>
-                        <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-sm text-primary">View</a>
+                        <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-sm text-primary">View</a>
                     </div>
                     {% else %}
                     <div class="p-4 text-center text-muted small">No closed issues yet.</div>

@@ -1,59 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duplicate Found</title>
-</head>
-<body>
+{% extends "base.html" %}
 
+{% block title %}Duplicate Detected - PRISM{% endblock %}
 
-    <h2>Similar Issue Already Exists</h2>
+{% block content %}
+<div class="container py-4 col-lg-8">
+    
+    <div class="text-center mb-5">
+        <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 rounded-circle mb-3" style="width: 80px; height: 80px;">
+            <i class="fa-solid fa-clone text-danger fs-1"></i>
+        </div>
+        <h2 class="fw-bold font-outfit text-dark">Wait! We Found A Match.</h2>
+        <p class="text-muted">An issue mathematically identical to yours is already active on our grid.</p>
+    </div>
 
-    <p>
-    A similar issue has already been reported:
-    </p>
+    <!-- Active Ticket Preview -->
+    <div class="custom-card shadow border-0 position-relative mb-5 p-4 rounded-4" style="background: linear-gradient(135deg, rgba(230,240,255,1) 0%, rgba(255,255,255,1) 100%);">
+        
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="badge bg-primary text-uppercase px-3 py-2 shadow-sm"><i class="fa-solid fa-wrench me-2"></i> Active Duplicate</span>
+            <span class="text-muted small fw-medium">Location: {{ duplicate_issue.building.name }} &bull; {{ duplicate_issue.room.name }}</span>
+        </div>
 
-    <hr>
+        <h4 class="fw-bold text-dark mb-2">{{ duplicate_issue.title or candidate_issue.description[:40] ~ '...' }}</h4>
+        <p class="text-muted mb-0">{{ duplicate_issue.description }}</p>
 
-    <h3>{{ duplicate_issue.title }}</h3>
+    </div>
+    
+    <hr class="my-5 opacity-25">
 
-    <p>
-    Location:
-    {{ duplicate_issue.building.name }}
-    /
-    Floor {{ duplicate_issue.floor.number }}
-    /
-    Room {{ duplicate_issue.room.name }}
-    </p>
+    <div class="row g-4 justify-content-center">
+        <!-- Track Instead -->
+        <div class="col-md-5">
+            <form method="GET" action="{{ url_for('issues.track_duplicate', issue_id=duplicate_issue.id) }}">
+                <button type="submit" class="btn btn-success w-100 rounded-pill py-3 fw-bold fs-5 shadow-sm text-white">
+                    <i class="fa-solid fa-link me-2"></i> Track Existing Ticket
+                </button>
+            </form>
+            <p class="text-center text-muted small mt-2">Automatically subscribe to updates on the existing ticket.</p>
+        </div>
 
-
-    <p>
-    Already being reviewed by administration.
-    </p>
-
-    <hr>
-
-    <form method="GET" action="{{ url_for('issues.track_duplicate', issue_id=duplicate_issue.id) }}">
-
-        <button type="submit">
-
-        Track Existing Issue Instead
-
-        </button>
-
-    </form>
-
-
-    <form method="GET" action="{{ url_for('dashboard.user_dashboard') }}">
-
-        <button type="submit">
-
-        Cancel Submission
-
-        </button>
-
-    </form>
-  
-</body>
-</html>
+        <!-- Cancel -->
+        <div class="col-md-5">
+            <form method="GET" action="{{ url_for('dashboard.user_dashboard') }}">
+                <button type="submit" class="btn btn-outline-danger w-100 rounded-pill py-3 fw-bold fs-5 shadow-sm">
+                    <i class="fa-solid fa-trash me-2"></i> Cancel Submission
+                </button>
+            </form>
+            <p class="text-center text-muted small mt-2">Discard this ticket and return to your dashboard.</p>
+        </div>
+    </div>
+        
+</div>
+{% endblock %}

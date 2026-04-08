@@ -49,16 +49,25 @@
                     <span class="text-muted small"><i class="fa-regular fa-calendar me-1"></i> {{ issue.created_at.strftime('%b %d, %Y') if issue.created_at else 'N/A' }}</span>
                 </div>
                 
-                <h5 class="fw-bold mb-2 text-dark">{{ issue.title or "Pending verification..." }}</h5>
+                <h5 class="fw-bold mb-2 text-dark">{{ issue.title if issue.title else ("Rejected Request" if issue.status.name == "REJECTED" else "Pending verification...") }}</h5>
                 
                 <div class="mt-auto pt-3 border-top position-relative">
                     <p class="text-muted small mb-3">
                         <i class="fa-solid fa-location-dot me-2 text-secondary"></i>
                         {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Rm {{ issue.room.name }}
                     </p>
-                    <a href="{{ url_for('issues.issue_detail', issue_id=issue.id) }}" class="btn btn-outline-primary w-100 rounded-pill fw-medium">
-                        View Details
-                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-outline-primary flex-grow-1 rounded-pill fw-medium">
+                            View Details
+                        </a>
+                        {% if issue.status.name in ["RESOLVED", "CLOSED", "REJECTED"] %}
+                        <form method="POST" action="{{ url_for('issues.delete_issue_route', issue_id=issue.id) }}" class="m-0" onsubmit="return confirm('Are you sure you want to permanently delete this issue? This action cannot be undone.');">
+                            <button type="submit" class="btn btn-outline-danger rounded-pill px-3" title="Permanently Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

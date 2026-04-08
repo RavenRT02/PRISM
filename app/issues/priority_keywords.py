@@ -1,141 +1,72 @@
 URGENCY_KEYWORDS = {
-
     "health": {
         "keywords": [
-            "chemical",
-            "spill",
-            "injury",
-            "blood",
-            "infection",
-            "gas leak",
-            "fumes",
-            "breathing problem",
-            "unconscious",
-            "burn",
-            "acid",
-            "hazardous",
-            "toxic",
-            "lab accident"
+            "chemical", "spill", "injury", "blood", "infect", "gas leak", 
+            "fume", "breath", "unconscious", "burn", "acid", "hazard", 
+            "toxic", "accident", "pest", "insect", "snake", "mosquito", "rodent"
         ],
         "score": 5
     },
-
     "safety": {
         "keywords": [
-            "electric",
-            "shock",
-            "fire",
-            "sparking",
-            "short circuit",
-            "wire exposed",
-            "overheating",
-            "smoke",
-            "alarm",
-            "explosion risk",
-            "loose wiring",
-            "trip hazard",
-            "blocked exit",
-            "emergency exit locked"
+            "electric", "shock", "fire", "spark", "short circuit", "wire expose", 
+            "overheat", "smoke", "alarm", "explode", "loose wire", "trip hazard", 
+            "block exit", "lock", "guard", "security", "theft", "steal"
         ],
         "score": 4
     },
-
     "basic_needs": {
         "keywords": [
-            "water",
-            "toilet",
-            "restroom",
-            "washroom",
-            "drinking water",
-            "no water",
-            "power outage",
-            "electricity",
-            "fan not working",
-            "light not working",
-            "ac not working",
-            "wifi down",
-            "network issue"
+            "water", "toilet", "restroom", "washroom", "drink", "power", 
+            "electricity", "fan", "light", "ac", "wifi", "internet", 
+            "network", "outage", "down", "food", "mess", "hygiene", "bed"
         ],
         "score": 3
     },
-
     "unrest": {
         "keywords": [
-            "fight",
-            "violence",
-            "crowd",
-            "protest",
-            "argument",
-            "harassment",
-            "threat",
-            "ragging",
-            "bullying",
-            "disturbance",
-            "panic"
+            "fight", "violent", "crowd", "protest", "argue", "harass", 
+            "threat", "rag", "bully", "disturb", "panic"
         ],
         "score": 5
+    },
+    "academic_critical": {
+        "keywords": [
+            "server", "portal", "login", "exam", "fee", "block", "crash", 
+            "projector", "pc", "software", "id", "card"
+        ],
+        "score": 4
     }
 }
 
 
 IMPACT_KEYWORDS = {
-
     "severity": {
         "keywords": [
-            "collapsed",
-            "broken",
-            "leak",
-            "damage",
-            "crack",
-            "flooding",
-            "overflow",
-            "not working",
-            "failed",
-            "malfunction",
-            "shutdown"
+            "collapse", "break", "leak", "damage", "crack", "flood", 
+            "overflow", "fail", "malfunction", "shutdown", "fix", 
+            "error", "bug", "corrupt"
         ],
         "score": 3
     },
-
     "escalation": {
         "keywords": [
-            "spreading",
-            "increasing",
-            "worsening",
-            "getting worse",
-            "affecting nearby",
-            "affecting multiple rooms",
-            "affecting students",
-            "affecting floor",
-            "affecting building"
+            "spread", "increase", "worsen", "affect", "multiple", 
+            "mass", "campuswide", "hostelwide"
         ],
         "score": 2
     },
-
     "long_term": {
         "keywords": [
-            "structural",
-            "foundation",
-            "permanent",
-            "ceiling crack",
-            "wall crack",
-            "building damage",
-            "pipeline damage",
-            "seepage",
-            "water seepage"
+            "structure", "foundation", "permanent", "ceiling", "wall", 
+            "building", "pipe", "seep"
         ],
         "score": 4
     },
-
     "service_disruption": {
         "keywords": [
-            "class interrupted",
-            "lab cancelled",
-            "exam affected",
-            "hostel issue",
-            "canteen closed",
-            "library closed",
-            "wifi unavailable"
+            "interrupt", "cancel", "close", "unavailable", "delay", 
+            "pause", "halt", "suspend"
         ],
         "score": 3
     }

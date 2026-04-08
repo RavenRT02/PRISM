@@ -2,6 +2,10 @@ from app.issues.enums import PriorityLevel, IssueStatus
 from datetime import datetime, timezone
 from app.utils.datetime_utils import ensure_utc
 from app.issues.priority_keywords import URGENCY_KEYWORDS, IMPACT_KEYWORDS
+import string
+from spellchecker import SpellChecker
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
 
 URGENCY_WEIGHT = 5
 IMPACT_WEIGHT = 4
@@ -73,36 +77,62 @@ def check_hold_expiry(issue):
     return now >= hold_until
 
 
-def infer_urgency_score(description):
+def clean_and_lemmatize(description):
+    
+    description = description.lower().translate(str.maketrans("", "", string.punctuation))
+    
+    try:
+        tokens = word_tokenize(description)
+    except:
+        tokens = description.split()
+    
+    spell = SpellChecker()
+    misspelled = spell.unknown(tokens)
+    corrected = []
+    
+    for token in tokens:
+        if token in misspelled:
+            correction = spell.correction(token)
+            corrected.append(correction if correction else token)
+        else:
+            corrected.append(token)
+            
+    lemmatizer = WordNetLemmatizer()
+    lemmas = [lemmatizer.lemmatize(word, pos='v') for word in corrected]
+    lemmas = [lemmatizer.lemmatize(word, pos='n') for word in lemmas]
+    
+    return " ".join(lemmas)
 
-    description = description.lower()
+
+def infer_urgency_score(cleaned_description):
+
     score = 0
-
     for category in URGENCY_KEYWORDS.values():
-
-        if any( keyword in description for keyword in category["keywords"] ):
+        if any(keyword in cleaned_description for keyword in category["keywords"]):
             score += category["score"]
-
     return score
 
 
-def infer_impact_score(description):
+def infer_impact_score(cleaned_description):
 
-    description = description.lower()
     score = 0
-
     for category in IMPACT_KEYWORDS.values():
-
-        if any( keyword in description for keyword in category["keywords"] ):
+        if any(keyword in cleaned_description for keyword in category["keywords"]):
             score += category["score"]
-
     return score
 
 
 def auto_score_issue(issue):
 
-    issue.urgency_score = infer_urgency_score(issue.description)
-    issue.impact_score = infer_impact_score(issue.description)
+    if not issue.description:
+        issue.urgency_score = 0
+        issue.impact_score = 0
+        return issue
+
+    cleaned_desc = clean_and_lemmatize(issue.description)
+
+    issue.urgency_score = infer_urgency_score(cleaned_desc)
+    issue.impact_score = infer_impact_score(cleaned_desc)
 
     return issue
 
