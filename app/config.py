@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# flask configuration is conventionally represented as class
+
 class Config:
 
     SECRET_KEY = os.getenv("SECRET_KEY")      # for testing, change later ! must load from .env (loads from env now)
