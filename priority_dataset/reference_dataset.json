@@ -1,0 +1,759 @@
+[
+
+  {
+    "description": "Scratch marks on the desk surface",
+    "location": "Building A, Floor 2, Room 204",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [0,8],
+    "urgency_score_range": [0,8]
+  },
+
+  {
+    "description": "The notice board has a crack on its frame",
+    "location": "Block D, Floor 5, Room 503",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [0,8],
+    "urgency_score_range": [0,8]
+  },
+
+  {
+    "description": "Some paint has peeled from the corridor wall",
+    "location": "Building C, Floor 3",
+    "scope": "FLOOR",
+    "safety_score_range": [3,8],
+    "impact_score_range": [5,18],
+    "urgency_score_range": [3,8]
+  },
+
+  {
+    "description": "The floor tile near the entrance is slightly uneven",
+    "location": "Science Block, Floor 4, Room 402",
+    "scope": "ROOM",
+    "safety_score_range": [8,16],
+    "impact_score_range": [5,15],
+    "urgency_score_range": [5,15]
+  },
+
+  {
+    "description": "The projector remote is not working properly",
+    "location": "Science Block, Floor 4, Room 402",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [10,22],
+    "urgency_score_range": [20,32]
+  },
+
+  {
+    "description": "A few ceiling lights are not working",
+    "location": "West wing, Floor 6, Room 603",
+    "scope": "ROOM",
+    "safety_score_range": [5,12],
+    "impact_score_range": [10,22],
+    "urgency_score_range": [10,25]
+  },
+
+  {
+    "description": "The classroom door is difficult to open",
+    "location": "Main Academic Block, Floor 7, Room 706",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [8,20],
+    "urgency_score_range": [8,20]
+  },
+
+  {
+    "description": "Several chairs in this classroom need repair",
+    "location": "Main Academic Block, Floor 1, Room 101",
+    "scope": "ROOM",
+    "safety_score_range": [10,25],
+    "impact_score_range": [12,28],
+    "urgency_score_range": [10,25]
+  },
+
+  {
+    "description": "The projector is not displaying properly during class",
+    "location": "Science Block, Floor 4, Room 402",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [28,45],
+    "urgency_score_range": [18,35]
+  },
+
+  {
+    "description": "The classroom AC is not working",
+    "location": "Main Academic Block, Floor 2, Room 204",
+    "scope": "ROOM",
+    "safety_score_range": [5,18],
+    "impact_score_range": [20,38],
+    "urgency_score_range": [18,35]
+  },
+
+  {
+    "description": "Most computers in the student lab are unavailable",
+    "location": "Technology Block, Floor 3, Computer Lab",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [32,48],
+    "urgency_score_range": [25,45]
+  },
+
+  {
+    "description": "The restroom is unavailable",
+    "location": "Main Academic Block, Floor 2",
+    "scope": "FLOOR",
+    "safety_score_range": [10,28],
+    "impact_score_range": [30,48],
+    "urgency_score_range": [28,45]
+  },
+
+  {
+    "description": "There are only two vending machines in this entire block",
+    "location": "Science Block",
+    "scope": "BUILDING",
+    "safety_score_range": [0,8],
+    "impact_score_range": [30,48],
+    "urgency_score_range": [8,22]
+  },
+
+  {
+    "description": "Most of the desks on this floor have damaged surfaces",
+    "location": "Main Academic Block, Floor 2",
+    "scope": "FLOOR",
+    "safety_score_range": [0,10],
+    "impact_score_range": [28,45],
+    "urgency_score_range": [8,22]
+  },
+
+  {
+    "description": "A loose ceiling tile is hanging above the classroom",
+    "location": "North wing, Floor 3, Room 309",
+    "scope": "ROOM",
+    "safety_score_range": [28,45],
+    "impact_score_range": [20,38],
+    "urgency_score_range": [30,48]
+  },
+
+  {
+    "description": "The surface of the wheelchair ramp is damaged",
+    "location": "Block C, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [28,48],
+    "impact_score_range": [25,45],
+    "urgency_score_range": [25,45]
+  },
+
+  {
+    "description": "Water from the restroom is spreading across the floor",
+    "location": "Building B, Floor 2",
+    "scope": "FLOOR",
+    "safety_score_range": [30,50],
+    "impact_score_range": [30,50],
+    "urgency_score_range": [35,55]
+  },
+
+  {
+    "description": "A heavy cupboard is unstable and may tip over",
+    "location": "Engineering department, Floor 1, Room 101",
+    "scope": "ROOM",
+    "safety_score_range": [32,52],
+    "impact_score_range": [18,35],
+    "urgency_score_range": [32,52]
+  },
+
+  {
+    "description": "Water is leaking from the ceiling",
+    "location": "Lecture hall, Floor 5, Room 508",
+    "scope": "ROOM",
+    "safety_score_range": [28,48],
+    "impact_score_range": [20,38],
+    "urgency_score_range": [30,50]
+  },
+
+  {
+    "description": "A broken floor tile is sticking up from the walkway",
+    "location": "Main Academic Block, Floor 6",
+    "scope": "FLOOR",
+    "safety_score_range": [20,38],
+    "impact_score_range": [15,32],
+    "urgency_score_range": [18,35]
+  },
+
+  {
+    "description": "Water keeps leaking across the corridor and people are slipping",
+    "location": "Block F, Floor 3",
+    "scope": "FLOOR",
+    "safety_score_range": [48,68],
+    "impact_score_range": [35,55],
+    "urgency_score_range": [52,72]
+  },
+
+  {
+    "description": "A large ceiling panel is damaged and looks unstable",
+    "location": "Building D, Floor 6, Room 605",
+    "scope": "ROOM",
+    "safety_score_range": [48,68],
+    "impact_score_range": [25,45],
+    "urgency_score_range": [45,68]
+  },
+
+  {
+    "description": "An exposed electrical wire is accessible to students",
+    "location": "Science Block, Floor 5, Room 502",
+    "scope": "ROOM",
+    "safety_score_range": [68,88],
+    "impact_score_range": [25,48],
+    "urgency_score_range": [68,90]
+  },
+
+  {
+    "description": "Chemical liquid has spilled onto the laboratory floor",
+    "location": "Science Block, Floor 3, Chemistry Laboratory",
+    "scope": "ROOM",
+    "safety_score_range": [52,75],
+    "impact_score_range": [25,48],
+    "urgency_score_range": [52,75]
+  },
+
+  {
+    "description": "A ceiling panel is hanging loose above the walkway",
+    "location": "Main Academic Block, Floor 6",
+    "scope": "FLOOR",
+    "safety_score_range": [52,72],
+    "impact_score_range": [30,52],
+    "urgency_score_range": [52,72]
+  },
+
+  {
+    "description": "A dead rodent was found near the food storage area",
+    "location": "Student Centre, Ground Floor, Canteen Storage",
+    "scope": "ROOM",
+    "safety_score_range": [48, 68],
+    "impact_score_range": [25, 45],
+    "urgency_score_range": [45, 68]
+  },
+
+  {
+    "description": "A chemical container is leaking and the liquid has reached the floor",
+    "location": "Science Block, Floor 4, Chemistry Laboratory",
+    "scope": "ROOM",
+    "safety_score_range": [52,75],
+    "impact_score_range": [25,48],
+    "urgency_score_range": [52,75]
+  },
+
+  {
+    "description": "A large electrical panel is damaged and internal wiring is exposed",
+    "location": "Technology Block, Ground Floor, Electrical Room",
+    "scope": "ROOM",
+    "safety_score_range": [72,90],
+    "impact_score_range": [25,50],
+    "urgency_score_range": [68,90]
+  },
+
+  {
+    "description": "Several containers are leaking in the laboratory and liquid is on the floor",
+    "location": "Science Block, Floor 4, Chemistry Laboratory",
+    "scope": "ROOM",
+    "safety_score_range": [72,90],
+    "impact_score_range": [35,58],
+    "urgency_score_range": [72,92]
+  },
+
+  {
+    "description": "A heavy section of the ceiling is visibly separating",
+    "location": "Main Academic Block, Floor 7, Room 704",
+    "scope": "ROOM",
+    "safety_score_range": [72,90],
+    "impact_score_range": [25,48],
+    "urgency_score_range": [70,90]
+  },
+
+  {
+    "description": "Part of the ceiling has fallen in the hallway and more of it looks unstable",
+    "location": "Block 4, Floor 2",
+    "scope": "FLOOR",
+    "safety_score_range": [88,100],
+    "impact_score_range": [45,70],
+    "urgency_score_range": [88,100]
+  },
+
+  {
+    "description": "A live electrical cable is exposed at student hand height",
+    "location": "West wing, Floor 6, Room 602",
+    "scope": "ROOM",
+    "safety_score_range": [92,100],
+    "impact_score_range": [30,55],
+    "urgency_score_range": [92,100]
+  },
+
+  {
+    "description": "Gas is leaking from laboratory equipment",
+    "location": "Block 3, Floor 6, Chemistry Laboratory",
+    "scope": "ROOM",
+    "safety_score_range": [92,100],
+    "impact_score_range": [35,60],
+    "urgency_score_range": [92,100]
+  },
+
+  {
+    "description": "A large section of the ceiling is hanging above an occupied classroom",
+    "location": "Main Academic Block, Floor 1, Room 107",
+    "scope": "ROOM",
+    "safety_score_range": [92,100],
+    "impact_score_range": [38,65],
+    "urgency_score_range": [92,100]
+  },
+
+  {
+    "description": "The fire exit is completely blocked by heavy equipment",
+    "location": "Building 6, Floor 2",
+    "scope": "FLOOR",
+    "safety_score_range": [88,100],
+    "impact_score_range": [55,80],
+    "urgency_score_range": [85,100]
+  },
+
+  {
+    "description": "An exposed electrical panel is accessible to students",
+    "location": "Engineering Block, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [90,100],
+    "impact_score_range": [35,60],
+    "urgency_score_range": [90,100]
+  },
+
+  {
+    "description": "Wi-Fi is not working anywhere on this floor",
+    "location": "Technology Block, Floor 3",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [48,68],
+    "urgency_score_range": [28,48]
+  },
+
+  {
+    "description": "There is no power in the classrooms on this floor",
+    "location": "Main Academic Block, Floor 8",
+    "scope": "FLOOR",
+    "safety_score_range": [18,35],
+    "impact_score_range": [50,70],
+    "urgency_score_range": [40,62]
+  },
+
+  {
+    "description": "The main student printer on this floor is not working",
+    "location": "Block F, Floor 5",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [42,62],
+    "urgency_score_range": [30,50]
+  },
+
+  {
+    "description": "The elevator is not working in the building",
+    "location": "Building C",
+    "scope": "BUILDING",
+    "safety_score_range": [8,15],
+    "impact_score_range": [48,68],
+    "urgency_score_range": [35,58]
+  },
+
+  {
+    "description": "The only accessible entrance to the building is blocked",
+    "location": "Main Academic Block",
+    "scope": "BUILDING",
+    "safety_score_range": [20, 40],
+    "impact_score_range": [58, 78],
+    "urgency_score_range": [45, 68]
+  },
+
+  {
+    "description": "Wi-Fi is unavailable throughout the building",
+    "location": "Technology Block",
+    "scope": "BUILDING",
+    "safety_score_range": [0,8],
+    "impact_score_range": [65,85],
+    "urgency_score_range": [35,58]
+  },
+
+  {
+    "description": "There is no electricity anywhere in the building",
+    "location": "Main Academic Block",
+    "scope": "BUILDING",
+    "safety_score_range": [20,40],
+    "impact_score_range": [68,88],
+    "urgency_score_range": [50,72]
+  },
+
+  {
+    "description": "The water supply is unavailable throughout the building",
+    "location": "Block D",
+    "scope": "BUILDING",
+    "safety_score_range": [20,40],
+    "impact_score_range": [72,90],
+    "urgency_score_range": [80,92]
+  },
+
+  {
+    "description": "All classrooms in the building have lost network access",
+    "location": "Computer science Block",
+    "scope": "BUILDING",
+    "safety_score_range": [0,8],
+    "impact_score_range": [68,88],
+    "urgency_score_range": [38,62]
+  },
+
+  {
+    "description": "The main entrance of the building cannot be used",
+    "location": "Main Academic Block",
+    "scope": "BUILDING",
+    "safety_score_range": [10,30],
+    "impact_score_range": [55,78],
+    "urgency_score_range": [45,68]
+  },
+
+  {
+    "description": "The building has lost all emergency communication systems",
+    "location": "Building A",
+    "scope": "BUILDING",
+    "safety_score_range": [78,95],
+    "impact_score_range": [82,100],
+    "urgency_score_range": [82,100]
+  },
+
+  {
+    "description": "The fire alarm system is not functioning",
+    "location": "F Block",
+    "scope": "BUILDING",
+    "safety_score_range": [88,100],
+    "impact_score_range": [78,98],
+    "urgency_score_range": [82,100]
+  },
+
+  {
+    "description": "Emergency exit routes throughout the building cannot be used",
+    "location": "Main Academic Block",
+    "scope": "BUILDING",
+    "safety_score_range": [90,100],
+    "impact_score_range": [82,100],
+    "urgency_score_range": [90,100]
+  },
+
+  {
+    "description": "The projector is not displaying properly and the room is unused this week",
+    "location": "Science Block, Floor 4, Room 402",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [25,42],
+    "urgency_score_range": [0,12]
+  },
+
+  {
+    "description": "The projector is not displaying properly and we have an intercollege event next week",
+    "location": "Science Block, Floor 7, Main Lecture Hall",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [48,68],
+    "urgency_score_range": [48,68]
+  },
+
+  {
+    "description": "The projector remote is not working and it is disturbing presentations because someone has to adjust it manually",
+    "location": "EEE department, Floor 8, Room 801",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [10,25],
+    "urgency_score_range": [25,42]
+  },
+
+  {
+    "description": "The registration printer is not working and registration closes today",
+    "location": "Main Academic Block, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [55,75],
+    "urgency_score_range": [55,78]
+  },
+
+  {
+    "description": "The auditorium microphone is not working for a university function tomorrow",
+    "location": "University building, Ground Floor, Auditorium",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [50,70],
+    "urgency_score_range": [52,72]
+  },
+
+  {
+    "description": "The lecture hall AC is not working and an exam is scheduled there tomorrow",
+    "location": "C Block, Floor 3, Lecture Hall",
+    "scope": "ROOM",
+    "safety_score_range": [10,25],
+    "impact_score_range": [45,65],
+    "urgency_score_range": [52,72]
+  },
+
+  {
+    "description": "The Wi-Fi keeps disconnecting during today's online exam",
+    "location": "Technology Block, Floor 3",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [55,78],
+    "urgency_score_range": [60,82]
+  },
+
+  {
+    "description": "The wheelchair ramp is blocked and an event is scheduled in this area tomorrow",
+    "location": "Main Academic Block, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [25,48],
+    "impact_score_range": [55,78],
+    "urgency_score_range": [55,78]
+  },
+
+  {
+    "description": "The notice board frame needs repair before a seminar tomorrow",
+    "location": "Block D, Floor 6, Room 606",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [8,22],
+    "urgency_score_range": [15,30]
+  },
+
+  {
+    "description": "A damaged electrical panel cover is locked and the internal wiring cannot be accessed",
+    "location": "Technology Block, Ground Floor",
+    "scope": "ROOM",
+    "safety_score_range": [42,62],
+    "impact_score_range": [8,25],
+    "urgency_score_range": [25,45]
+  },
+
+  {
+    "description": "Several fire extinguishers are past their inspection date",
+    "location": "Building 5, Floor 1",
+    "scope": "FLOOR",
+    "safety_score_range": [48,68],
+    "impact_score_range": [35,58],
+    "urgency_score_range": [25,45]
+  },
+
+  {
+    "description": "There is a strange smell in the chemistry laboratory",
+    "location": "Block 7, Floor 1, Chemistry Laboratory",
+    "scope": "ROOM",
+    "safety_score_range": [30,55],
+    "impact_score_range": [20,42],
+    "urgency_score_range": [30,55]
+  },
+
+  {
+    "description": "There is a strange smell in the mathematics faculty office",
+    "location": "Mathematics Block, Floor 3, Faculty Office",
+    "scope": "ROOM",
+    "safety_score_range": [15,35],
+    "impact_score_range": [8,22],
+    "urgency_score_range": [15,35]
+  },
+
+  {
+    "description": "Add another notice board in the classroom",
+    "location": "Main Academic Block, Floor 2, Room 204",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [8,20],
+    "urgency_score_range": [0,8]
+  },
+
+  {
+    "description": "Provide a few more chairs in the classroom",
+    "location": "Main Academic Block, Floor 2, Room 204",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [18,32],
+    "urgency_score_range": [8,22]
+  },
+
+  {
+    "description": "Can we get more charging points in the library?",
+    "location": "Library, Floor 1, Study Room",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [20,35],
+    "urgency_score_range": [5,20]
+  },
+
+  {
+    "description": "Increase the number of water dispensers on this floor",
+    "location": "Computer science Block, Floor 2",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [25,45],
+    "urgency_score_range": [8,25]
+  },
+
+  {
+    "description": "More tables are needed in the canteen because students struggle to find seating during lunch",
+    "location": "Student Centre, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [35,55],
+    "urgency_score_range": [15,35]
+  },
+
+  {
+    "description": "Requesting additional computers for the lab due to long waiting times",
+    "location": "Technology Block, Floor 3, Computer Lab",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [35,55],
+    "urgency_score_range": [22,42]
+  },
+
+  {
+    "description": "The library needs additional study tables",
+    "location": "Library, Floor 1",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [30,50],
+    "urgency_score_range": [8,25]
+  },
+
+  {
+    "description": "Would it be possible to add another water dispenser near the lecture halls?",
+    "location": "Science Block, Floor 4",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [25,45],
+    "urgency_score_range": [8,25]
+  },
+
+  {
+    "description": "There are not enough computers available during practical sessions",
+    "location": "Technology Block, Floor 3, Computer Lab",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [35,55],
+    "urgency_score_range": [22,42]
+  },
+
+  {
+    "description": "The library needs more study spaces because it is overcrowded",
+    "location": "Library, Floor 1",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [38,58],
+    "urgency_score_range": [25,45]
+  },
+
+  {
+    "description": "More functioning printers are needed during registration",
+    "location": "Main Academic Block, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [45,65],
+    "urgency_score_range": [35,58]
+  },
+
+  {
+    "description": "Additional water facilities are needed because of long queues",
+    "location": "Block B, Floor 1",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [30,50],
+    "urgency_score_range": [20,40]
+  },
+
+  {
+    "description": "More tables are needed because there is not enough seating for a large student event tomorrow",
+    "location": "Student Centre, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [50,72],
+    "urgency_score_range": [52,75]
+  },
+
+  {
+    "description": "Additional computers are needed because of practical exams next week",
+    "location": "Technology Block, Floor 3, Computer Lab",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [48,68],
+    "urgency_score_range": [45,68]
+  },
+
+  {
+    "description": "More seating is needed because the library will be crowded during exams next week",
+    "location": "Library, Floor 1",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [48,68],
+    "urgency_score_range": [45,68]
+  },
+
+  {
+    "description": "Can we add another notice board before next month's event?",
+    "location": "Main Academic Block, Floor 2, Room 204",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [8,22],
+    "urgency_score_range": [8,22]
+  },
+  
+  {
+    "description": "An accessible study table would be useful in the library",
+    "location": "Library, Floor 1, Study Room",
+    "scope": "ROOM",
+    "safety_score_range": [0,8],
+    "impact_score_range": [22,35],
+    "urgency_score_range": [8,25]
+  },
+
+  {
+    "description": "An accessible water dispenser is needed on this floor",
+    "location": "Building 3, Floor 8",
+    "scope": "FLOOR",
+    "safety_score_range": [0,10],
+    "impact_score_range": [25,45],
+    "urgency_score_range": [18,38]
+  },
+
+  {
+    "description": "An accessible route is needed for the temporary event area",
+    "location": "Student Centre, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [15,35],
+    "impact_score_range": [48,70],
+    "urgency_score_range": [48,70]
+  },
+
+  {
+    "description": "There are not enough tables in the canteen for normal daily use",
+    "location": "Student Centre, Ground Floor",
+    "scope": "FLOOR",
+    "safety_score_range": [0,8],
+    "impact_score_range": [32,52],
+    "urgency_score_range": [8,25]
+  },
+
+  {
+    "description": "The student services counter needs another queue terminal because students wait for long periods",
+    "location": "Main Academic Block, Ground Floor, Student Services",
+    "scope": "ROOM",
+    "safety_score_range": [0, 8],
+    "impact_score_range": [28, 48],
+    "urgency_score_range": [18, 38]
+  },
+
+  {
+  "description": "Additional sanitary waste bins are needed in the restroom",
+  "location": "Main Academic Block, Floor 2, Restroom",
+  "scope": "ROOM",
+  "safety_score_range": [5, 18],
+  "impact_score_range": [20, 38],
+  "urgency_score_range": [18, 35]
+ }
+
+]
