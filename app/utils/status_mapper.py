@@ -3,7 +3,7 @@ def get_user_visible_status(issue):
     if issue.status.name == "SUBMITTED":
         return "Under review"
 
-    if issue.status.name == "PRIORITIZED":
+    if issue.status.name == "IN_PROGRESS":
         return "Approved"
 
     if issue.status.name == "ON_HOLD":

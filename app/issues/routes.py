@@ -111,7 +111,7 @@ def verify_issue_route(issue_id):
     old_status = issue.status
     
     verify_issue(issue, current_user, title, category_id)
-    flash("Issue verified and prioritized successfully")
+    flash("Issue verified and added to queue successfully")
 
     log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
 
@@ -148,28 +148,28 @@ def issue_details(issue_id):
 
 
 
-@issues_bp.route("/prioritize/<int:issue_id>", methods = ['POST'])
+@issues_bp.route("/pin/<int:issue_id>", methods = ['POST'])
 @login_required
 @admin_required
-def prioritize_issue(issue_id):
+def pin_issue(issue_id):   # pin issue
 
     issue = Issue.query.get_or_404(issue_id)
-    issue.priority_override = True
+    issue.is_pinned = True
 
     db.session.commit()
-    flash("Issue manually prioritized", "success")
+    flash("Issue Pinned Successfully", "success")
 
     return redirect(url_for("issues.issue_details", issue_id = issue.id))
 
 
 
-@issues_bp.route("/unprioritize/<int:issue_id>", methods = ['POST'])
+@issues_bp.route("/unpin/<int:issue_id>", methods = ['POST'])
 @login_required
 @admin_required
-def unprioritize_issue(issue_id):
+def unpin_issue(issue_id):    # unpin issue
 
     issue = Issue.query.get_or_404(issue_id)
-    issue.priority_override = False
+    issue.is_pinned = False
 
     db.session.commit()
     flash("Manual prioritization removed", "info")
@@ -281,7 +281,7 @@ def resume_issue(issue_id):
         return redirect(url_for("issues.issue_details", issue_id=issue.id))
 
     old_status = issue.status
-    issue.status = IssueStatus.PRIORITIZED
+    issue.status = IssueStatus.IN_PROGRESS
     issue.hold_until = None
     
     db.session.commit()

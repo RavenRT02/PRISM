@@ -18,12 +18,11 @@ def admin_dashboard():
 
     release_expired_holds()
 
-    issues = Issue.query.filter(Issue.status == IssueStatus.PRIORITIZED,
-        Issue.priority_override == False).order_by(Issue.priority_score.desc()).all()
+    issues = Issue.query.filter(Issue.status == IssueStatus.IN_PROGRESS).order_by(Issue.priority_score.desc()).all()
     
     verification_queue = Issue.query.filter(Issue.status == IssueStatus.SUBMITTED).order_by(Issue.created_at.asc()).all()
 
-    prioritized = Issue.query.filter(Issue.priority_override == True).all()
+    pinned_issues = Issue.query.filter(Issue.is_pinned.is_(True)).all()
 
     on_hold = Issue.query.filter(Issue.status == IssueStatus.ON_HOLD).all()
 
@@ -31,16 +30,18 @@ def admin_dashboard():
 
     closed = Issue.query.filter(Issue.status == IssueStatus.CLOSED).all()
 
+    rejected_count = Issue.query.filter(Issue.status == IssueStatus.REJECTED).count()
+
     category_stats = db.session.query(IssueCategory.name, func.count(Issue.id)).join(Issue).group_by(IssueCategory.name).all()
 
     category_labels = [c[0] for c in category_stats]
     category_counts = [c[1] for c in category_stats]
 
-    return render_template("admin_dashboard.html", issues=issues, prioritized=prioritized,
+    return render_template("admin_dashboard.html", issues=issues, pinned_issues=pinned_issues,
                             on_hold=on_hold, resolved=resolved, closed=closed, verification_queue = verification_queue,
-                            issues_count = len(issues), prioritized_count = len(prioritized), 
+                            issues_count = len(issues), pinned_count = len(pinned_issues), 
                             on_hold_count = len(on_hold), resolved_count = len(resolved), closed_count = len(closed),
-                            category_labels = category_labels, category_counts = category_counts)
+                            category_labels = category_labels, category_counts = category_counts, rejected_count = rejected_count)
 
 
 

@@ -3,8 +3,10 @@ from flask_login import UserMixin    # provides flask_login req methods like is_
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db,login_manager
 from datetime import datetime, timezone
-from app.issues.enums import IssueStatus, IssueType, PriorityLevel
+from app.issues.enums import IssueStatus, IssueType, PriorityLevel, LocationScope
 
+
+# db.Model -- Makes the class a SQLAlchemy database model
 
 class User(UserMixin, db.Model):           # users table
 
@@ -24,13 +26,25 @@ class User(UserMixin, db.Model):           # users table
 
     course_end_date = db.Column(db.Date, nullable = True )
 
-    created_at = db.Column(db.DateTime, default = lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
-    issues = db.relationship("Issue", foreign_keys = "Issue.created_by", lazy = True)
+    # db.relationship -- Creates a Python/SQLAlchemy relationship to another model
+    # They do not create columns, They create SQLAlchemy/Python navigation paths.
 
-    verified_issues = db.relationship("Issue", foreign_keys = "Issue.verified_by", lazy = True)
+    # "From a users object, let me access the issues that this user created." -- Show issues created by this user
+    # user.issues -- Give me the issues whose issues.created_by points to this users.id.
+    # FK in this table are not inside [] as they reference other table columns
+    issues = db.relationship("Issue", foreign_keys = "Issue.created_by", back_populates = "creator", lazy = True)
 
-    followed_issues = db.relationship("IssueFollower", foreign_keys = "IssueFollower.user_id", lazy = True)
+    # Show issues verified by this user
+    verified_issues = db.relationship("Issue", foreign_keys = "Issue.verified_by", back_populates = "verifier", lazy = True)
+
+    # Show issues followed by this user -- No need to explictly define FK here since there is only 1 FK from IssueFollowers to User
+    followed_issues = db.relationship("IssueFollower", foreign_keys = "IssueFollower.user_id", back_populates = "user", lazy = True)
+
+    otps = db.relationship("UserOTP", back_populates = "user", lazy = True)
+
+    status_changes = db.relationship("IssueStatusHistory", back_populates = "changer", lazy = True)
 
 
     def set_password(self,password):                         # Convert user pass to hashed pass before storing in db
@@ -69,8 +83,12 @@ class UserOTP(db.Model):
 
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
-    user = db.relationship("User", backref = "otps")
+    # back_populates is cleaner for complex db designs as it is defined on both sides. 
+    user = db.relationship("User", back_populates = "otps")
 
+    # __table_agrs__ -- Gives table-level configuration/constraints to SQLAlchemy 
+    # Ending comma necessary since __table_args__ have to be tuple or dict, without comma it will not be a tuple 
+    # __table_args__ = (value,) 
     __table_args__ = (db.Index("idx_user_purpose_active", "user_id", "purpose", "is_used"),)
 
 
@@ -87,6 +105,8 @@ class Building(db.Model):
 
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
+    # back_populates -- explicitly define on both sides ( defined in floors table as well )
+    # lazy=True is SQLAlchemy, not a database feature. It controls when SQLAlchemy loads the related objects.
     floors = db.relationship("Floor", back_populates = "building", lazy=True)
 
 
@@ -102,13 +122,14 @@ class Floor(db.Model):
 
     is_active = db.Column(db.Boolean, default = True)
 
-    building = db.relationship("Building", back_populates = "floors")
-
-    __table_args__ = (db.UniqueConstraint("number", "building_id", name = "uq_floor_building"),)
-
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
+    # Explicitly defined here ( also in buildings table )
+    building = db.relationship("Building", back_populates = "floors")
+
     rooms = db.relationship("Room", back_populates = "floor", lazy=True)
+
+    __table_args__ = (db.UniqueConstraint("number", "building_id", name = "uq_floor_building"),)
 
 
 class Room(db.Model):
@@ -123,13 +144,13 @@ class Room(db.Model):
 
     is_active = db.Column(db.Boolean, default = True)
 
-    floor = db.relationship("Floor", back_populates = "rooms")
-
-    __table_args__ = (db.UniqueConstraint("name", "floor_id", name = "uq_room_floor"),)
-
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
+    floor = db.relationship("Floor", back_populates = "rooms")
+
     issues = db.relationship("Issue", back_populates = "room", lazy = True)
+
+    __table_args__ = (db.UniqueConstraint("name", "floor_id", name = "uq_room_floor"),)
 
 
 
@@ -164,37 +185,23 @@ class Issue(db.Model):
 
     issue_type = db.Column(db.Enum(IssueType), nullable = False)
 
-    category_id = db.Column(db.Integer, db.ForeignKey("issue_categories.id"), nullable = False)
-    category = db.relationship("IssueCategory")
-
-    building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable = False)
-    building = db.relationship("Building")
-
-    floor_id = db.Column(db.Integer, db.ForeignKey("floors.id"), nullable = False)
-    floor = db.relationship("Floor")
-
-    room_id = db.Column(db.Integer, db.ForeignKey("rooms.id"), nullable = False)
-    room = db.relationship("Room", back_populates = "issues")
-
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
-    creator = db.relationship("User", foreign_keys = [created_by], overlaps = "issues")
-
-    verified_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-    verifier = db.relationship("User", foreign_keys = [verified_by], overlaps = "verified_issues")
+    location_scope = db.Column(db.Enum(LocationScope), nullable = False)
 
     status = db.Column(db.Enum(IssueStatus), default = IssueStatus.SUBMITTED, nullable = False)
 
-    urgency_score = db.Column(db.Integer)
+    safety_score = db.Column(db.Float, nullable = True)
 
-    impact_score = db.Column(db.Integer)
+    impact_score = db.Column(db.Float, nullable = True)
 
-    aging_score = db.Column(db.Integer, default = 0)
+    urgency_score = db.Column(db.Float, nullable = True)
 
-    priority_score = db.Column(db.Integer)
+    aging_score = db.Column(db.Float, nullable = False, default = 0.0)
+
+    priority_score = db.Column(db.Float, nullable = True)
 
     priority_level = db.Column(db.Enum(PriorityLevel))
 
-    priority_override = db.Column(db.Boolean, default = False)
+    is_pinned = db.Column(db.Boolean, nullable = False, default = False)
 
     image_path = db.Column(db.String(255))
 
@@ -206,13 +213,52 @@ class Issue(db.Model):
 
     verified_at = db.Column(db.DateTime(timezone = True))
 
-    approved_at = db.Column(db.DateTime(timezone = True))
-
     updated_at = db.Column(db.DateTime(timezone = True), onupdate = lambda: datetime.now(timezone.utc))
 
     status_changed_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
-    followers = db.relationship("IssueFollower", foreign_keys = "IssueFollower.issue_id", lazy = True)
+    category_id = db.Column(db.Integer, db.ForeignKey("issue_categories.id"), nullable = False)
+    category = db.relationship("IssueCategory")
+
+    building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable = False)
+    building = db.relationship("Building")
+
+    floor_id = db.Column(db.Integer, db.ForeignKey("floors.id"), nullable = True)
+    floor = db.relationship("Floor")
+
+    room_id = db.Column(db.Integer, db.ForeignKey("rooms.id"), nullable = True)
+    room = db.relationship("Room", back_populates = "issues")
+
+    """
+    foreign_keys = [column] The square brackets make it a Python list containing that column.
+    SQLAlchemy's foreign_keys parameter accepts a collection of columns because 
+    a relationship can involve one or more ForeignKey columns.
+    for users table created_by was not inside the table so Issue.created_by
+    This table on the otherhand has created_by within it so [column]
+    """
+
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
+    creator = db.relationship("User", foreign_keys = [created_by], back_populates = "issues")
+
+    verified_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    verifier = db.relationship("User", foreign_keys = [verified_by], back_populates = "verified_issues")
+
+    followers = db.relationship("IssueFollower", foreign_keys = "IssueFollower.issue_id", back_populates = "issue", lazy = True)
+
+    status_history = db.relationship("IssueStatusHistory", back_populates = "issue", lazy = True)
+
+    __table_args__ = (
+        db.CheckConstraint(
+            """
+            (location_scope = 'BUILDING' AND floor_id IS NULL AND room_id IS NULL)
+            OR
+            (location_scope = 'FLOOR' AND floor_id IS NOT NULL AND room_id IS NULL)
+            OR
+            (location_scope = 'ROOM' AND floor_id IS NOT NULL AND room_id IS NOT NULL)
+            """,
+            name = "ck_issue_location_scope"
+        ),
+    )
 
 
 
@@ -228,8 +274,8 @@ class IssueFollower(db.Model):
 
     created_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
-    user = db.relationship("User", overlaps = "followed_issues")
-    issue = db.relationship("Issue", overlaps = "followers")
+    user = db.relationship("User", foreign_keys = [user_id], back_populates = "followed_issues")
+    issue = db.relationship("Issue", foreign_keys = [issue_id], back_populates = "followers")
 
     __table_args__ = (db.UniqueConstraint("user_id", "issue_id", name = "uq_user_issue_follow"), )
 
@@ -243,12 +289,16 @@ class IssueStatusHistory(db.Model):
 
     issue_id = db.Column(db.Integer, db.ForeignKey("issues.id"), nullable=False)
 
-    old_status = db.Column(db.String(50))
+    old_status = db.Column(db.Enum(IssueStatus), nullable = True)
 
-    new_status = db.Column(db.String(50), nullable=False)
+    new_status = db.Column(db.Enum(IssueStatus), nullable=False)
 
-    changed_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+    changed_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = True)
 
     changed_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     note = db.Column(db.String(255))
+
+    issue = db.relationship("Issue", back_populates = "status_history")
+
+    changer = db.relationship("User", back_populates = "status_changes")

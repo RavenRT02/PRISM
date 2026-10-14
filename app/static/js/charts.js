@@ -1,41 +1,32 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById("issueChart");
 
-    const ctx = document
-        .getElementById("issueChart")
-        .getContext("2d");
-
-    new Chart(ctx, {
-
-        type: "pie",
-
-        data: {
-
-            labels: [
-                "Issues",
-                "Prioritized",
-                "On Hold",
-                "Resolved",
-                "Closed"
-            ],
-
-            datasets: [{
-
-                label: "Issue Distribution",
-
-                data: [
-                    window.issuesCount,
-                    window.prioritizedCount,
-                    window.onHoldCount,
-                    window.resolvedCount,
-                    window.closedCount
-                ]
-
-            }]
-
-        }
-
-    });
-
+    if (canvas) {
+        new Chart(canvas.getContext("2d"), {
+            type: "pie",
+            data: {
+                labels: [
+                    "Submitted",
+                    "In Progress",
+                    "On Hold",
+                    "Resolved",
+                    "Closed",
+                    "Rejected"
+                ],
+                datasets: [{
+                    label: "Issues by Status",
+                    data: [
+                        window.submittedCount,
+                        window.inProgressCount,
+                        window.onHoldCount,
+                        window.resolvedCount,
+                        window.closedCount,
+                        window.rejectedCount
+                    ]
+                }]
+            }
+        });
+    }
 });
 
 const categoryCtx = document

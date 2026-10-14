@@ -9,7 +9,7 @@ import enum
 class IssueStatus(enum.Enum):
 
     SUBMITTED = "SUBMITTED"
-    PRIORITIZED = "PRIORITIZED"   # requires change ( IN_PROGRESS )
+    IN_PROGRESS = "IN_PROGRESS"   # Previously PRIORITIZED
     ON_HOLD = "ON_HOLD"
     RESOLVED = "RESOLVED"
     CLOSED = "CLOSED"
@@ -26,3 +26,9 @@ class PriorityLevel(enum.Enum):
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
     LOW = "LOW"
+
+class LocationScope(enum.Enum):
+
+    BUILDING = "BUILDING"
+    FLOOR = "FLOOR"
+    ROOM = "ROOM"

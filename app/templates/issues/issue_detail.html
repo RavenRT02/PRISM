@@ -191,7 +191,7 @@
                 </form>
 
 
-                {% elif issue.status.name in ["PRIORITIZED","ON_HOLD"] %}
+                {% elif issue.status.name in ["IN_PROGRESS","ON_HOLD"] %}
 
 
                 <form method="POST"
@@ -226,7 +226,7 @@
                 </form>
 
 
-                {% if issue.status.name == "PRIORITIZED" %}
+                {% if issue.status.name == "IN_PROGRESS" %}
 
                 <form method="POST"
                       action="{{ url_for('issues.hold_issue', issue_id=issue.id) }}">
@@ -259,13 +259,13 @@
                 <hr class="my-4">
 
 
-                {% if not issue.priority_override %}
+                {% if not issue.is_pinned %}
 
                 <form method="POST"
-                      action="{{ url_for('issues.prioritize_issue', issue_id=issue.id) }}">
+                      action="{{ url_for('issues.pin_issue', issue_id=issue.id) }}">
 
                     <button class="btn btn-warning w-100 rounded-pill fw-bold text-dark shadow-sm">
-                        Force Prioritize
+                        Pin Issue
                     </button>
 
                 </form>
@@ -274,10 +274,10 @@
                 {% else %}
 
                 <form method="POST"
-                      action="{{ url_for('issues.unprioritize_issue', issue_id=issue.id) }}">
+                      action="{{ url_for('issues.unpin_issue', issue_id=issue.id) }}">
 
                     <button class="btn btn-outline-secondary w-100 rounded-pill">
-                        Remove Override
+                        Unpin Issue
                     </button>
 
                 </form>

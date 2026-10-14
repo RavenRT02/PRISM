@@ -12,7 +12,7 @@
         <div class="metric-card primary h-100">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <h6 class="text-muted fw-semibold mb-1">Total Active</h6>
+                    <h6 class="text-muted fw-semibold mb-1">In Progress</h6>
                     <div class="metric-value">{{ issues|length }}</div>
                 </div>
                 <div class="metric-icon icon-primary">
@@ -22,13 +22,13 @@
         </div>
     </div>
     
-    <!-- Prioritized -->
+    <!-- Pinned Issues -->
     <div class="col-md-6 col-lg-3 flex-fill">
         <div class="metric-card warning h-100">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <h6 class="text-muted fw-semibold mb-1">Prioritized</h6>
-                    <div class="metric-value">{{ prioritized|length }}</div>
+                    <h6 class="text-muted fw-semibold mb-1">Pinned Issues</h6>
+                    <div class="metric-value">{{ pinned_issues|length }}</div>
                 </div>
                 <div class="metric-icon icon-warning">
                     <i class="fa-solid fa-triangle-exclamation"></i>
@@ -108,8 +108,8 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="prioritized-tab" data-bs-toggle="tab" data-bs-target="#prioritized" type="button" role="tab">
-                    Prioritized <span class="badge bg-warning text-dark ms-1">{{ prioritized|length }}</span>
+                <button class="nav-link" id="pinned-tab" data-bs-toggle="tab" data-bs-target="#pinned" type="button" role="tab">
+                    Pinned Issues <span class="badge bg-warning text-dark ms-1">{{ pinned_issues|length }}</span>
                 </button>
             </li>
             <li class="nav-item" role="presentation">
@@ -171,33 +171,37 @@
                                 {% else %}badge-low{% endif %}">
                                 <i class="fa-solid fa-bolt me-1"></i> {{ issue.priority_level.name }}
                             </span>
-                            <span class="badge badge-custom rounded-pill status-{{ issue.status.name | lower }}">
+                            <span class="badge badge-custom rounded-pill status-{{ issue.status.name | lower | replace('_', '-') }}">
                                 {{ issue.status.name }}
                             </span>
                         </div>
                     </div>
                     {% else %}
                     <div class="p-5 text-center text-muted">
-                        <p class="mb-0">No active prioritized issues found.</p>
+                        <p class="mb-0">No issues currently in progress.</p>
                     </div>
                     {% endfor %}
                 </div>
             </div>
             
-            <!-- Prioritized Tab -->
-            <div class="tab-pane fade p-0" id="prioritized" role="tabpanel">
+            <!-- Pinned Issues Tab -->
+            <div class="tab-pane fade p-0" id="pinned" role="tabpanel">
                 <div class="list-group list-group-flush">
-                    {% for issue in prioritized %}
+                    {% for issue in pinned_issues %}
                     <div class="list-group-item issue-item p-4">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h6 class="mb-0 fw-bold">{{ issue.title }}</h6>
                             <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-sm btn-light border radius-10">Details</a>
                         </div>
-                        <p class="mb-2 text-muted small"><i class="fa-solid fa-location-dot me-1"></i> {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Room {{ issue.room.name }}</p>
-                        <div><span class="badge rounded-pill badge-custom badge-high"><i class="fa-solid fa-star me-1"></i> Priority Override Active</span></div>
+                        <p class="mb-2 text-muted small">
+                            <i class="fa-solid fa-location-dot me-1"></i> 
+                            {{ issue.building.name }} 
+                            {% if issue.floor %}&bull; Floor {{ issue.floor.number }}{% endif %} 
+                            {% if issue.room %}&bull; Room {{ issue.room.name }}{% endif %}</p>
+                        <div><span class="badge rounded-pill badge-custom badge-high"><i class="fa-solid fa-star me-1"></i> Pinned </span></div>
                     </div>
                     {% else %}
-                    <div class="p-5 text-center text-muted"><p class="mb-0">No manual priority overrides.</p></div>
+                    <div class="p-5 text-center text-muted"><p class="mb-0">No Pinned Issues.</p></div>
                     {% endfor %}
                 </div>
             </div>
@@ -262,12 +266,13 @@
 
 {% block scripts %}
 <script>
-    window.issuesCount = {{ issues|length }};
-    window.prioritizedCount = {{ prioritized|length }};
+    window.submittedCount = {{ verification_queue|length }};
+    window.inProgressCount = {{ issues|length }};
     window.onHoldCount = {{ on_hold|length }};
     window.resolvedCount = {{ resolved|length }};
     window.closedCount = {{ closed|length }};
-    
+    window.rejectedCount = {{ rejected_count }};
+
     window.categoryLabels = {{ category_labels|tojson }};
     window.categoryCounts = {{ category_counts|tojson }};
 </script>

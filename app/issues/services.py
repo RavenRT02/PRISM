@@ -27,7 +27,7 @@ def detect_duplicate_issue(candidate_issue):
     existing_issue = Issue.query.filter(Issue.building_id == candidate_issue.building_id,
                                         Issue.floor_id == candidate_issue.floor_id,
                                         Issue.room_id == candidate_issue.room_id,
-                                        Issue.status.in_([IssueStatus.SUBMITTED, IssueStatus.PRIORITIZED, IssueStatus.ON_HOLD])).all()
+                                        Issue.status.in_([IssueStatus.SUBMITTED, IssueStatus.IN_PROGRESS, IssueStatus.ON_HOLD])).all()
     
     duplicate_issue = find_duplicate(candidate_issue, existing_issue)
 
@@ -52,7 +52,7 @@ def verify_issue(issue, admin_user, title, category_id = None):
 
     issue.verified_by = admin_user.id
     issue.verified_at = ensure_utc(datetime.now(timezone.utc))
-    issue.status = IssueStatus.PRIORITIZED
+    issue.status = IssueStatus.IN_PROGRESS
 
     update_issue_priority(issue)
     db.session.commit()
@@ -75,7 +75,7 @@ def reject_issue(issue, admin_user, reason = None):
 def release_expired_holds():
 
     held_issues = Issue.query.filter(Issue.status == IssueStatus.ON_HOLD).all()
-    now = ensure_utc(datetime.now(timezone.utc))
+    now = ensure_utc(Issue.hold_until)
 
     released = []
 
@@ -87,7 +87,7 @@ def release_expired_holds():
 
             if now >= hold_until:
 
-                issue.status == IssueStatus.PRIORITIZED
+                issue.status = IssueStatus.IN_PROGRESS
                 issue.hold_until = None
                 issue.status_changed_at = now
                 released.append(issue)
