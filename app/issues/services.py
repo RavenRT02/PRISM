@@ -72,10 +72,11 @@ def reject_issue(issue, admin_user, reason = None):
     return issue
 
 
+
 def release_expired_holds():
 
     held_issues = Issue.query.filter(Issue.status == IssueStatus.ON_HOLD).all()
-    now = ensure_utc(Issue.hold_until)
+    now = datetime.now(timezone.utc)
 
     released = []
 
@@ -83,15 +84,22 @@ def release_expired_holds():
 
         if issue.hold_until:
 
-            hold_until = ensure_utc(datetime.now(timezone.utc))
+            hold_until = ensure_utc(issue.hold_until)
 
             if now >= hold_until:
+
+                old_status = issue.status
 
                 issue.status = IssueStatus.IN_PROGRESS
                 issue.hold_until = None
                 issue.status_changed_at = now
+
+                history = IssueStatusHistory(issue_id=issue.id, old_status=old_status, new_status=IssueStatus.IN_PROGRESS,
+                    changed_at=now, note="Automatically resumed after hold expired")
+
+                db.session.add(history)
                 released.append(issue)
-    
+
     if released:
         db.session.commit()
 

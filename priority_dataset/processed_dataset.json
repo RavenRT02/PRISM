@@ -1,0 +1,1430 @@
+[
+  {
+    "id": "ref_001",
+    "description": "Scratch marks on the desk surface",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      0,
+      8
+    ],
+    "urgency_score_range": [
+      0,
+      8
+    ]
+  },
+  {
+    "id": "ref_002",
+    "description": "The notice board has a crack on its frame",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      0,
+      8
+    ],
+    "urgency_score_range": [
+      0,
+      8
+    ]
+  },
+  {
+    "id": "ref_003",
+    "description": "Some paint has peeled from the corridor wall",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      3,
+      8
+    ],
+    "impact_score_range": [
+      5,
+      18
+    ],
+    "urgency_score_range": [
+      3,
+      8
+    ]
+  },
+  {
+    "id": "ref_004",
+    "description": "The floor tile near the entrance is slightly uneven",
+    "scope": "ROOM",
+    "safety_score_range": [
+      8,
+      16
+    ],
+    "impact_score_range": [
+      5,
+      15
+    ],
+    "urgency_score_range": [
+      5,
+      15
+    ]
+  },
+  {
+    "id": "ref_005",
+    "description": "The projector remote is not working properly",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      10,
+      22
+    ],
+    "urgency_score_range": [
+      20,
+      32
+    ]
+  },
+  {
+    "id": "ref_006",
+    "description": "A few ceiling lights are not working",
+    "scope": "ROOM",
+    "safety_score_range": [
+      5,
+      12
+    ],
+    "impact_score_range": [
+      10,
+      22
+    ],
+    "urgency_score_range": [
+      10,
+      25
+    ]
+  },
+  {
+    "id": "ref_007",
+    "description": "The classroom door is difficult to open",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      8,
+      20
+    ],
+    "urgency_score_range": [
+      8,
+      20
+    ]
+  },
+  {
+    "id": "ref_008",
+    "description": "Several chairs in this classroom need repair",
+    "scope": "ROOM",
+    "safety_score_range": [
+      10,
+      25
+    ],
+    "impact_score_range": [
+      12,
+      28
+    ],
+    "urgency_score_range": [
+      10,
+      25
+    ]
+  },
+  {
+    "id": "ref_009",
+    "description": "The projector is not displaying properly during class",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      28,
+      45
+    ],
+    "urgency_score_range": [
+      18,
+      35
+    ]
+  },
+  {
+    "id": "ref_010",
+    "description": "The classroom AC is not working",
+    "scope": "ROOM",
+    "safety_score_range": [
+      5,
+      18
+    ],
+    "impact_score_range": [
+      20,
+      38
+    ],
+    "urgency_score_range": [
+      18,
+      35
+    ]
+  },
+  {
+    "id": "ref_011",
+    "description": "Most computers in the student lab are unavailable",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      32,
+      48
+    ],
+    "urgency_score_range": [
+      25,
+      45
+    ]
+  },
+  {
+    "id": "ref_012",
+    "description": "The restroom is unavailable",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      10,
+      28
+    ],
+    "impact_score_range": [
+      30,
+      48
+    ],
+    "urgency_score_range": [
+      28,
+      45
+    ]
+  },
+  {
+    "id": "ref_013",
+    "description": "There are only two vending machines in this entire block",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      30,
+      48
+    ],
+    "urgency_score_range": [
+      8,
+      22
+    ]
+  },
+  {
+    "id": "ref_014",
+    "description": "Most of the desks on this floor have damaged surfaces",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      10
+    ],
+    "impact_score_range": [
+      28,
+      45
+    ],
+    "urgency_score_range": [
+      8,
+      22
+    ]
+  },
+  {
+    "id": "ref_015",
+    "description": "A loose ceiling tile is hanging above the classroom",
+    "scope": "ROOM",
+    "safety_score_range": [
+      28,
+      45
+    ],
+    "impact_score_range": [
+      20,
+      38
+    ],
+    "urgency_score_range": [
+      30,
+      48
+    ]
+  },
+  {
+    "id": "ref_016",
+    "description": "The surface of the wheelchair ramp is damaged",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      28,
+      48
+    ],
+    "impact_score_range": [
+      25,
+      45
+    ],
+    "urgency_score_range": [
+      25,
+      45
+    ]
+  },
+  {
+    "id": "ref_017",
+    "description": "Water from the restroom is spreading across the floor",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      30,
+      50
+    ],
+    "impact_score_range": [
+      30,
+      50
+    ],
+    "urgency_score_range": [
+      35,
+      55
+    ]
+  },
+  {
+    "id": "ref_018",
+    "description": "A heavy cupboard is unstable and may tip over",
+    "scope": "ROOM",
+    "safety_score_range": [
+      32,
+      52
+    ],
+    "impact_score_range": [
+      18,
+      35
+    ],
+    "urgency_score_range": [
+      32,
+      52
+    ]
+  },
+  {
+    "id": "ref_019",
+    "description": "Water is leaking from the ceiling",
+    "scope": "ROOM",
+    "safety_score_range": [
+      28,
+      48
+    ],
+    "impact_score_range": [
+      20,
+      38
+    ],
+    "urgency_score_range": [
+      30,
+      50
+    ]
+  },
+  {
+    "id": "ref_020",
+    "description": "A broken floor tile is sticking up from the walkway",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      20,
+      38
+    ],
+    "impact_score_range": [
+      15,
+      32
+    ],
+    "urgency_score_range": [
+      18,
+      35
+    ]
+  },
+  {
+    "id": "ref_021",
+    "description": "Water keeps leaking across the corridor and people are slipping",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      48,
+      68
+    ],
+    "impact_score_range": [
+      35,
+      55
+    ],
+    "urgency_score_range": [
+      52,
+      72
+    ]
+  },
+  {
+    "id": "ref_022",
+    "description": "A large ceiling panel is damaged and looks unstable",
+    "scope": "ROOM",
+    "safety_score_range": [
+      48,
+      68
+    ],
+    "impact_score_range": [
+      25,
+      45
+    ],
+    "urgency_score_range": [
+      45,
+      68
+    ]
+  },
+  {
+    "id": "ref_023",
+    "description": "An exposed electrical wire is accessible to students",
+    "scope": "ROOM",
+    "safety_score_range": [
+      68,
+      88
+    ],
+    "impact_score_range": [
+      25,
+      48
+    ],
+    "urgency_score_range": [
+      68,
+      90
+    ]
+  },
+  {
+    "id": "ref_024",
+    "description": "Chemical liquid has spilled onto the laboratory floor",
+    "scope": "ROOM",
+    "safety_score_range": [
+      52,
+      75
+    ],
+    "impact_score_range": [
+      25,
+      48
+    ],
+    "urgency_score_range": [
+      52,
+      75
+    ]
+  },
+  {
+    "id": "ref_025",
+    "description": "A ceiling panel is hanging loose above the walkway",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      52,
+      72
+    ],
+    "impact_score_range": [
+      30,
+      52
+    ],
+    "urgency_score_range": [
+      52,
+      72
+    ]
+  },
+  {
+    "id": "ref_026",
+    "description": "A dead rodent was found near the food storage area",
+    "scope": "ROOM",
+    "safety_score_range": [
+      48,
+      68
+    ],
+    "impact_score_range": [
+      25,
+      45
+    ],
+    "urgency_score_range": [
+      45,
+      68
+    ]
+  },
+  {
+    "id": "ref_027",
+    "description": "A chemical container is leaking and the liquid has reached the floor",
+    "scope": "ROOM",
+    "safety_score_range": [
+      52,
+      75
+    ],
+    "impact_score_range": [
+      25,
+      48
+    ],
+    "urgency_score_range": [
+      52,
+      75
+    ]
+  },
+  {
+    "id": "ref_028",
+    "description": "A large electrical panel is damaged and internal wiring is exposed",
+    "scope": "ROOM",
+    "safety_score_range": [
+      72,
+      90
+    ],
+    "impact_score_range": [
+      25,
+      50
+    ],
+    "urgency_score_range": [
+      68,
+      90
+    ]
+  },
+  {
+    "id": "ref_029",
+    "description": "Several containers are leaking in the laboratory and liquid is on the floor",
+    "scope": "ROOM",
+    "safety_score_range": [
+      72,
+      90
+    ],
+    "impact_score_range": [
+      35,
+      58
+    ],
+    "urgency_score_range": [
+      72,
+      92
+    ]
+  },
+  {
+    "id": "ref_030",
+    "description": "A heavy section of the ceiling is visibly separating",
+    "scope": "ROOM",
+    "safety_score_range": [
+      72,
+      90
+    ],
+    "impact_score_range": [
+      25,
+      48
+    ],
+    "urgency_score_range": [
+      70,
+      90
+    ]
+  },
+  {
+    "id": "ref_031",
+    "description": "Part of the ceiling has fallen in the hallway and more of it looks unstable",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      88,
+      100
+    ],
+    "impact_score_range": [
+      45,
+      70
+    ],
+    "urgency_score_range": [
+      88,
+      100
+    ]
+  },
+  {
+    "id": "ref_032",
+    "description": "A live electrical cable is exposed at student hand height",
+    "scope": "ROOM",
+    "safety_score_range": [
+      92,
+      100
+    ],
+    "impact_score_range": [
+      30,
+      55
+    ],
+    "urgency_score_range": [
+      92,
+      100
+    ]
+  },
+  {
+    "id": "ref_033",
+    "description": "Gas is leaking from laboratory equipment",
+    "scope": "ROOM",
+    "safety_score_range": [
+      92,
+      100
+    ],
+    "impact_score_range": [
+      35,
+      60
+    ],
+    "urgency_score_range": [
+      92,
+      100
+    ]
+  },
+  {
+    "id": "ref_034",
+    "description": "A large section of the ceiling is hanging above an occupied classroom",
+    "scope": "ROOM",
+    "safety_score_range": [
+      92,
+      100
+    ],
+    "impact_score_range": [
+      38,
+      65
+    ],
+    "urgency_score_range": [
+      92,
+      100
+    ]
+  },
+  {
+    "id": "ref_035",
+    "description": "The fire exit is completely blocked by heavy equipment",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      88,
+      100
+    ],
+    "impact_score_range": [
+      55,
+      80
+    ],
+    "urgency_score_range": [
+      85,
+      100
+    ]
+  },
+  {
+    "id": "ref_036",
+    "description": "An exposed electrical panel is accessible to students",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      90,
+      100
+    ],
+    "impact_score_range": [
+      35,
+      60
+    ],
+    "urgency_score_range": [
+      90,
+      100
+    ]
+  },
+  {
+    "id": "ref_037",
+    "description": "Wi-Fi is not working anywhere on this floor",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      48,
+      68
+    ],
+    "urgency_score_range": [
+      28,
+      48
+    ]
+  },
+  {
+    "id": "ref_038",
+    "description": "There is no power in the classrooms on this floor",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      18,
+      35
+    ],
+    "impact_score_range": [
+      50,
+      70
+    ],
+    "urgency_score_range": [
+      40,
+      62
+    ]
+  },
+  {
+    "id": "ref_039",
+    "description": "The main student printer on this floor is not working",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      42,
+      62
+    ],
+    "urgency_score_range": [
+      30,
+      50
+    ]
+  },
+  {
+    "id": "ref_040",
+    "description": "The elevator is not working in the building",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      8,
+      15
+    ],
+    "impact_score_range": [
+      48,
+      68
+    ],
+    "urgency_score_range": [
+      35,
+      58
+    ]
+  },
+  {
+    "id": "ref_041",
+    "description": "The only accessible entrance to the building is blocked",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      20,
+      40
+    ],
+    "impact_score_range": [
+      58,
+      78
+    ],
+    "urgency_score_range": [
+      45,
+      68
+    ]
+  },
+  {
+    "id": "ref_042",
+    "description": "Wi-Fi is unavailable throughout the building",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      65,
+      85
+    ],
+    "urgency_score_range": [
+      35,
+      58
+    ]
+  },
+  {
+    "id": "ref_043",
+    "description": "There is no electricity anywhere in the building",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      20,
+      40
+    ],
+    "impact_score_range": [
+      68,
+      88
+    ],
+    "urgency_score_range": [
+      50,
+      72
+    ]
+  },
+  {
+    "id": "ref_044",
+    "description": "The water supply is unavailable throughout the building",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      20,
+      40
+    ],
+    "impact_score_range": [
+      72,
+      90
+    ],
+    "urgency_score_range": [
+      80,
+      92
+    ]
+  },
+  {
+    "id": "ref_045",
+    "description": "All classrooms in the building have lost network access",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      68,
+      88
+    ],
+    "urgency_score_range": [
+      38,
+      62
+    ]
+  },
+  {
+    "id": "ref_046",
+    "description": "The main entrance of the building cannot be used",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      10,
+      30
+    ],
+    "impact_score_range": [
+      55,
+      78
+    ],
+    "urgency_score_range": [
+      45,
+      68
+    ]
+  },
+  {
+    "id": "ref_047",
+    "description": "The building has lost all emergency communication systems",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      78,
+      95
+    ],
+    "impact_score_range": [
+      82,
+      100
+    ],
+    "urgency_score_range": [
+      82,
+      100
+    ]
+  },
+  {
+    "id": "ref_048",
+    "description": "The fire alarm system is not functioning",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      88,
+      100
+    ],
+    "impact_score_range": [
+      78,
+      98
+    ],
+    "urgency_score_range": [
+      82,
+      100
+    ]
+  },
+  {
+    "id": "ref_049",
+    "description": "Emergency exit routes throughout the building cannot be used",
+    "scope": "BUILDING",
+    "safety_score_range": [
+      90,
+      100
+    ],
+    "impact_score_range": [
+      82,
+      100
+    ],
+    "urgency_score_range": [
+      90,
+      100
+    ]
+  },
+  {
+    "id": "ref_050",
+    "description": "The projector is not displaying properly and the room is unused this week",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      25,
+      42
+    ],
+    "urgency_score_range": [
+      0,
+      12
+    ]
+  },
+  {
+    "id": "ref_051",
+    "description": "The projector is not displaying properly and we have an intercollege event next week",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      48,
+      68
+    ],
+    "urgency_score_range": [
+      48,
+      68
+    ]
+  },
+  {
+    "id": "ref_052",
+    "description": "The projector remote is not working and it is disturbing presentations because someone has to adjust it manually",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      10,
+      25
+    ],
+    "urgency_score_range": [
+      25,
+      42
+    ]
+  },
+  {
+    "id": "ref_053",
+    "description": "The registration printer is not working and registration closes today",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      55,
+      75
+    ],
+    "urgency_score_range": [
+      55,
+      78
+    ]
+  },
+  {
+    "id": "ref_054",
+    "description": "The auditorium microphone is not working for a university function tomorrow",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      50,
+      70
+    ],
+    "urgency_score_range": [
+      52,
+      72
+    ]
+  },
+  {
+    "id": "ref_055",
+    "description": "The lecture hall AC is not working and an exam is scheduled there tomorrow",
+    "scope": "ROOM",
+    "safety_score_range": [
+      10,
+      25
+    ],
+    "impact_score_range": [
+      45,
+      65
+    ],
+    "urgency_score_range": [
+      52,
+      72
+    ]
+  },
+  {
+    "id": "ref_056",
+    "description": "The Wi-Fi keeps disconnecting during today's online exam",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      55,
+      78
+    ],
+    "urgency_score_range": [
+      60,
+      82
+    ]
+  },
+  {
+    "id": "ref_057",
+    "description": "The wheelchair ramp is blocked and an event is scheduled in this area tomorrow",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      25,
+      48
+    ],
+    "impact_score_range": [
+      55,
+      78
+    ],
+    "urgency_score_range": [
+      55,
+      78
+    ]
+  },
+  {
+    "id": "ref_058",
+    "description": "The notice board frame needs repair before a seminar tomorrow",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      8,
+      22
+    ],
+    "urgency_score_range": [
+      15,
+      30
+    ]
+  },
+  {
+    "id": "ref_059",
+    "description": "A damaged electrical panel cover is locked and the internal wiring cannot be accessed",
+    "scope": "ROOM",
+    "safety_score_range": [
+      42,
+      62
+    ],
+    "impact_score_range": [
+      8,
+      25
+    ],
+    "urgency_score_range": [
+      25,
+      45
+    ]
+  },
+  {
+    "id": "ref_060",
+    "description": "Several fire extinguishers are past their inspection date",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      48,
+      68
+    ],
+    "impact_score_range": [
+      35,
+      58
+    ],
+    "urgency_score_range": [
+      25,
+      45
+    ]
+  },
+  {
+    "id": "ref_061",
+    "description": "There is a strange smell in the chemistry laboratory",
+    "scope": "ROOM",
+    "safety_score_range": [
+      30,
+      55
+    ],
+    "impact_score_range": [
+      20,
+      42
+    ],
+    "urgency_score_range": [
+      30,
+      55
+    ]
+  },
+  {
+    "id": "ref_062",
+    "description": "There is a strange smell in the mathematics faculty office",
+    "scope": "ROOM",
+    "safety_score_range": [
+      15,
+      35
+    ],
+    "impact_score_range": [
+      8,
+      22
+    ],
+    "urgency_score_range": [
+      15,
+      35
+    ]
+  },
+  {
+    "id": "ref_063",
+    "description": "Add another notice board in the classroom",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      8,
+      20
+    ],
+    "urgency_score_range": [
+      0,
+      8
+    ]
+  },
+  {
+    "id": "ref_064",
+    "description": "Provide a few more chairs in the classroom",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      18,
+      32
+    ],
+    "urgency_score_range": [
+      8,
+      22
+    ]
+  },
+  {
+    "id": "ref_065",
+    "description": "Can we get more charging points in the library?",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      20,
+      35
+    ],
+    "urgency_score_range": [
+      5,
+      20
+    ]
+  },
+  {
+    "id": "ref_066",
+    "description": "Increase the number of water dispensers on this floor",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      25,
+      45
+    ],
+    "urgency_score_range": [
+      8,
+      25
+    ]
+  },
+  {
+    "id": "ref_067",
+    "description": "More tables are needed in the canteen because students struggle to find seating during lunch",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      35,
+      55
+    ],
+    "urgency_score_range": [
+      15,
+      35
+    ]
+  },
+  {
+    "id": "ref_068",
+    "description": "Requesting additional computers for the lab due to long waiting times",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      35,
+      55
+    ],
+    "urgency_score_range": [
+      22,
+      42
+    ]
+  },
+  {
+    "id": "ref_069",
+    "description": "The library needs additional study tables",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      30,
+      50
+    ],
+    "urgency_score_range": [
+      8,
+      25
+    ]
+  },
+  {
+    "id": "ref_070",
+    "description": "Would it be possible to add another water dispenser near the lecture halls?",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      25,
+      45
+    ],
+    "urgency_score_range": [
+      8,
+      25
+    ]
+  },
+  {
+    "id": "ref_071",
+    "description": "There are not enough computers available during practical sessions",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      35,
+      55
+    ],
+    "urgency_score_range": [
+      22,
+      42
+    ]
+  },
+  {
+    "id": "ref_072",
+    "description": "The library needs more study spaces because it is overcrowded",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      38,
+      58
+    ],
+    "urgency_score_range": [
+      25,
+      45
+    ]
+  },
+  {
+    "id": "ref_073",
+    "description": "More functioning printers are needed during registration",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      45,
+      65
+    ],
+    "urgency_score_range": [
+      35,
+      58
+    ]
+  },
+  {
+    "id": "ref_074",
+    "description": "Additional water facilities are needed because of long queues",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      30,
+      50
+    ],
+    "urgency_score_range": [
+      20,
+      40
+    ]
+  },
+  {
+    "id": "ref_075",
+    "description": "More tables are needed because there is not enough seating for a large student event tomorrow",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      50,
+      72
+    ],
+    "urgency_score_range": [
+      52,
+      75
+    ]
+  },
+  {
+    "id": "ref_076",
+    "description": "Additional computers are needed because of practical exams next week",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      48,
+      68
+    ],
+    "urgency_score_range": [
+      45,
+      68
+    ]
+  },
+  {
+    "id": "ref_077",
+    "description": "More seating is needed because the library will be crowded during exams next week",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      48,
+      68
+    ],
+    "urgency_score_range": [
+      45,
+      68
+    ]
+  },
+  {
+    "id": "ref_078",
+    "description": "Can we add another notice board before next month's event?",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      8,
+      22
+    ],
+    "urgency_score_range": [
+      8,
+      22
+    ]
+  },
+  {
+    "id": "ref_079",
+    "description": "An accessible study table would be useful in the library",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      22,
+      35
+    ],
+    "urgency_score_range": [
+      8,
+      25
+    ]
+  },
+  {
+    "id": "ref_080",
+    "description": "An accessible water dispenser is needed on this floor",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      10
+    ],
+    "impact_score_range": [
+      25,
+      45
+    ],
+    "urgency_score_range": [
+      18,
+      38
+    ]
+  },
+  {
+    "id": "ref_081",
+    "description": "An accessible route is needed for the temporary event area",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      15,
+      35
+    ],
+    "impact_score_range": [
+      48,
+      70
+    ],
+    "urgency_score_range": [
+      48,
+      70
+    ]
+  },
+  {
+    "id": "ref_082",
+    "description": "There are not enough tables in the canteen for normal daily use",
+    "scope": "FLOOR",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      32,
+      52
+    ],
+    "urgency_score_range": [
+      8,
+      25
+    ]
+  },
+  {
+    "id": "ref_083",
+    "description": "The student services counter needs another queue terminal because students wait for long periods",
+    "scope": "ROOM",
+    "safety_score_range": [
+      0,
+      8
+    ],
+    "impact_score_range": [
+      28,
+      48
+    ],
+    "urgency_score_range": [
+      18,
+      38
+    ]
+  },
+  {
+    "id": "ref_084",
+    "description": "Additional sanitary waste bins are needed in the restroom",
+    "scope": "ROOM",
+    "safety_score_range": [
+      5,
+      18
+    ],
+    "impact_score_range": [
+      20,
+      38
+    ],
+    "urgency_score_range": [
+      18,
+      35
+    ]
+  }
+]
