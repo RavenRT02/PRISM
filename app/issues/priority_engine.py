@@ -1,7 +1,6 @@
 from app.issues.enums import PriorityLevel, IssueStatus
 from datetime import datetime, timezone
 from app.utils.datetime_utils import ensure_utc
-from app.issues.priority_keywords import URGENCY_KEYWORDS, IMPACT_KEYWORDS
 import string
 from spellchecker import SpellChecker
 from nltk.stem import WordNetLemmatizer
@@ -106,20 +105,12 @@ def clean_and_lemmatize(description):
 
 def infer_urgency_score(cleaned_description):
 
-    score = 0
-    for category in URGENCY_KEYWORDS.values():
-        if any(keyword in cleaned_description for keyword in category["keywords"]):
-            score += category["score"]
-    return score
+    pass
 
 
 def infer_impact_score(cleaned_description):
 
-    score = 0
-    for category in IMPACT_KEYWORDS.values():
-        if any(keyword in cleaned_description for keyword in category["keywords"]):
-            score += category["score"]
-    return score
+    pass
 
 
 def auto_score_issue(issue):
