@@ -247,6 +247,8 @@ class Issue(db.Model):
 
     status_history = db.relationship("IssueStatusHistory", back_populates = "issue", lazy = True)
 
+    llm_response = db.relationship("LLMResponse", back_populates= "issue", uselist= False, cascade= "all, delete-orphan")
+
     __table_args__ = (
         db.CheckConstraint(
             """
@@ -259,6 +261,46 @@ class Issue(db.Model):
             name = "ck_issue_location_scope"
         ),
     )
+
+
+
+class LLMResponse(db.Model):
+
+    __tablename__ = "llm_responses"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    issue_id = db.Column(db.Integer, db.ForeignKey("issues.id", ondelete= "CASCADE"), nullable= False, unique= True)
+
+    # Preserve the original issue description and scope
+    description = db.Column(db.String(300), nullable=False)
+    scope = db.Column(db.Enum(LocationScope), nullable=False)
+
+    # LLM-proposed or admin-edited factor ranges
+    safety_min = db.Column(db.Float, nullable=False)
+    safety_max = db.Column(db.Float, nullable=False)
+
+    impact_min = db.Column(db.Float, nullable=False)
+    impact_max = db.Column(db.Float, nullable=False)
+
+    urgency_min = db.Column(db.Float, nullable=False)
+    urgency_max = db.Column(db.Float, nullable=False)
+
+    # Calculated midpoints
+    safety_score = db.Column(db.Float, nullable=False)
+    impact_score = db.Column(db.Float, nullable=False)
+    urgency_score = db.Column(db.Float, nullable=False)
+
+    # Calculated overall priority
+    priority_score = db.Column(db.Float, nullable=False)
+    priority_level = db.Column(db.Enum(PriorityLevel), nullable=False)
+
+    # Approval and vector-store ingestion tracking
+    finalized = db.Column(db.Boolean, nullable=False, default=False)
+    added_to_vector_db = db.Column(db.Boolean, nullable=False, default=False)
+
+    # Relationship to the original issue
+    issue = db.relationship("Issue", back_populates= "llm_response")
 
 
 
