@@ -3,9 +3,9 @@ from app.models import IssueFollower, Issue, IssueStatusHistory
 from app.issues.duplicate_detection import find_duplicate
 from app.issues.enums import IssueStatus
 from datetime import datetime, timezone
-from app.issues.priority_engine import update_issue_priority
+from app.priority.priority_engine import update_issue_priority
 from app.utils.datetime_utils import ensure_utc
-from app.issues.priority_engine import check_hold_expiry
+from app.priority.priority_engine import check_hold_expiry
 
 
 def follow_issue(user_id, issue_id):

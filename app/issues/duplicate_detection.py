@@ -1,6 +1,6 @@
 import re
 from functools import lru_cache
-from app.issues.priority_engine import clean_and_lemmatize
+from app.priority.priority_engine import clean_and_lemmatize
 
 
 STOPWORDS = { "the", "is", "in", "at", "on", "a", "an", "and", "or", "to", "for", "of", "with", "by", "from" }

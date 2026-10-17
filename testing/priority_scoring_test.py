@@ -1,8 +1,8 @@
 # run with --> python -m testing.priority_scoring_test
 # app is not inside testing folder so it cannot find when this file is run with the run button
 
-from app.issues.priority_score_cal import find_midpoint
-from app.issues.priority_score_cal import calculate_priority_score
+from app.priority.priority_score_cal import find_midpoint
+from app.priority.priority_score_cal import calculate_priority_score
 
 
 tests = [
