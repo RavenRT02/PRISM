@@ -58,7 +58,7 @@ def determine_priority_path(description: str) -> dict:
     }
 
 
-
+# This is used when strong references are available for the issue, llm path does not use this
 def calculate_from_reference(reference: dict) -> dict:
     """
     Calculate factor midpoints and initial priority score and tag

@@ -25,8 +25,17 @@ class Config:
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
 
-    # LLM config 
-    LLM_PROVIDER = os.getenv("LLM_PROVIDER")
+    # LLM configuration
+
+    # OpenAI — uncomment this block to use OpenAI
+    # LLM_PROVIDER = "openai"
+    # LLM_MODEL = "gpt-4.1-mini"
+    # LLM_BASE_URL = None
+
+    # Google Gemini — uncomment this block to use Gemini
+    LLM_PROVIDER = "gemini"
+    LLM_MODEL = "gemini-3.6-flash"
+    LLM_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+    # API key for the currently selected provider
     LLM_API_KEY = os.getenv("LLM_API_KEY")
-    LLM_MODEL = os.getenv("LLM_MODEL")
-    LLM_BASE_URL = os.getenv("LLM_BASE_URL") or None
