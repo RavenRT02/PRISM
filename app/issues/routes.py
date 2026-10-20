@@ -8,6 +8,7 @@ from app.issues.services import detect_duplicate_issue, follow_issue, create_iss
 from app.utils.decorators import admin_required
 from datetime import datetime, timezone, timedelta
 from app.utils.datetime_utils import ensure_utc
+from app.priority.priority_engine import update_issue_priority
 import os 
 from werkzeug.utils import secure_filename
 
@@ -185,11 +186,21 @@ def hold_issue(issue_id):
 
 
     issue = Issue.query.get_or_404(issue_id)
+
+    if issue.status != IssueStatus.IN_PROGRESS:
+        flash("Only active issues can be placed on hold.", "warning")
+        return redirect(url_for("issues.issue_details", issue_id=issue.id))
+
     old_status = issue.status
+    now = ensure_utc(datetime.now(timezone.utc))
     HOLD_DURATION_DAYS = 3
+
+    # Increase eligible time up to the moment the hold begins, then pause the clock.
+    update_issue_priority(issue=issue, now=now)
     issue.status = IssueStatus.ON_HOLD
-    issue.hold_until = ensure_utc(datetime.now(timezone.utc)) + timedelta(days=HOLD_DURATION_DAYS)
-    issue.status_changed_at = ensure_utc(datetime.now(timezone.utc))
+    issue.hold_until = now + timedelta(days=HOLD_DURATION_DAYS)
+    issue.status_changed_at = now
+    issue.aging_updated_at = None
 
     log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
 
@@ -208,10 +219,16 @@ def resolve_issue(issue_id):
 
     issue = Issue.query.get_or_404(issue_id)
     old_status = issue.status
-    issue.status = IssueStatus.RESOLVED
-    issue.status_changed_at = ensure_utc(datetime.now(timezone.utc))
+    now = ensure_utc(datetime.now(timezone.utc))
 
-    log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
+    if issue.status == IssueStatus.IN_PROGRESS:
+        update_issue_priority(issue=issue, now=now)
+    
+    issue.status = IssueStatus.RESOLVED
+    issue.status_changed_at = now
+    issue.aging_updated_at = None
+
+    log_status_change(issue, old_status, issue.status, current_user.id, "Issue resolved")
 
     db.session.commit()
     flash("Issue marked as resolved", "success")
@@ -230,8 +247,13 @@ def close_issue(issue_id):
     tracker_id = request.form.get("duplicate_id")
     old_status = issue.status
 
+    now = ensure_utc(datetime.now(timezone.utc))
+    if issue.status == IssueStatus.IN_PROGRESS:
+        update_issue_priority(issue=issue, now=now)
+
     issue.status = IssueStatus.CLOSED
-    issue.status_changed_at = ensure_utc(datetime.now(timezone.utc))
+    issue.status_changed_at = now
+    issue.aging_updated_at = None
     
     if reason:
         issue.review_notes = reason
@@ -281,8 +303,12 @@ def resume_issue(issue_id):
         return redirect(url_for("issues.issue_details", issue_id=issue.id))
 
     old_status = issue.status
+    now = ensure_utc(datetime.now(timezone.utc))
     issue.status = IssueStatus.IN_PROGRESS
     issue.hold_until = None
+    issue.status_changed_at = now
+    issue.aging_updated_at = now
+    update_issue_priority(issue=issue, now=now)
     
     db.session.commit()
     flash("Ticket resumed to Active Pipeline.", "success")

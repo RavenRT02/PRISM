@@ -217,6 +217,9 @@ class Issue(db.Model):
 
     status_changed_at = db.Column(db.DateTime(timezone = True), default = lambda: datetime.now(timezone.utc))
 
+    # Last time eligible IN_PROGRESS time was converted into aging points.
+    aging_updated_at = db.Column(db.DateTime(timezone = True))
+
     category_id = db.Column(db.Integer, db.ForeignKey("issue_categories.id"), nullable = False)
     category = db.relationship("IssueCategory")
 

@@ -3,9 +3,8 @@ from app.models import IssueFollower, Issue, IssueStatusHistory
 from app.issues.duplicate_detection import find_duplicate
 from app.issues.enums import IssueStatus
 from datetime import datetime, timezone
-from app.priority.priority_engine import update_issue_priority
+from app.priority.priority_engine import update_issue_priority, check_hold_expiry
 from app.utils.datetime_utils import ensure_utc
-from app.priority.priority_engine import check_hold_expiry
 
 
 def follow_issue(user_id, issue_id):
@@ -53,6 +52,7 @@ def verify_issue(issue, admin_user, title, category_id = None):
     issue.verified_by = admin_user.id
     issue.verified_at = ensure_utc(datetime.now(timezone.utc))
     issue.status = IssueStatus.IN_PROGRESS
+    issue.aging_updated_at = ensure_utc(datetime.now(timezone.utc))
 
     update_issue_priority(issue)
     db.session.commit()
@@ -74,31 +74,29 @@ def reject_issue(issue, admin_user, reason = None):
 
 
 def release_expired_holds():
+    """Resume expired holds without counting time spent ON_HOLD as aging time"""
 
     held_issues = Issue.query.filter(Issue.status == IssueStatus.ON_HOLD).all()
-    now = datetime.now(timezone.utc)
+    now = ensure_utc(datetime.now(timezone.utc))
 
     released = []
 
     for issue in held_issues:
+        if not check_hold_expiry(issue=issue, now=now):
+            continue
 
-        if issue.hold_until:
+        # For issues whose hold time expires, update status and add continue aging
+        old_status = issue.status
+        issue.status = IssueStatus.IN_PROGRESS
+        issue.hold_until = None
+        issue.status_changed_at = now
+        issue.aging_updated_at = now
 
-            hold_until = ensure_utc(issue.hold_until)
+        history = IssueStatusHistory(issue_id=issue.id, old_status=old_status, new_status=IssueStatus.IN_PROGRESS,
+            changed_at=now, note="Automatically resumed after hold expired")
 
-            if now >= hold_until:
-
-                old_status = issue.status
-
-                issue.status = IssueStatus.IN_PROGRESS
-                issue.hold_until = None
-                issue.status_changed_at = now
-
-                history = IssueStatusHistory(issue_id=issue.id, old_status=old_status, new_status=IssueStatus.IN_PROGRESS,
-                    changed_at=now, note="Automatically resumed after hold expired")
-
-                db.session.add(history)
-                released.append(issue)
+        db.session.add(history)
+        released.append(issue)
 
     if released:
         db.session.commit()

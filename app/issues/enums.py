@@ -10,6 +10,7 @@ class IssueStatus(enum.Enum):
 
     SUBMITTED = "SUBMITTED"
     IN_PROGRESS = "IN_PROGRESS"   # Previously PRIORITIZED
+    PENDING_APPROVAL = "PENDING_APPROVAL"  # new state for llm response waiting for admin approval
     ON_HOLD = "ON_HOLD"
     RESOLVED = "RESOLVED"
     CLOSED = "CLOSED"

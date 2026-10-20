@@ -17,6 +17,20 @@ def find_midpoint(safety_range: list[int], impact_range: list[int], urgency_rang
     return safety, impact, urgency
 
 
+def assign_priority_level(score: float) -> PriorityLevel:
+    """Map the final score to the existing priority bands"""
+
+    if score <= 25:
+        return PriorityLevel.LOW
+    
+    elif score <= 55:
+        return PriorityLevel.MEDIUM
+    
+    elif score <= 75:
+        return PriorityLevel.HIGH
+    
+    return PriorityLevel.CRITICAL
+
 
 def calculate_priority_score(safety: float, impact: float, urgency: float) -> tuple[float, PriorityLevel]:
     """
@@ -40,13 +54,6 @@ def calculate_priority_score(safety: float, impact: float, urgency: float) -> tu
 
     initial_score = min(base_score + bonus, 90)
 
-    if initial_score <= 25:
-        priority_level = PriorityLevel.LOW
-    elif initial_score <= 55:
-        priority_level = PriorityLevel.MEDIUM
-    elif initial_score <= 75:
-        priority_level = PriorityLevel.HIGH
-    else:
-        priority_level = PriorityLevel.CRITICAL
+    priority_level = assign_priority_level(score=initial_score)
 
     return round(initial_score, 2), priority_level.value
