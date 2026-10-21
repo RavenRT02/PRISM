@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, url_for, flash, render_template, jsonify
+from flask import Blueprint, request, redirect, url_for, flash, render_template, jsonify, current_app
 from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Issue, Building, Floor, Room, IssueCategory
@@ -110,11 +110,23 @@ def verify_issue_route(issue_id):
         return redirect(url_for("issues.issue_details", issue_id = issue.id))
     
     old_status = issue.status
-    
-    verify_issue(issue, current_user, title, category_id)
-    flash("Issue verified and added to queue successfully")
 
-    log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
+    try:
+        verify_issue(issue, current_user, title, category_id)
+        log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
+        db.session.commit()
+
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Failed to verify issue")
+        flash("Unable to verify the issue. Please try again.", "error")
+        return redirect(url_for("issues.issue_details", issue_id=issue.id))
+
+    if issue.status == IssueStatus.PENDING_APPROVAL:
+        flash("Issue assessed and submitted for admin approval", "success")
+
+    elif issue.status == IssueStatus.IN_PROGRESS:
+        flash("Issue verified and added to active queue", "success")
 
     return redirect(url_for("dashboard.admin_dashboard"))
 

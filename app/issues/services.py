@@ -4,6 +4,7 @@ from app.issues.duplicate_detection import find_duplicate
 from app.issues.enums import IssueStatus
 from datetime import datetime, timezone
 from app.priority.priority_engine import update_issue_priority, check_hold_expiry
+from app.issues.assessment_service import assess_issue
 from app.utils.datetime_utils import ensure_utc
 
 
@@ -51,11 +52,9 @@ def verify_issue(issue, admin_user, title, category_id = None):
 
     issue.verified_by = admin_user.id
     issue.verified_at = ensure_utc(datetime.now(timezone.utc))
-    issue.status = IssueStatus.IN_PROGRESS
-    issue.aging_updated_at = ensure_utc(datetime.now(timezone.utc))
 
-    update_issue_priority(issue)
-    db.session.commit()
+    # Find assessment path and populate Issue or LLMResponse models accordingly
+    assess_issue(issue=issue)
 
     return issue
 
@@ -106,7 +105,7 @@ def release_expired_holds():
 
 def log_status_change(issue, old_status, new_status, user_id=None, note=None):
 
-    history = IssueStatusHistory(issue_id=issue.id, old_status=old_status.name if old_status else None,
-                                 new_status=new_status.name, changed_by=user_id, note=note)
+    history = IssueStatusHistory(issue_id=issue.id, old_status=old_status if old_status else None,
+                                 new_status=new_status, changed_by=user_id, note=note)
 
     db.session.add(history)
