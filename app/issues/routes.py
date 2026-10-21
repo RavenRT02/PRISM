@@ -1,7 +1,7 @@
 from flask import Blueprint, request, redirect, url_for, flash, render_template, jsonify, current_app
 from flask_login import login_required, current_user
 from app.extensions import db
-from app.models import Issue, Building, Floor, Room, IssueCategory
+from app.models import Issue, Building, Floor, Room, IssueCategory, LLMResponse
 from app.utils.toxicity import contains_toxicity
 from app.issues.enums import IssueStatus, IssueType
 from app.issues.services import detect_duplicate_issue, follow_issue, create_issue, verify_issue, reject_issue, log_status_change
@@ -129,6 +129,18 @@ def verify_issue_route(issue_id):
         flash("Issue verified and added to active queue", "success")
 
     return redirect(url_for("dashboard.admin_dashboard"))
+
+
+
+
+@issues_bp.route("/pending-assessments")
+@login_required
+@admin_required
+def pending_assessments():
+
+    pending_issues = Issue.query.filter_by(status=IssueStatus.PENDING_APPROVAL).order_by(Issue.created_at.asc()).all()
+
+    return render_template("issues/pending_assessments.html", pending_issues=pending_issues)
 
 
 

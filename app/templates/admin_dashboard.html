@@ -97,26 +97,37 @@
 <div class="custom-card shadow-sm">
     <div class="card-body p-0">
         <ul class="nav nav-tabs px-4 pt-3" id="issueTabs" role="tablist">
+
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="verification-tab" data-bs-toggle="tab" data-bs-target="#verification" type="button" role="tab">
                     Verification Queue <span class="badge bg-danger ms-1">{{ verification_queue|length }}</span>
                 </button>
             </li>
+
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="assessment-tab" data-bs-toggle="tab" data-bs-target="#assessment" type="button" role="tab">
+                    Pending Assessments <span class="badge bg-warning text-dark ms-1">{{ pending_assessments|length }}</span>
+                </button>
+            </li>
+
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab">
                     Active Issues <span class="badge bg-primary ms-1">{{ issues|length }}</span>
                 </button>
             </li>
+
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="pinned-tab" data-bs-toggle="tab" data-bs-target="#pinned" type="button" role="tab">
                     Pinned Issues <span class="badge bg-warning text-dark ms-1">{{ pinned_issues|length }}</span>
                 </button>
             </li>
+
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="onhold-tab" data-bs-toggle="tab" data-bs-target="#onhold" type="button" role="tab">
                     On Hold <span class="badge bg-info text-dark ms-1">{{ on_hold|length }}</span>
                 </button>
             </li>
+
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="resolved-tab" data-bs-toggle="tab" data-bs-target="#resolved" type="button" role="tab">
                     Resolved / Closed <span class="badge bg-success ms-1">{{ resolved|length + closed|length }}</span>
@@ -144,6 +155,47 @@
                     <div class="p-5 text-center text-muted">
                         <i class="fa-regular fa-circle-check fs-1 mb-3 text-success"></i>
                         <p class="mb-0">All caught up! No issues pending verification.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Pending Assessment Approval Tab -->
+            <div class="tab-pane fade p-0" id="assessment" role="tabpanel">
+
+                <div class="list-group list-group-flush">
+                    {% for issue in pending_assessments %}
+                    <div class="list-group-item issue-item p-4 d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <h6 class="mb-1 fw-bold text-dark">{{ issue.title or "Untitled Issue" }}</h6>
+
+                            <p class="mb-1 text-muted small">
+                                {{ issue.description[:100] }}
+                                {% if issue.description|length > 100 %}...{% endif %}
+                            </p>
+
+                            {% if issue.llm_response %}
+                            <span class="badge bg-secondary">
+                                Estimated priority:
+                                {{ issue.llm_response.priority_level.name }}
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <a href="{{ url_for('issues.review_assessment', issue_id=issue.id) }}"
+                        class="btn btn-sm btn-outline-primary px-3 rounded-pill">
+                            <i class="fa-solid fa-clipboard-check me-1"></i>
+                            Review Assessment
+                        </a>
+
+                    </div>
+                    {% else %}
+                    <div class="p-5 text-center text-muted">
+                        <i class="fa-regular fa-circle-check fs-1 mb-3 text-success"></i>
+                        <p class="mb-0">
+                            No assessments are waiting for approval.
+                        </p>
                     </div>
                     {% endfor %}
                 </div>

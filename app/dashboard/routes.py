@@ -22,6 +22,8 @@ def admin_dashboard():
     
     verification_queue = Issue.query.filter(Issue.status == IssueStatus.SUBMITTED).order_by(Issue.created_at.asc()).all()
 
+    pending_assessments = Issue.query.filter(Issue.status == IssueStatus.PENDING_APPROVAL).order_by(Issue.created_at.asc()).all()
+
     pinned_issues = Issue.query.filter(Issue.is_pinned.is_(True)).all()
 
     on_hold = Issue.query.filter(Issue.status == IssueStatus.ON_HOLD).all()
@@ -39,7 +41,7 @@ def admin_dashboard():
 
     return render_template("admin_dashboard.html", issues=issues, pinned_issues=pinned_issues,
                             on_hold=on_hold, resolved=resolved, closed=closed, verification_queue = verification_queue,
-                            issues_count = len(issues), pinned_count = len(pinned_issues), 
+                            pending_assessments=pending_assessments, issues_count = len(issues), pinned_count = len(pinned_issues), 
                             on_hold_count = len(on_hold), resolved_count = len(resolved), closed_count = len(closed),
                             category_labels = category_labels, category_counts = category_counts, rejected_count = rejected_count)
 

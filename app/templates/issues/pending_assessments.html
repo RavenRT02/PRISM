@@ -1,0 +1,120 @@
+ 
+{% extends "base.html" %}
+
+{% block title %}Pending Assessments | PRISM{% endblock %}
+{% block page_title %}Pending Assessment Approval{% endblock %}
+
+{% block content %}
+
+<div class="custom-card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-bold">Assessments Awaiting Review</span>
+        <span class="badge bg-warning text-dark">
+            {{ pending_issues|length }} pending
+        </span>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+
+            {% for issue in pending_issues %}
+            <div class="list-group-item p-4">
+
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-1">
+                            {{ issue.title or "Awaiting Final Title" }}
+                        </h5>
+                        <small class="text-muted">
+                            Issue #{{ issue.id }} &bull;
+                            Submitted {{ issue.created_at.strftime('%Y-%m-%d') }}
+                        </small>
+                    </div>
+
+                    <span class="badge bg-warning text-dark">
+                        Pending Approval
+                    </span>
+                </div>
+
+                <p class="mb-3">{{ issue.description }}</p>
+
+                <p class="text-muted small mb-3">
+                    <i class="fa-solid fa-location-dot me-1"></i>
+                    {{ issue.building.name }}
+                    {% if issue.floor %}&bull; Floor {{ issue.floor.number }}{% endif %}
+                    {% if issue.room %}&bull; Room {{ issue.room.name }}{% endif %}
+                </p>
+
+                {% if issue.llm_response %}
+                {% set assessment = issue.llm_response %}
+
+                <div class="row g-3 mb-3">
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <div class="text-muted small mb-1">Safety</div>
+                            <strong>
+                                {{ assessment.safety_min }}–{{ assessment.safety_max }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <div class="text-muted small mb-1">Impact</div>
+                            <strong>
+                                {{ assessment.impact_min }}–{{ assessment.impact_max }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <div class="text-muted small mb-1">Urgency</div>
+                            <strong>
+                                {{ assessment.urgency_min }}–{{ assessment.urgency_max }}
+                            </strong>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <span>
+                        Calculated score:
+                        <strong>{{ assessment.priority_score }}</strong>
+                    </span>
+
+                    <span class="badge bg-secondary">
+                        {{ assessment.priority_level.name }}
+                    </span>
+                </div>
+
+                {% else %}
+                <div class="alert alert-danger mb-0">
+                    No assessment record was found for this issue.
+                    Please investigate before approving it.
+                </div>
+                {% endif %}
+
+                <div class="mt-3">
+                    <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}"
+                       class="btn btn-sm btn-outline-primary rounded-pill">
+                        View Issue Details
+                    </a>
+                </div>
+
+            </div>
+
+            {% else %}
+            <div class="p-5 text-center text-muted">
+                <i class="fa-regular fa-circle-check fs-1 mb-3 text-success"></i>
+                <p class="mb-0">No assessments are waiting for approval.</p>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
