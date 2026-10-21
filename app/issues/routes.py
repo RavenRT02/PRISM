@@ -3,12 +3,14 @@ from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Issue, Building, Floor, Room, IssueCategory, LLMResponse
 from app.utils.toxicity import contains_toxicity
-from app.issues.enums import IssueStatus, IssueType
+from app.issues.enums import IssueStatus, PriorityLevel
 from app.issues.services import detect_duplicate_issue, follow_issue, create_issue, verify_issue, reject_issue, log_status_change
 from app.utils.decorators import admin_required
 from datetime import datetime, timezone, timedelta
 from app.utils.datetime_utils import ensure_utc
 from app.priority.priority_engine import update_issue_priority
+from app.priority.priority_score_cal import find_midpoint, calculate_priority_score
+from app.issues.assessment_service import approve_assessment
 import os 
 from werkzeug.utils import secure_filename
 
@@ -141,6 +143,87 @@ def pending_assessments():
     pending_issues = Issue.query.filter_by(status=IssueStatus.PENDING_APPROVAL).order_by(Issue.created_at.asc()).all()
 
     return render_template("issues/pending_assessments.html", pending_issues=pending_issues)
+
+
+# Allows admin to approve llm response or save edits to range (saving does not approve)
+@issues_bp.route("/review-assessment/<int:issue_id>", methods = ['GET', 'POST'])
+@login_required
+@admin_required
+def review_assessment(issue_id):
+
+    issue = Issue.query.get_or_404(issue_id)
+    response = issue.llm_response
+
+    # will not trigger if pipeline is system following pipeline properly, just a failsafe condition
+    if (issue.status != IssueStatus.PENDING_APPROVAL) or (response is None) or (response.finalized):
+        flash("This assessment is not awaiting approval", "warning")
+        return redirect(url_for("dashboard.admin_dashboard"))
+
+    if request.method == 'POST':
+        try:
+            # Read and validate the six editable range values
+            ranges = {}
+
+            for factor in ("safety", "impact", "urgency"):
+                minimum = float(request.form.get(f'{factor}_min', ""))
+                maximum = float(request.form.get(f'{factor}_max', ""))
+
+                if not (0 <= minimum <= 100) and (0 <= maximum <= 100):
+                    raise ValueError(f'{factor.title()} scores must be between 0 and 100')
+
+                if minimum > maximum:
+                    raise ValueError(f'{factor.title()} minimum cannot exceed its maximum')
+
+                ranges[factor] = (minimum, maximum)
+
+            # Store the edited ranges to llm response table
+            response.safety_min, response.safety_max = ranges["safety"]
+            response.impact_min, response.impact_max = ranges["impact"]
+            response.urgency_min, response.urgency_max = ranges["urgency"]
+
+            # Recalculate midpoints using existing scoring utilities
+            safety, impact, urgency = find_midpoint(
+                safety_range=list(ranges["safety"]), impact_range=list(ranges["impact"]), urgency_range=list(ranges["urgency"])
+                )
+
+            priority_score, priority_level = calculate_priority_score(safety=safety, impact=impact, urgency=urgency)
+
+            response.safety_score = safety
+            response.impact_score = impact
+            response.urgency_score = urgency
+            response.priority_score = priority_score
+            response.priority_level = PriorityLevel(priority_level)
+
+            action = request.form.get("action")
+
+            if action == "approve":
+                old_status = issue.status
+                approve_assessment(issue=issue)
+
+                log_status_change(issue, old_status, issue.status, current_user.id, "LLM assessment reviewed and approved by admin")
+
+                db.session.commit()
+                flash("Assessment approved. Issue added to the active queue", "success")
+
+                return redirect(url_for("dashboard.admin_dashboard"))
+
+            elif action == "save":
+                db.session.commit()
+                flash("Assessment changes saved", "success")
+
+                return redirect(url_for("issues.review_assessment", issue_id=issue.id))
+
+            else:
+                raise ValueError("Invalid form action")
+
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception("Failed to review issue assessment")
+            flash("Unable to save the assessment. Please try again.", "error")
+
+            return redirect(url_for("issues.review_assessment", issue_id=issue.id))
+
+    return render_template("issues/review_assessment.html", issue=issue, response=response)
 
 
 

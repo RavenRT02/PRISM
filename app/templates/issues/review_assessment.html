@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Review Assessment</h2>
+            <p class="text-muted mb-0">Issue #{{ issue.id }}</p>
+        </div>
+        <a href="{{ url_for('dashboard.admin_dashboard') }}"
+           class="btn btn-outline-secondary">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4>{{ issue.title or "Untitled Issue" }}</h4>
+            <p class="text-muted">{{ issue.description }}</p>
+            <p class="mb-0">
+                <strong>Location scope:</strong>
+                {{ issue.location_scope.name.replace("_", " ").title() }}
+            </p>
+        </div>
+    </div>
+
+    <form method="POST">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Review Score Ranges</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    Edit the proposed ranges if necessary. Each score must
+                    be between 0 and 100, and the minimum cannot exceed
+                    the maximum.
+                </p>
+
+                {% for factor in ["safety", "impact", "urgency"] %}
+                <div class="border rounded p-3 mb-3">
+                    <h6 class="text-capitalize">{{ factor }}</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="{{ factor }}_min"
+                                   class="form-label">Minimum</label>
+                            <input type="number"
+                                   class="form-control"
+                                   id="{{ factor }}_min"
+                                   name="{{ factor }}_min"
+                                   min="0" max="100" step="any"
+                                   value="{{ '%.2f'|format(
+                                       response|attr(factor + '_min')
+                                   ) }}"
+                                   required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ factor }}_max"
+                                   class="form-label">Maximum</label>
+                            <input type="number"
+                                   class="form-control"
+                                   id="{{ factor }}_max"
+                                   name="{{ factor }}_max"
+                                   min="0" max="100" step="any"
+                                   value="{{ '%.2f'|format(
+                                       response|attr(factor + '_max')
+                                   ) }}"
+                                   required>
+                        </div>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0">
+                        Current midpoint:
+                        {{ '%.2f'|format(
+                            response|attr(factor + '_score')
+                        ) }}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Current Calculated Priority</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-2">
+                    <strong>Priority score:</strong>
+                    {{ '%.2f'|format(response.priority_score) }}
+                </p>
+                <p class="mb-0">
+                    <strong>Priority level:</strong>
+                    {{ response.priority_level.name }}
+                </p>
+                <p class="text-muted small mt-3 mb-0">
+                    These values reflect the last saved ranges. Saving
+                    or approving recalculates them from the ranges
+                    submitted on this page.
+                </p>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            <button type="submit" name="action" value="save"
+                    class="btn btn-outline-primary">
+                Save Changes
+            </button>
+            <button type="submit" name="action" value="approve"
+                    class="btn btn-success"
+                    onclick="return confirm(
+                        'Approve this assessment and move the issue to the active queue?'
+                    );">
+                Approve Assessment
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
