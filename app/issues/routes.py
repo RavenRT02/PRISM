@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Issue, Building, Floor, Room, IssueCategory, LLMResponse
 from app.utils.toxicity import contains_toxicity
-from app.issues.enums import IssueStatus, PriorityLevel
+from app.issues.enums import IssueStatus, PriorityLevel, IssueType
 from app.issues.services import detect_duplicate_issue, follow_issue, create_issue, verify_issue, reject_issue, log_status_change
 from app.utils.decorators import admin_required
 from datetime import datetime, timezone, timedelta
@@ -155,8 +155,19 @@ def review_assessment(issue_id):
     response = issue.llm_response
 
     # will not trigger if pipeline is system following pipeline properly, just a failsafe condition
-    if (issue.status != IssueStatus.PENDING_APPROVAL) or (response is None) or (response.finalized):
-        flash("This assessment is not awaiting approval", "warning")
+    if issue.status != IssueStatus.PENDING_APPROVAL:
+        flash(
+            f"Issue status is {issue.status.name}, not PENDING_APPROVAL.",
+            "warning",
+        )
+        return redirect(url_for("dashboard.admin_dashboard"))
+
+    if response is None:
+        flash("This issue has no linked LLM assessment record.", "error")
+        return redirect(url_for("dashboard.admin_dashboard"))
+
+    if response.finalized:
+        flash("This assessment has already been finalized.", "warning")
         return redirect(url_for("dashboard.admin_dashboard"))
 
     if request.method == 'POST':

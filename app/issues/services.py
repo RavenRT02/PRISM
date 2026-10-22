@@ -1,7 +1,7 @@
 from app.extensions import db
 from app.models import IssueFollower, Issue, IssueStatusHistory
 from app.issues.duplicate_detection import find_duplicate
-from app.issues.enums import IssueStatus
+from app.issues.enums import IssueStatus, LocationScope
 from datetime import datetime, timezone
 from app.priority.priority_engine import update_issue_priority, check_hold_expiry
 from app.issues.assessment_service import assess_issue
@@ -37,6 +37,8 @@ def detect_duplicate_issue(candidate_issue):
 def create_issue(candidate_issue):
 
     candidate_issue.status = IssueStatus.SUBMITTED
+    candidate_issue.location_scope = LocationScope.ROOM
+    
     db.session.add(candidate_issue)
     db.session.commit()
 

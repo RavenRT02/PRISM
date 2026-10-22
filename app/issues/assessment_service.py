@@ -40,6 +40,7 @@ def assess_issue(issue: Issue) -> Issue:
 
         if response is None:
             response = LLMResponse(issue=issue)    # Due to the relationship between Issue and LLMResponse in models
+            db.session.add(response)
 
         elif response.finalized:
             raise ValueError("A finalized assessement cannot be reassessed")

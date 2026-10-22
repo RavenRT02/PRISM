@@ -9,9 +9,8 @@ app = create_app()
 with app.app_context():
     assessment = assess_issue_with_llm(
         description=(
-                    "A ceiling light fixture in the main library corridor is hanging partially loose from the ceiling, "
-                    "and its electrical wiring is visible. The corridor is used by students throughout the day, "
-                    "and people have to walk directly underneath the fixture to reach the study areas."
+                    "Auditorium lacks first aid kits, school children who came for inspection fell and hurt their knee "
+                    "from the broken tiles and we did not have first aid kits to treat them"
                     )
     )
 

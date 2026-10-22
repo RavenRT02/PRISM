@@ -183,7 +183,7 @@ def update_issue_priority(issue: Issue, now: datetime | None = None) -> None:
         safety=issue.safety_score, impact=issue.impact_score, urgency=issue.urgency_score
     )
 
-    issue.aging_score = min(max(issue.aging_score or 0.0), AGING_MAX_SCORE)  # never exceeds max aging score
+    issue.aging_score = min(max(issue.aging_score or 0.0, 0.0), AGING_MAX_SCORE)  # never exceeds max aging score
     final_score = min(base_score + issue.aging_score, 100)   # never exceeds 100
     issue.priority_score = round(final_score, 2)
     issue.priority_level = assign_priority_level(score=final_score)

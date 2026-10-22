@@ -204,26 +204,42 @@
 
                 </form>
 
+                <!-- Initiate Issue Closure Button -->
 
-                <form method="POST"
-                      action="{{ url_for('issues.close_issue', issue_id=issue.id) }}"
-                      class="mb-3">
+                <button type="button"
+                        id="initiateClosureBtn"
+                        class="btn btn-dark w-100 shadow-sm mb-3"
+                        onclick="toggleClosureForm()">
+                    Initiate Issue Closure
+                </button>
 
-                    <input type="text"
-                           name="reason"
-                           class="form-control mb-2"
-                           placeholder="Optional closing note">
+                <!-- Closure Form: Hidden Initially -->
+                <div id="closureForm" style="display: none;">
 
-                    <input type="number"
-                           name="duplicate_id"
-                           class="form-control mb-2"
-                           placeholder="Duplicate ID">
+                    <form method="POST"
+                        action="{{ url_for('issues.close_issue', issue_id=issue.id) }}"
+                        class="mb-3">
 
-                    <button class="btn btn-dark w-100 shadow-sm">
-                        Close Issue
-                    </button>
+                        <label class="form-label">Closing Note (Optional)</label>
+                        <input type="text"
+                            name="reason"
+                            class="form-control mb-2"
+                            placeholder="Enter closing note">
 
-                </form>
+                        <label class="form-label">Duplicate Issue ID (Optional)</label>
+                        <input type="number"
+                            name="duplicate_id"
+                            class="form-control mb-3"
+                            placeholder="Enter duplicate issue ID">
+
+                        <button type="submit"
+                                class="btn btn-danger w-100 rounded-pill shadow-sm">
+                            Close Issue
+                        </button>
+
+                    </form>
+
+                </div>
 
 
                 {% if issue.status.name == "IN_PROGRESS" %}
@@ -307,20 +323,25 @@
 
 
                 <div class="d-flex justify-content-between mb-2">
-                    <span class="small">Urgency Matrix</span>
-                    <span>{{ issue.urgency_score or 0 }}</span>
+                    <span class="small">Safety Score</span>
+                    <span>{{ issue.safety_score or 0 }}</span>
                 </div>
 
 
                 <div class="d-flex justify-content-between mb-2">
-                    <span class="small">Impact Factor</span>
+                    <span class="small">Impact Score</span>
                     <span>{{ issue.impact_score or 0 }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small">Urgency Score</span>
+                    <span>{{ issue.urgency_score or 0 }}</span>
                 </div>
 
 
                 <div class="d-flex justify-content-between mb-3">
                     <span class="small">Chronological Aging</span>
-                    <span>{{ issue.aging_score or 0 }}</span>
+                    <span>{{ "%.2f"|format(issue.aging_score or 0) }}</span>
                 </div>
 
 
@@ -328,12 +349,24 @@
 
                     <div class="d-flex justify-content-between">
 
-                        <span class="small text-uppercase fw-semibold">
+                        <span class="fs-6 text-uppercase fw-semibold">
                             Net Priority Score
                         </span>
 
-                        <span class="fs-4 fw-bold text-primary">
+                        <span class="fs-5 fw-bold text-primary">
                             {{ issue.priority_score or "N/A" }}
+                        </span>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <span class="fs-6 text-uppercase fw-semibold">
+                            Priority Level
+                        </span>
+
+                        <span class="fs-5 fw-bold text-primary">
+                            {{ issue.priority_level.value or "N/A" }}
                         </span>
 
                     </div>
@@ -349,5 +382,11 @@
     </div>
 
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{{ url_for('static', filename='js/issue_closure_dropdown.js') }}"></script>
 
 {% endblock %}

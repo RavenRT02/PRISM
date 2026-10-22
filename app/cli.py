@@ -1,3 +1,5 @@
+# run with --> flask --app run.py seed-categories (in terminal)
+
 from app.extensions import db
 from app.models import IssueCategory
 from flask import current_app
