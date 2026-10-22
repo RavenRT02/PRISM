@@ -40,9 +40,32 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!--Location Scope-->
+
+                    <div class="mb-4">
+                        <label for="location_scope"
+                            class="form-label fw-semibold text-secondary small text-uppercase mb-2">
+                            Issue Scope
+                        </label>
+                        <div class="shadow-sm rounded overflow-hidden">
+                            <select id="location_scope" name="location_scope"
+                                    class="form-select form-select-lg bg-light border-0" required>
+                                <option value="ROOM" selected>Specific Room / Area</option>
+                                <option value="FLOOR">Entire Floor</option>
+                                <option value="BUILDING">Entire Building</option>
+                            </select>
+                        </div>
+                        <div class="form-text">
+                            Select the area affected by this issue.
+                        </div>
+                    </div>
 
                     <div class="row g-4 mb-4">
-                        <div class="col-md-4">
+
+                        <!--Select Building-->
+
+                        <div class="col-md-4" id="buildingField">
                             <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Building</label>
                             <div class="shadow-sm rounded overflow-hidden">
                                 <select id="building" name="building_id" class="form-select form-select-lg bg-light border-0" required>
@@ -53,7 +76,10 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+
+                        <!--Select Floor-->
+
+                        <div class="col-md-4" id="floorField">
                             <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Floor</label>
                             <div class="shadow-sm rounded overflow-hidden">
                                 <select id="floor" name="floor_id" class="form-select form-select-lg bg-light border-0" required>
@@ -61,7 +87,10 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+
+                        <!--Select Room-->
+
+                        <div class="col-md-4" id="roomField">
                             <label class="form-label fw-semibold text-secondary small text-uppercase mb-2">Room / Area</label>
                             <div class="shadow-sm rounded overflow-hidden">
                                 <select id="room" name="room_id" class="form-select form-select-lg bg-light border-0" required>
@@ -106,41 +135,8 @@
 </div>
 {% endblock %}
 
+
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/location_dropdown.js') }}"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const buildingSelect = document.getElementById("building");
-        const floorSelect = document.getElementById("floor");
-        const roomSelect = document.getElementById("room");
-        const imageUpload = document.getElementById("imageUpload");
-        const fileNameDisplay = document.getElementById("fileNameDisplay");
-
-        // Display file name when image is selected
-        imageUpload.addEventListener("change", function() {
-            if (this.files && this.files.length > 0) {
-                fileNameDisplay.textContent = "Selected: " + this.files[0].name;
-                fileNameDisplay.classList.remove("d-none");
-            } else {
-                fileNameDisplay.classList.add("d-none");
-            }
-        });
-
-        // Remove disabled state logic to rely purely on HTML5 validation
-        buildingSelect.addEventListener("change", () => {
-            if (!buildingSelect.value) {
-                floorSelect.innerHTML = '<option value="">Choose Building First</option>';
-                roomSelect.innerHTML = '<option value="">Choose Floor First</option>';
-            }
-        });
-
-        floorSelect.addEventListener("change", () => {
-            if (!floorSelect.value || floorSelect.value === "Select Floor") {
-                roomSelect.innerHTML = '<option value="">Choose Floor First</option>';
-            }
-        });
-        
-
-    });
-</script>
+<script src="{{ url_for('static', filename='js/location_dropdown.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/location_scope_dropdown.js') }}" defer></script>
 {% endblock %}

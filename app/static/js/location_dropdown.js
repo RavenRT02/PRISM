@@ -1,62 +1,75 @@
 document.addEventListener("DOMContentLoaded", () => {
-
     const buildingSelect = document.getElementById("building");
     const floorSelect = document.getElementById("floor");
     const roomSelect = document.getElementById("room");
 
+    if (!buildingSelect || !floorSelect || !roomSelect) return;
 
     buildingSelect.addEventListener("change", async () => {
-
         const buildingId = buildingSelect.value;
 
-        floorSelect.innerHTML = "<option>Loading...</option>";
-        roomSelect.innerHTML = "<option>Select floor first</option>";
+        floorSelect.innerHTML =
+            '<option value="">Choose Floor</option>';
+        roomSelect.innerHTML =
+            '<option value="">Choose Floor First</option>';
 
         if (!buildingId) return;
 
-        const response = await fetch(`/issues/floors/${buildingId}`);
-        const floors = await response.json();
+        floorSelect.innerHTML =
+            '<option value="">Loading...</option>';
 
-        floorSelect.innerHTML = "<option>Select Floor</option>";
+        try {
+            const response = await fetch(`/issues/floors/${buildingId}`);
+            if (!response.ok) throw new Error("Failed to load floors");
 
-        floors.forEach(floor => {
+            const floors = await response.json();
 
-            const option = document.createElement("option");
+            floorSelect.innerHTML =
+                '<option value="">Select Floor</option>';
 
-            option.value = floor.id;
-            option.textContent = floor.number;
-
-            floorSelect.appendChild(option);
-
-        });
-
+            floors.forEach(floor => {
+                const option = document.createElement("option");
+                option.value = floor.id;
+                option.textContent = floor.number;
+                floorSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error(error);
+            floorSelect.innerHTML =
+                '<option value="">Could not load floors</option>';
+        }
     });
 
-
     floorSelect.addEventListener("change", async () => {
-
         const floorId = floorSelect.value;
 
-        roomSelect.innerHTML = "<option>Loading...</option>";
+        roomSelect.innerHTML =
+            '<option value="">Choose Room</option>';
 
         if (!floorId) return;
 
-        const response = await fetch(`/issues/rooms/${floorId}`);
-        const rooms = await response.json();
+        roomSelect.innerHTML =
+            '<option value="">Loading...</option>';
 
-        roomSelect.innerHTML = "<option>Select Room</option>";
+        try {
+            const response = await fetch(`/issues/rooms/${floorId}`);
+            if (!response.ok) throw new Error("Failed to load rooms");
 
-        rooms.forEach(room => {
+            const rooms = await response.json();
 
-            const option = document.createElement("option");
+            roomSelect.innerHTML =
+                '<option value="">Select Room</option>';
 
-            option.value = room.id;
-            option.textContent = room.name;
-
-            roomSelect.appendChild(option);
-
-        });
-
+            rooms.forEach(room => {
+                const option = document.createElement("option");
+                option.value = room.id;
+                option.textContent = room.name;
+                roomSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error(error);
+            roomSelect.innerHTML =
+                '<option value="">Could not load rooms</option>';
+        }
     });
-
 });

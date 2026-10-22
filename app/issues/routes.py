@@ -1,7 +1,7 @@
 from flask import Blueprint, request, redirect, url_for, flash, render_template, jsonify, current_app
 from flask_login import login_required, current_user
 from app.extensions import db
-from app.models import Issue, Building, Floor, Room, IssueCategory, LLMResponse
+from app.models import Issue, Building, Floor, Room, IssueCategory, LLMResponse, LocationScope
 from app.utils.toxicity import contains_toxicity
 from app.issues.enums import IssueStatus, PriorityLevel, IssueType
 from app.issues.services import detect_duplicate_issue, follow_issue, create_issue, verify_issue, reject_issue, log_status_change
@@ -43,15 +43,65 @@ def submit_issue():
     if image and image.filename:
 
         filename = secure_filename(image.filename)
-
         filepath = os.path.join("uploads", filename)
-
         image.save(os.path.join("app/static", filepath))
-
         image_path = filepath
+
+    scope_raw = request.form.get("location_scope", "ROOM")
+
+    try:
+        location_scope = LocationScope(scope_raw)
+    except ValueError:
+        flash("Please select a valid issue scope.", "error")
+        return redirect(request.referrer or url_for("dashboard.user_dashboard"))
+
+    building_id = request.form.get("building_id", type=int)
+    floor_id = request.form.get("floor_id", type=int) or None
+    room_id = request.form.get("room_id", type=int) or None
+
+    if not building_id:
+        flash("Please select a building.", "warning")
+        return redirect(request.referrer or url_for("dashboard.user_dashboard"))
+
+    if location_scope == LocationScope.BUILDING:
+        floor_id = None
+        room_id = None
+
+    elif location_scope == LocationScope.FLOOR:
+        room_id = None
+        if not floor_id:
+            flash("Please select a floor.", "warning")
+            return redirect(request.referrer or url_for("dashboard.user_dashboard"))
+
+    elif location_scope == LocationScope.ROOM:
+        if not floor_id or not room_id:
+            flash("Please select a floor and room.", "warning")
+            return redirect(request.referrer or url_for("dashboard.user_dashboard"))
+        
+
+    building = db.session.get(Building, building_id)
+
+    if building is None:
+        flash("Invalid building selection.", "error")
+        return redirect(request.referrer or url_for("dashboard.user_dashboard"))
+
+    if floor_id is not None:
+        floor = db.session.get(Floor, floor_id)
+
+        if floor is None or floor.building_id != building_id:
+            flash("The selected floor does not belong to that building.", "error")
+            return redirect(request.referrer or url_for("dashboard.user_dashboard"))
+
+    if room_id is not None:
+        room = db.session.get(Room, room_id)
+
+        if room is None or room.floor_id != floor_id:
+            flash("The selected room does not belong to that floor.", "error")
+            return redirect(request.referrer or url_for("dashboard.user_dashboard"))
+            
     
-    candidate_issue = Issue(description = description, building_id = building_id, floor_id = floor_id,
-                            room_id = room_id, category_id = category_id, issue_type = issue_type,
+    candidate_issue = Issue(description = description, location_scope=location_scope, building_id = building_id, 
+                            floor_id = floor_id, room_id = room_id, category_id = category_id, issue_type = issue_type,
                             created_by = current_user.id, status = IssueStatus.SUBMITTED, image_path = image_path)
     
     

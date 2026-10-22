@@ -37,7 +37,6 @@ def detect_duplicate_issue(candidate_issue):
 def create_issue(candidate_issue):
 
     candidate_issue.status = IssueStatus.SUBMITTED
-    candidate_issue.location_scope = LocationScope.ROOM
     
     db.session.add(candidate_issue)
     db.session.commit()
