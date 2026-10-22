@@ -114,3 +114,33 @@ def find_similar_references(description, n_results=3):
         })
 
     return references
+
+
+
+def ingest_approved_response(response):
+    """Embed and store admin approved llm response to vector database"""
+
+    if not response.finalized:
+        raise ValueError("Cannot ingest an assessment that has not been approved by admin")
+
+    # Stable ID makes retries update the same reference instead of duplicating it.
+    reference_id = f'llm_response_{response.id}'
+    description = response.description.strip()
+
+    if not description:
+        raise ValueError("Cannot ingest an empty description")
+
+    embedding = get_embedding_model().encode([description]).tolist()
+
+    collection.upsert(ids=[reference_id], documents=[description], embeddings=embedding, 
+                      metadatas=[{
+                          "scope" : response.scope.value,
+                          "safety_min" : float(response.safety_min),
+                          "safety_max" : float(response.safety_max),
+                          "impact_min" : float(response.impact_min),
+                          "impact_max" : float(response.impact_max),
+                          "urgency_min" : float(response.urgency_min),
+                          "urgency_max" : float(response.urgency_max)
+                      }])
+
+    return reference_id

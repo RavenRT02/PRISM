@@ -1,29 +1,34 @@
-import re
-from functools import lru_cache
-# from app.priority.priority_engine import clean_and_lemmatize
+from sklearn.metrics.pairwise import cosine_similarity
+from app.similarity_search.reference_store import get_embedding_model
 
 
-STOPWORDS = { "the", "is", "in", "at", "on", "a", "an", "and", "or", "to", "for", "of", "with", "by", "from" }
-
-@lru_cache(maxsize=1024)
-def normalize(text):
-    pass
+# similarity >= this score will be considered duplicate
+DUPLICATE_THRESHOLD = 0.75
 
 
-def overlap_coefficient(text1, text2):
-    
-    pass
+def is_duplicate(candidate_issue, existing_issue, threshold = DUPLICATE_THRESHOLD):
+    """Return whether two issue descriptions are sufficiently similar"""
 
+    candidate_description = (candidate_issue.description or "").strip()
+    existing_description = (existing_issue.description or "").strip()
 
-def is_same_location(issue1, issue2):
+    if not candidate_description or not existing_description:
+        return False
 
-    pass
+    model = get_embedding_model()
+    embeddings = model.encode([candidate_description, existing_description])
 
-def is_duplicate(candidate_issue, existing_issue, threshold = 0.4):
+    similarity = cosine_similarity([embeddings[0]], [embeddings[1]])[0][0]
 
-    pass
+    return float(similarity) >= threshold
+
 
 
 def find_duplicate(candidate_issue, existing_issue):
+    """Return first active issue with sufficiently similar description"""
 
-    pass
+    for issue in existing_issue:
+        if is_duplicate(candidate_issue=candidate_issue, existing_issue=issue):
+            return issue
+
+    return None

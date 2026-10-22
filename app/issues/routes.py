@@ -11,6 +11,7 @@ from app.utils.datetime_utils import ensure_utc
 from app.priority.priority_engine import update_issue_priority
 from app.priority.priority_score_cal import find_midpoint, calculate_priority_score
 from app.issues.assessment_service import approve_assessment
+from app.similarity_search.reference_store import ingest_approved_response
 import os 
 from werkzeug.utils import secure_filename
 
@@ -263,8 +264,23 @@ def review_assessment(issue_id):
 
                 log_status_change(issue, old_status, issue.status, current_user.id, "LLM assessment reviewed and approved by admin")
 
+                # Commit approval
                 db.session.commit()
-                flash("Assessment approved. Issue added to the active queue", "success")
+
+                # Attempt ingestion to reference dataset
+
+                try:
+                    ingest_approved_response(response=response)
+                    response.added_to_vector_db = True
+                    db.session.commit()
+
+                    flash("Assessment approved and added to reference dataset and active queue", "success")
+
+                except:
+                    db.session.rollback()
+                    current_app.logger.exception("Assessment approved but ingestion failed for %s", issue.id)
+                    flash("Assessment approved, but adding it to the reference database failed. "
+                        "It can be retried later.", "warning")
 
                 return redirect(url_for("dashboard.admin_dashboard"))
 

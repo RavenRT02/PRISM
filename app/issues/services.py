@@ -27,7 +27,8 @@ def detect_duplicate_issue(candidate_issue):
     existing_issue = Issue.query.filter(Issue.building_id == candidate_issue.building_id,
                                         Issue.floor_id == candidate_issue.floor_id,
                                         Issue.room_id == candidate_issue.room_id,
-                                        Issue.status.in_([IssueStatus.SUBMITTED, IssueStatus.IN_PROGRESS, IssueStatus.ON_HOLD])).all()
+                                        Issue.status.in_([IssueStatus.SUBMITTED, IssueStatus.IN_PROGRESS, 
+                                                          IssueStatus.PENDING_APPROVAL,IssueStatus.ON_HOLD])).all()
     
     duplicate_issue = find_duplicate(candidate_issue, existing_issue)
 

@@ -207,7 +207,9 @@ marimo/_lsp/
 __marimo__/
 
 # check files
+db_checker
 db_check.py
+check_chroma.py
 
 # .env
 .env
