@@ -2,7 +2,7 @@ from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from app.utils.decorators import admin_required
 from app.issues.services import release_expired_holds
-from app.models import Issue, IssueCategory
+from app.models import Issue, IssueCategory, IssueFollower
 from app.issues.enums import IssueStatus
 from sqlalchemy import func
 from app.extensions import db
@@ -53,4 +53,9 @@ def user_dashboard():
 
     user_issues = Issue.query.filter(Issue.created_by == current_user.id).order_by(Issue.created_at.desc()).all()
 
-    return render_template("user_dashboard.html", issues=user_issues)
+    followed_issues = Issue.query.join(
+        IssueFollower, IssueFollower.issue_id == Issue.id).filter(
+            IssueFollower.user_id == current_user.id, Issue.created_by != current_user.id).order_by(
+                IssueFollower.created_at.desc()).all()
+
+    return render_template("user_dashboard.html", issues=user_issues, followed_issues=followed_issues)

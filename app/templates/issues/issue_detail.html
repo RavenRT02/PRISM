@@ -87,9 +87,16 @@
 
                         <p class="mb-0 fw-medium">
                             <i class="fa-solid fa-location-dot text-danger me-2"></i>
+
                             {{ issue.building.name }}
-                            &bull; Flr {{ issue.floor.number }}
-                            &bull; {{ issue.room.name }}
+
+                            {% if issue.floor %}
+                                &bull; Floor {{ issue.floor.number }}
+                            {% endif %}
+
+                            {% if issue.room %}
+                                &bull; {{ issue.room.name }}
+                            {% endif %}
                         </p>
 
                     </div>

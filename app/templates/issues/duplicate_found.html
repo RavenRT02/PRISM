@@ -18,7 +18,19 @@
         
         <div class="d-flex justify-content-between align-items-center mb-3">
             <span class="badge bg-primary text-uppercase px-3 py-2 shadow-sm"><i class="fa-solid fa-wrench me-2"></i> Active Duplicate</span>
-            <span class="text-muted small fw-medium">Location: {{ duplicate_issue.building.name }} &bull; {{ duplicate_issue.room.name }}</span>
+            <span class="text-muted small fw-medium">
+                Location: 
+                    {{ duplicate_issue.building.name }}
+
+                    {% if duplicate_issue.floor %}
+                        &bull; Floor {{ duplicate_issue.floor.number }}
+                    {% endif %}
+
+                    {% if duplicate_issue.room %}
+                        &bull; {{ duplicate_issue.room.name }}
+                    {% endif %}
+
+            </span>
         </div>
 
         <h4 class="fw-bold text-dark mb-2">{{ duplicate_issue.title or candidate_issue.description[:40] ~ '...' }}</h4>

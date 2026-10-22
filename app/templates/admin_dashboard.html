@@ -144,7 +144,16 @@
                         <div>
                             <h6 class="mb-1 fw-bold text-dark">{{ issue.description[:60] }}...</h6>
                             <p class="mb-0 text-muted small">
-                                <i class="fa-solid fa-location-dot me-1"></i> {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Room {{ issue.room.name }}
+                                <i class="fa-solid fa-location-dot me-1"></i> 
+                                {{ issue.building.name }}
+
+                                {% if issue.floor %}
+                                    &bull; Floor {{ issue.floor.number }}
+                                {% endif %}
+
+                                {% if issue.room %}
+                                    &bull; {{ issue.room.name }}
+                                {% endif %}
                             </p>
                         </div>
                         <a href="{{ url_for('issues.issue_details', issue_id=issue.id) }}" class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-medium">
@@ -213,7 +222,16 @@
                             </a>
                         </div>
                         <p class="mb-2 text-muted small">
-                            <i class="fa-solid fa-location-dot me-1"></i> {{ issue.building.name }} &bull; Floor {{ issue.floor.number }} &bull; Room {{ issue.room.name }}
+                            <i class="fa-solid fa-location-dot me-1"></i> 
+                            {{ issue.building.name }}
+
+                            {% if issue.floor %}
+                                &bull; Floor {{ issue.floor.number }}
+                            {% endif %}
+
+                            {% if issue.room %}
+                                &bull; {{ issue.room.name }}
+                            {% endif %}
                         </p>
                         <div class="d-flex gap-2">
                             <span class="badge badge-custom rounded-pill
@@ -247,9 +265,16 @@
                         </div>
                         <p class="mb-2 text-muted small">
                             <i class="fa-solid fa-location-dot me-1"></i> 
-                            {{ issue.building.name }} 
-                            {% if issue.floor %}&bull; Floor {{ issue.floor.number }}{% endif %} 
-                            {% if issue.room %}&bull; Room {{ issue.room.name }}{% endif %}</p>
+                            {{ issue.building.name }}
+
+                            {% if issue.floor %}
+                                &bull; Floor {{ issue.floor.number }}
+                            {% endif %}
+
+                            {% if issue.room %}
+                                &bull; {{ issue.room.name }}
+                            {% endif %}
+                        </p>
                         <div><span class="badge rounded-pill badge-custom badge-high"><i class="fa-solid fa-star me-1"></i> Pinned </span></div>
                     </div>
                     {% else %}

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, redirect, url_for, flash, render_template, jsonify, current_app
 from flask_login import login_required, current_user
 from app.extensions import db
-from app.models import Issue, Building, Floor, Room, IssueCategory, LLMResponse, LocationScope
+from app.models import Issue, Building, Floor, Room, IssueCategory, IssueFollower, LocationScope
 from app.utils.toxicity import contains_toxicity
 from app.issues.enums import IssueStatus, PriorityLevel, IssueType
 from app.issues.services import detect_duplicate_issue, follow_issue, create_issue, verify_issue, reject_issue, log_status_change
@@ -109,7 +109,21 @@ def submit_issue():
     duplicate_issue = detect_duplicate_issue(candidate_issue)
 
     if duplicate_issue:
+        # The user originally reported the issue
+        if duplicate_issue.created_by == current_user.id:
+            flash("You have already reported a similar issue at this location", "warning")
+            return redirect(request.referrer or url_for("dashboard.user_dashboard"))
+
+        # The user already follows the issue
+        existing_follow = IssueFollower.query.filter_by(user_id = current_user.id, issue_id = duplicate_issue.id).first()
+
+        if existing_follow:
+            flash("You are already tracking a similar issue, you cannot track the same issue more than once", "info")
+            return redirect(url_for("dashboard.user_dashboard"))
+        
+        # A different user reported it and current user is not following it yet
         flash("Similar issue already exists, would you like to track instead?", "warning")
+        
         return render_template("issues/duplicate_found.html", duplicate_issue = duplicate_issue, candidate_issue = candidate_issue)
         
     create_issue(candidate_issue)
@@ -122,9 +136,26 @@ def submit_issue():
 @login_required
 def track_duplicate(issue_id):
 
-    follow_issue(current_user.id, issue_id)
-    flash("You are now tracking this issue", "success")
+    issue = Issue.query.get_or_404(issue_id)
 
+    if issue.created_by == current_user.id:
+        flash("You have already reported this issue.", "warning")
+        return redirect(url_for("dashboard.user_dashboard"))
+
+    if issue.status not in [IssueStatus.IN_PROGRESS, IssueStatus.SUBMITTED, 
+                            IssueStatus.PENDING_APPROVAL, IssueStatus.ON_HOLD]:
+        flash("This issue is no longer available for tracking.", "warning")
+        return redirect(url_for("dashboard.user_dashboard"))
+
+    existing_follow = IssueFollower.query.filter_by(user_id = current_user.id, issue_id = issue.id).first()
+
+    if existing_follow:
+        flash("You are already tracking this issue", "info")
+        return redirect(url_for("dashboard.user_dashboard"))
+
+    follow_issue(current_user.id, issue.id)
+    flash("You are now tracking this issue.", "success")
+    
     return redirect(url_for("dashboard.user_dashboard"))
 
 
