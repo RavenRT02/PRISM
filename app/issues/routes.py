@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, url_for, flash, render_template, jsonify, current_app
+from flask import Blueprint, request, redirect, url_for, flash, render_template, jsonify, current_app, abort
 from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Issue, Building, Floor, Room, IssueCategory, IssueFollower, LocationScope
@@ -157,6 +157,68 @@ def track_duplicate(issue_id):
     flash("You are now tracking this issue.", "success")
     
     return redirect(url_for("dashboard.user_dashboard"))
+
+
+
+@issues_bp.route("<int:issue_id>/duplicate-suggestion/accept", methods = ['POST'])
+@login_required
+def accept_duplicate_suggestion(issue_id):
+
+    issue = Issue.query.get_or_404(issue_id)
+
+    if issue.created_by != current_user.id:
+        abort(403)
+
+    if issue.duplicate_suggestion_status != "PENDING" or not issue.suggested_duplicate_id:
+        flash("There is not pending duplicate suggestion for this issue", "info")
+        return redirect(url_for("issues/issue_details", issue_id = issue.id))
+
+    target_issue = Issue.query.filter(
+        Issue.id == issue.suggested_duplicate_id, Issue.id != issue.id,
+        Issue.status.in_([
+            IssueStatus.SUBMITTED, IssueStatus.IN_PROGRESS,
+            IssueStatus.PENDING_APPROVAL, IssueStatus.ON_HOLD
+        ])
+    ).first()
+
+    if not target_issue:
+        flash("The selected issue is no longer available for tracking", "warning")
+        return redirect(url_for("issues.issue_details", issue_id = issue.id))
+
+    existing_follow = IssueFollower.query.filter_by(user_id = current_user.id, issue_id = target_issue.id).first()
+
+    # If user is not already following this issue, then follow it
+    if not existing_follow:
+        follow_issue(user_id = current_user.id, issue_id= target_issue.id)
+
+    issue.duplicate_suggestion_status = "ACCEPTED"
+    db.session.commit()
+
+    flash("You are tracking the suggested issue", "success")
+
+    return redirect(url_for("issues.issue_details", issue_id = issue.id))
+
+
+
+
+@issues_bp.route("<int:issue_id>/duplicate-suggestion/decline", methods = ['POST'])
+@login_required
+def decline_duplicate_suggestion(issue_id):
+
+    issue = Issue.query.get_or_404(issue_id)
+
+    if issue.created_by != current_user.id:
+        abort(403)
+
+    if issue.duplicate_suggestion_status != "PENDING" or not issue.suggested_duplicate_id:
+        flash("There is no pending duplicate suggestion for this issue", "info")
+        return redirect(url_for("issues.issue_details", issue_id = issue.id))
+
+    issue.duplicate_suggestion_status = "DECLINED"
+    db.session.commit()
+
+    flash("Duplicate suggestion declined", "info")
+    return redirect(url_for("issues.issue_details", issue_id = issue.id))
 
 
 
@@ -342,10 +404,36 @@ def reject_issue_route(issue_id):
 
     issue = Issue.query.get_or_404(issue_id)
     reason = request.form.get("reason")
+    tracker_id = request.form.get("duplicate_id", "").strip()
+
+    target_issue = None
+
+    if tracker_id:
+        if not tracker_id.isdigit():
+            flash("Invalid duplicate issue selection", "danger")
+            return redirect(url_for("issues.issue_details", issue_id = issue.id))
+
+        target_issue = Issue.query.filter(
+            Issue.id == int(tracker_id), Issue.id != issue.id,
+            Issue.status.in_([
+                IssueStatus.SUBMITTED, IssueStatus.IN_PROGRESS,
+                IssueStatus.PENDING_APPROVAL, IssueStatus.ON_HOLD
+            ])
+        ).first()
+
+        if not target_issue:
+            flash("The suggested issue is no longer available. Please select another issue", "warning")
+            return redirect(url_for("issues.issue_details", issue_id = issue.id))
 
     old_status = issue.status
 
     reject_issue(issue, current_user, reason)
+
+    if target_issue:
+        issue.suggested_duplicate_id = target_issue.id
+        issue.duplicate_suggestion_status = "PENDING"
+        db.session.commit()
+
     flash("Issue rejected successfully", "info")
 
     log_status_change(issue, old_status, issue.status, current_user.id, "Issue verified by admin")
@@ -360,7 +448,14 @@ def issue_details(issue_id):
 
     issue = Issue.query.get_or_404(issue_id)
 
-    return render_template("issues/issue_detail.html", issue = issue)
+    eligible_duplicate_issues = Issue.query.filter(
+        Issue.id != issue.id, Issue.status.in_([
+            IssueStatus.SUBMITTED, IssueStatus.IN_PROGRESS,
+            IssueStatus.PENDING_APPROVAL, IssueStatus.ON_HOLD
+        ])
+    ).order_by(Issue.title.asc()).all()
+
+    return render_template("issues/issue_detail.html", issue = issue, eligible_duplicate_issues = eligible_duplicate_issues)
 
 
 
@@ -459,10 +554,32 @@ def close_issue(issue_id):
 
     issue = Issue.query.get_or_404(issue_id)
     reason = request.form.get("reason")
-    tracker_id = request.form.get("duplicate_id")
+    tracker_id = request.form.get("duplicate_id", "").strip()
+
+    target_issue = None
+
+    if tracker_id:
+        if not tracker_id.isdigit():
+            flash("Invalid duplicate issue selection", "danger")
+            return redirect(url_for("issues.issue_details", issue_id = issue.id))
+
+        target_issue = Issue.query.filter(
+            Issue.id == int(tracker_id), Issue.id != issue.id,
+            Issue.status.in_([
+                IssueStatus.SUBMITTED, IssueStatus.IN_PROGRESS,
+                IssueStatus.PENDING_APPROVAL, IssueStatus.ON_HOLD
+            ])
+        ).first()
+
+        if not target_issue:
+            flash("The selected issue is no longer available. Please select another issue", "warning")
+            return(redirect(url_for("issues.issue_details", issue_id = issue.id)))
+
+
     old_status = issue.status
 
     now = ensure_utc(datetime.now(timezone.utc))
+
     if issue.status == IssueStatus.IN_PROGRESS:
         update_issue_priority(issue=issue, now=now)
 
@@ -473,21 +590,23 @@ def close_issue(issue_id):
     if reason:
         issue.review_notes = reason
 
+    if target_issue:
+        issue.suggested_duplicate_id = target_issue.id
+        issue.duplicate_suggestion_status = "PENDING"
+
+    else:
+        issue.suggested_duplicate_id = None
+        issue.duplicate_suggestion_status = None
+
     db.session.commit()
-    
-    # Core Logic: If admin links an active duplicate, secretly assign the ticket-creator to track it!
-    if tracker_id and tracker_id.isdigit():
-        target_issue = Issue.query.get(int(tracker_id))
-        if target_issue:
-            follow_issue(issue.created_by, target_issue.id)
-            issue.review_notes = (issue.review_notes or "") + f" [System] Tracked to Issue #{target_issue.id} automatically."
-            db.session.commit()
 
     flash("Issue marked as closed", "secondary")
 
-    log_status_change(issue, old_status, issue.status, current_user.id, f"Issue administratively closed: {reason}" if reason else "Issue administratively closed")
+    log_status_change(issue, old_status, issue.status, current_user.id, 
+                      f"Issue administratively closed: {reason}" if reason else "Issue administratively closed")
 
     return redirect(url_for("issues.issue_details", issue_id = issue.id))
+
 
 
 @issues_bp.route("/rename/<int:issue_id>", methods=["POST"])

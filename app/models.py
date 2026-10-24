@@ -220,6 +220,13 @@ class Issue(db.Model):
     # Last time eligible IN_PROGRESS time was converted into aging points.
     aging_updated_at = db.Column(db.DateTime(timezone = True))
 
+    # Admin's optional duplicate suggestion
+    suggested_duplicate_id = db.Column(db.Integer, db.ForeignKey("issues.id"), nullable = True)
+
+    # User decision - Pending, Accepted or Declined to suggested duplicate tracking
+    duplicate_suggestion_status = db.Column(db.String(20), nullable = True)
+
+
     category_id = db.Column(db.Integer, db.ForeignKey("issue_categories.id"), nullable = False)
     category = db.relationship("IssueCategory")
 
@@ -248,9 +255,12 @@ class Issue(db.Model):
 
     followers = db.relationship("IssueFollower", foreign_keys = "IssueFollower.issue_id", back_populates = "issue", lazy = True)
 
+    suggested_duplicate = db.relationship("Issue", foreign_keys = [suggested_duplicate_id], remote_side = "Issue.id")
+
     status_history = db.relationship("IssueStatusHistory", back_populates = "issue", lazy = True)
 
     llm_response = db.relationship("LLMResponse", back_populates= "issue", uselist= False, cascade= "all, delete-orphan")
+
 
     __table_args__ = (
         db.CheckConstraint(
