@@ -1,7 +1,7 @@
 from flask import Flask
 from app.auth.routes import auth_bp 
 from app.extensions import db,migrate,login_manager,mail
-from app import models
+from app.utils.datetime_utils import format_local_datetime
 from app.org_setup.routes import org_bp
 from app.cli import seed_categories
 from app.issues.routes import issues_bp
@@ -40,5 +40,7 @@ def create_app():
     @app.context_processor
     def inject_status_mapper():
         return dict(get_user_visible_status=get_user_visible_status)
+
+    app.jinja_env.filters["local_datetime"] = format_local_datetime
 
     return app

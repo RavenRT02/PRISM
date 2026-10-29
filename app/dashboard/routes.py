@@ -32,7 +32,7 @@ def admin_dashboard():
 
     closed = Issue.query.filter(Issue.status == IssueStatus.CLOSED).all()
 
-    rejected_count = Issue.query.filter(Issue.status == IssueStatus.REJECTED).count()
+    rejected = Issue.query.filter(Issue.status == IssueStatus.REJECTED).all()
 
     category_stats = db.session.query(IssueCategory.name, func.count(Issue.id)).join(Issue).group_by(IssueCategory.name).all()
 
@@ -40,10 +40,10 @@ def admin_dashboard():
     category_counts = [c[1] for c in category_stats]
 
     return render_template("admin_dashboard.html", issues=issues, pinned_issues=pinned_issues,
-                            on_hold=on_hold, resolved=resolved, closed=closed, verification_queue = verification_queue,
+                            on_hold=on_hold, resolved=resolved, closed=closed, rejected = rejected, verification_queue = verification_queue,
                             pending_assessments=pending_assessments, issues_count = len(issues), pinned_count = len(pinned_issues), 
                             on_hold_count = len(on_hold), resolved_count = len(resolved), closed_count = len(closed),
-                            category_labels = category_labels, category_counts = category_counts, rejected_count = rejected_count)
+                            category_labels = category_labels, category_counts = category_counts, rejected_count = len(rejected))
 
 
 
