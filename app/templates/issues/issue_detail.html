@@ -201,9 +201,12 @@
                     <div class="rounded-3 overflow-hidden border shadow-sm"
                          style="max-height:400px; display:flex; justify-content:center; background:#f0f0f0;">
 
-                        <img src="{{ url_for('static', filename=issue.image_path) }}"
-                             class="img-fluid"
-                             style="object-fit:contain;">
+                        
+                        <img src="{{ url_for('static', filename=issue.image_path.replace('\\', '/')) }}"
+                            alt="Issue Photograph"
+                            class="img-fluid"
+                            style="object-fit:contain;">
+
 
                     </div>
 

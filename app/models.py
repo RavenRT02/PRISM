@@ -226,6 +226,9 @@ class Issue(db.Model):
     # User decision - Pending, Accepted or Declined to suggested duplicate tracking
     duplicate_suggestion_status = db.Column(db.String(20), nullable = True)
 
+    # Flag to hide issues from user dashboard when they delete issue in UI 
+    hidden_from_user = db.Column(db.Boolean, nullable = False, default = False, server_default = db.false())
+
 
     category_id = db.Column(db.Integer, db.ForeignKey("issue_categories.id"), nullable = False)
     category = db.relationship("IssueCategory")

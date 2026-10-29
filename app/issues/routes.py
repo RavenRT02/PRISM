@@ -44,9 +44,14 @@ def submit_issue():
     if image and image.filename:
 
         filename = secure_filename(image.filename)
-        filepath = os.path.join("uploads", filename)
-        image.save(os.path.join("app/static", filepath))
-        image_path = filepath
+
+        upload_folder = os.path.join("app", "static", "uploads")
+        os.makedirs(upload_folder, exist_ok=True)
+
+        image.save(os.path.join(upload_folder, filename))
+
+        # Store a URL-friendly relative path in the database
+        image_path = f'uploads/{filename}'
 
     scope_raw = request.form.get("location_scope", "ROOM")
 
@@ -160,6 +165,31 @@ def track_duplicate(issue_id):
 
 
 
+@issues_bp.route("/untrack/<int:issue_id>", methods = ['POST'])
+@login_required
+def untrack_issue(issue_id):
+
+    issue = Issue.query.get_or_404(issue_id)
+
+    if issue.status not in [IssueStatus.RESOLVED, IssueStatus.CLOSED, IssueStatus.REJECTED]:
+        flash("You can only remove tracking for resolved, closed or rejected issues", "warning")
+        return redirect(url_for("dashboard.user_dashboard"))
+
+    follower = IssueFollower.query.filter_by(user_id = current_user.id, issue_id = issue.id).first()
+
+    if not follower:
+        flash("You are not tracking this issue", "info")
+        return redirect(url_for("dashboard.user_dashboard"))
+
+    db.session.delete(follower)
+    db.session.commit()
+
+    flash("Issue removed from your tracking list", "success")
+    return redirect(url_for("dashboard.user_dashboard"))
+
+
+
+
 @issues_bp.route("<int:issue_id>/duplicate-suggestion/accept", methods = ['POST'])
 @login_required
 def accept_duplicate_suggestion(issue_id):
@@ -235,9 +265,10 @@ def delete_issue_route(issue_id):
         flash("Only resolved, closed, or rejected issues can be deleted.", "error")
         return redirect(url_for("dashboard.user_dashboard"))
         
-    db.session.delete(issue)
+    issue.hidden_from_user = True
     db.session.commit()
-    flash("Issue permanently deleted.", "success")
+
+    flash("Issue removed from your dashboard", "success")
     return redirect(url_for("dashboard.user_dashboard"))
 
 

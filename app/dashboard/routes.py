@@ -51,7 +51,9 @@ def admin_dashboard():
 @login_required
 def user_dashboard():
 
-    user_issues = Issue.query.filter(Issue.created_by == current_user.id).order_by(Issue.created_at.desc()).all()
+    user_issues = Issue.query.filter(
+        Issue.created_by == current_user.id, Issue.hidden_from_user == False
+        ).order_by(Issue.created_at.desc()).all()
 
     followed_issues = Issue.query.join(
         IssueFollower, IssueFollower.issue_id == Issue.id).filter(

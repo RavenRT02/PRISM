@@ -211,5 +211,8 @@ db_checker
 db_check.py
 check_chroma.py
 
+# uploaded images
+uploads
+
 # .env
 .env
